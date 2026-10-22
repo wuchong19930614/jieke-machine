@@ -241,7 +241,7 @@ async function seedProducts(payload: Payload, pool: number[]): Promise<number[]>
           description: `Step ${i + 1}: ${title.toLowerCase()} with adjustable speed and easy access for cleaning.`,
           visible: true,
         })),
-        seo: { seoTitle: `${line.name} | Sample Food Machinery`, seoDescription: line.summary },
+        seo: { seoDescription: line.summary },
       },
     })
     ids.push(doc.id as number)
@@ -286,7 +286,7 @@ async function seedCases(payload: Payload, productIds: number[]): Promise<number
         solution: rich(p('We designed a compact U-shaped layout and adjusted the machines to the local 380 V / 60 Hz power supply.')),
         deliveryOperation: rich(p('The line was tested in our factory, shipped in one container and installed on site in two weeks.')),
         gallery: [g1, g2, g3],
-        seo: { seoTitle: `${item.title} | Case Study`, seoDescription: `Customer project: ${item.title}.` },
+        seo: { seoDescription: `Customer project: ${item.title}.` },
       },
     })
     ids.push(doc.id as number)

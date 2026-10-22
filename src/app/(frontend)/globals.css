@@ -1182,8 +1182,9 @@ p {
   gap: 14px;
   flex-wrap: wrap;
 }
-/* 顶栏和页脚的文字链接：点击区域至少 24px 高（WCAG 2.2 目标尺寸），上下负外边距抵消多出的高度，版面不变 */
+/* 顶栏、面包屑和页脚的文字链接：点击区域至少 24px 高（WCAG 2.2 目标尺寸），上下负外边距抵消多出的高度，版面不变 */
 .lp-top a,
+.lp-breadcrumb a,
 .lp-footer li a,
 .lp-legal a,
 .lp-footer .lp-legal .lp-footer-button {
