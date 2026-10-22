@@ -61,6 +61,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
   poweredByHeader: false,
+  // 后台“操作教程”页面运行时读取这份文档，部署时要一起带上（见 src/admin/views/GuideView.tsx）
+  outputFileTracingIncludes: { '/admin/*': ['./docs/后台操作教程.md'] },
   images: {
     formats: ['image/avif', 'image/webp'],
     // 横幅桌面图用 80，其余用默认 75

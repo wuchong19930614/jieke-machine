@@ -28,7 +28,18 @@ const subscribeReducedMotion = (onChange: () => void) => {
   return () => query.removeEventListener('change', onChange)
 }
 
-export function BannerCarousel({ slides, texts, locate = {} }: { slides: React.ReactNode[]; texts: Texts; locate?: Partial<Record<keyof Texts, LocateAttrs>> }) {
+export function BannerCarousel({
+  slides,
+  texts,
+  locate = {},
+  ratio = 'original',
+}: {
+  slides: React.ReactNode[]
+  texts: Texts
+  locate?: Partial<Record<keyof Texts, LocateAttrs>>
+  // 主题设置“默认图框比例 › Banner”：original 保持原设计的高度，其他比例只在桌面生效
+  ratio?: string
+}) {
   const total = slides.length
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -86,6 +97,9 @@ export function BannerCarousel({ slides, texts, locate = {} }: { slides: React.R
     <section
       ref={rootRef}
       className="lp-hero"
+      {...(ratio && ratio !== 'original'
+        ? { 'data-ratio': ratio, style: { '--banner-ratio': ratio.replace('/', ' / ') } as React.CSSProperties }
+        : {})}
       aria-roledescription="carousel"
       aria-label={texts.region}
       onMouseEnter={() => setHovering(true)}

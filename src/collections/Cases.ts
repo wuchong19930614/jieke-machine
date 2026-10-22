@@ -141,7 +141,7 @@ export const Cases: CollectionConfig = {
       label: '模块文案覆盖',
       admin: { initCollapsed: true },
       fields: [
-        overrideGroup('sectionTexts', '本案例的标签和按钮', UI_CASE_DETAIL, '只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字'),
+        overrideGroup('sectionTexts', '本案例的标签和按钮', UI_CASE_DETAIL, '只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字', `本案例的${D}页`),
       ],
     },
     seoGroup('本案例'),

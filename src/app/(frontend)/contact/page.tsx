@@ -66,6 +66,12 @@ export default async function ContactPageView() {
                 {t.intro}
               </p>
             ) : null}
+            {/* 需求书第五部分：联系页显示公司名称，取全站设置 */}
+            {settings.companyName ? (
+              <p className="lp-contact-company" {...L(S, 'companyName')}>
+                {settings.companyName}
+              </p>
+            ) : null}
             <dl className="lp-contact-list">
               {settings.email ? (
                 <div>

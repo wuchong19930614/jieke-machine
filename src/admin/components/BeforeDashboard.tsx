@@ -13,6 +13,7 @@ const LINKS = [
   { href: '/admin/globals/site-settings', label: '全站设置', roles: CONTENT },
   { href: '/admin/search', label: '查找内容', roles: ['admin', 'editor', 'sales', 'developer'] },
   { href: '/admin/content-transfer', label: '内容导入导出', roles: ['admin', 'developer'] },
+  { href: '/admin/guide', label: '操作教程', roles: ['admin', 'editor', 'sales', 'developer'] },
 ]
 
 export function BeforeDashboard({ user }: ServerProps) {
@@ -33,6 +34,9 @@ export function BeforeDashboard({ user }: ServerProps) {
         <li>前台所有文字必须用英文；出现中文时系统会阻止发布并标出字段。</li>
         <li>编辑页右上角打开“实时预览”后，点任意字段旁的“在前台定位”，可在预览里找到对应位置；预览里开启“定位模式”可点回后台字段。</li>
         <li>图片上传前请填写英文替代文字；单张图片不超过 20MB，PDF 不超过 30MB。</li>
+        <li>
+          完整的操作步骤见<Link href="/admin/guide">《后台操作教程》</Link>。
+        </li>
       </ol>
     </div>
   )

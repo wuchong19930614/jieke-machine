@@ -30,6 +30,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* 弹窗打开时锁住滚动会去掉滚动条，预留滚动条位置，页面不左右跳 */
+  scrollbar-gutter: stable;
+}
+/* 联系弹窗、客服窗口、Cookie 设置、图片放大层打开时锁定底层页面（技术方案 4.2） */
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -366,6 +372,30 @@ p {
 .lp-rich img {
   height: auto;
 }
+/* 富文本表格（如隐私政策里的处理目的、服务商、Cookie 清单）：手机上横向滑动 */
+.lp-rich .lexical-table-container {
+  overflow-x: auto;
+  margin: 16px 0;
+  -webkit-overflow-scrolling: touch;
+}
+.lp-rich .lexical-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+}
+.lp-rich .lexical-table-cell {
+  border: 1px solid var(--lp-line);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.lp-rich .lexical-table-cell p {
+  margin: 0;
+}
+.lp-rich th.lexical-table-cell {
+  background: var(--lp-soft);
+  font-weight: 600;
+}
 
 /* ---------- 图片框 ---------- */
 .lp-frame {
@@ -420,6 +450,19 @@ p {
 }
 .lp-banner-slide img {
   object-fit: cover;
+  /* 桌面图和手机图各用自己的焦点 */
+  object-position: var(--focal, 50% 50%);
+}
+@media (max-width: 767px) {
+  .lp-banner-slide img {
+    object-position: var(--focal-mobile, var(--focal, 50% 50%));
+  }
+}
+/* 主题设置“默认图框比例 › Banner”选了具体比例时，桌面按比例定高度；原图比例 = 保持原设计的高度 */
+@media (min-width: 768px) {
+  .lp-hero[data-ratio] {
+    aspect-ratio: var(--banner-ratio);
+  }
 }
 .lp-banner-slide::after {
   content: '';
@@ -903,6 +946,11 @@ p {
 }
 
 /* ---------- 联系页与表单 ---------- */
+.lp-contact-company {
+  margin: 22px 0 0;
+  font-size: 1.07em;
+  font-weight: 700;
+}
 .lp-contact-list {
   display: grid;
   gap: 18px;

@@ -13,6 +13,8 @@ import type { Country } from '@/lib/countries'
 import { type InquiryField, LIMITS, validateInquiry } from '@/lib/inquirySchema'
 import type { LocateAttrs } from '@/lib/locator'
 
+import { useUi } from './UiProvider'
+
 type FormTexts = TextsOf<typeof FORM_TEXTS>
 
 type Props = {
@@ -44,6 +46,7 @@ const withFallback = (template: string, vars: Record<string, string>, fallback: 
 
 export function InquiryForm({ source, texts, countries, businessEmail, product, variant = 'page', locate = {}, defaultProductModel, turnstileSiteKey }: Props) {
   const router = useRouter()
+  const { close } = useUi()
   const uid = useId().replace(/:/g, '')
   const formRef = useRef<HTMLFormElement>(null)
   const [values, setValues] = useState<Values>({ ...EMPTY, productModel: defaultProductModel ?? '' })
@@ -191,6 +194,12 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
           // 忽略
         }
         submissionId.current = newSubmissionId()
+        // 弹窗和客服窗口里的表单一直挂在页面上：成功后清空已填内容并关掉所在弹窗，
+        // 否则跳到感谢页时弹窗还盖在上面，再点“发送”会存成第二条询盘
+        setValues({ ...EMPTY, productModel: defaultProductModel ?? '' })
+        setErrors({})
+        resetCaptcha()
+        close()
         router.push(data.redirect || '/thank-you/')
         return
       }

@@ -5,6 +5,7 @@ import React from 'react'
 
 import { ChatsAndDialogs } from '@/components/ChatsAndDialogs'
 import { Analytics } from '@/components/client/Analytics'
+import { ErrorTextsProvider } from '@/components/client/ErrorTexts'
 import { LightboxProvider } from '@/components/client/Lightbox'
 import { PreviewTools } from '@/components/client/PreviewTools'
 import { UiProvider } from '@/components/client/UiProvider'
@@ -53,7 +54,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
             <TopBar settings={settings} ui={ui} L={L} />
             <SiteHeader settings={settings} ui={ui} L={L} />
             <main id="main" tabIndex={-1}>
-              {children}
+              <ErrorTextsProvider texts={ui.error}>{children}</ErrorTextsProvider>
             </main>
             <ContactBand settings={settings} L={L} />
             <SiteFooter settings={settings} ui={ui} L={L} />

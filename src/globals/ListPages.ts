@@ -1,7 +1,7 @@
 // 产品列表页、案例列表页、联系我们（技术方案 3.3）
 import { textFields } from '@/content/defineTexts'
 import { CASES_PAGE_TEXTS, CONTACT_PAGE_TEXTS, PRODUCTS_PAGE_TEXTS } from '@/content/texts'
-import { imageField, seoGroup } from '@/fields'
+import { at, imageField, seoGroup } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { CASES_PER_PAGE_DEFAULT } from '@/lib/constants'
 
@@ -31,7 +31,7 @@ export const CasesPage = editableGlobal({
       defaultValue: CASES_PER_PAGE_DEFAULT,
       min: 3,
       max: 30,
-      admin: { description: '默认 9 个（桌面 3 列）' },
+      admin: { description: at('案例列表 › 每页显示的案例数，超过自动分页', '默认 9 个（桌面 3 列）') },
     },
     seoGroup('案例列表页'),
   ],

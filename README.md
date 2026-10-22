@@ -99,6 +99,7 @@ npm run dev
 - `npm run generate:types`：重新生成 `src/payload-types.ts`
 - `npm run generate:importmap`：新增或改名后台自定义组件后重新生成 importMap
 - `npm run decrypt-backup -- 备份文件 [输出文件]`：解密数据库备份
+- `npm run import:legal`：把 `docs/隐私政策与Cookie说明模板（含巴西LGPD）.md` 里的隐私政策和 Cookie 说明录入“辅助页面”，自动填入公司名称、地址、网址和日期。默认存为草稿，加 `-- --publish` 直接发布；只操作本地 `file:` 数据库，导入线上库要另加 `-- --allow-remote`。运行结束会列出还没替换的方括号占位（如隐私邮箱、DPO、各服务商的保存期限），需与法务确认后在后台填写。脚本在 Next.js 之外运行，不能刷新线上已生成的页面，所以导入线上库时不要加 `--publish`：存为草稿，在后台填完占位后点“发布修改”，前台才会更新
 - `npm run typecheck` / `npm run lint` / `npm test`：类型检查、代码检查、单元测试
 
 <a id="s3"></a>
@@ -128,7 +129,7 @@ src/
   app/(frontend)/      前台页面（首页、产品、案例、关于、联系、辅助页、404）
   app/(payload)/       Payload 后台路由和 /api/cms 接口（框架生成，一般不改）
   app/api/             网站自己的接口：询盘、表单令牌、预览、备份下载、定时任务
-  admin/               后台自定义组件：仪表板提示、参数表编辑器、前后台定位、搜索、内容导入导出
+  admin/               后台自定义组件：仪表板提示、左侧菜单、参数表编辑器、前后台定位、搜索、内容导入导出、操作教程
   collections/         内容集合：产品、案例、辅助页面、媒体、询盘、用户、备份记录
   globals/             页面配置和全站设置：首页、关于、列表页、联系页、全站设置、主题、界面文案
   content/             前台默认英文文案（texts.ts）和文案字段工具
@@ -138,9 +139,9 @@ src/
   migrations/          数据库迁移
   payload.config.ts    Payload 总配置
   proxy.ts             给后台请求加 x-pathname 头（payload-totp 需要）
-scripts/               种子数据、备份解密
+scripts/               种子数据、备份解密、隐私政策与 Cookie 说明导入
 tests/                 单元测试
-docs/                  技术方案、界面文案、隐私政策模板、业务方资料
+docs/                  技术方案、界面文案、隐私政策模板、后台操作教程、业务方资料
 ```
 
 <a id="s5"></a>
@@ -352,3 +353,5 @@ turso db import restore.db
 - “没有编辑权限的账号不能从前台跳到后台”已实现（点选前先查当前账号对该内容的编辑权限），但只用管理员账号在浏览器里实测过，业务人员账号的拦截提示还没在浏览器里点过。
 - 后台的“前后台定位”依赖 Payload 后台的懒渲染行为（折叠分组里的字段展开后才渲染）。已按 Payload 3.91.0 的 DOM 规则实现并实测了产品、案例、首页、关于页、界面文案，升级 Payload 后要回归测试这个功能。
 - 手机端右侧悬浮栏按需求固定显示，会压住首页 Banner 右侧的切换箭头（可以左右滑动或点圆点切换）。
+- 后台左侧菜单（`src/admin/components/Nav.tsx`）照 Payload 3.91.0 的默认菜单拼装，后台首页的集合卡片（`src/admin/components/DashboardCards.tsx`）用 Payload 自带的卡片组件生成后再重排，两处共用 `src/admin/navOrder.ts` 里的顺序；升级 Payload 后要回归检查这两处（卡片结构认不出来时会退回 Payload 默认顺序，不会报错）。编辑仪表板时仍能添加 Payload 自带的 Collections 卡片，那个是默认顺序。
+- 后台“操作教程”页面运行时读取 `docs/后台操作教程.md`，已在 `next.config.ts` 用 `outputFileTracingIncludes` 带进部署包，部署后要打开 `/admin/guide` 确认一次。

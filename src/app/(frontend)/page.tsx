@@ -79,8 +79,19 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
         <div className="lp-banner-slide" {...L(H, `${path}.desktopImage`)}>
           <picture>
             {mob ? <source media="(max-width: 767px)" srcSet={mob.srcSet} /> : null}
+            {/* 焦点交给样式按屏幕宽度选用：桌面用桌面图的焦点，手机用手机图的焦点 */}
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <img {...desk} style={{ ...desk.style, objectFit: 'cover', objectPosition: `${desktop?.focalX ?? 50}% ${desktop?.focalY ?? 50}%` }} />
+            <img
+              {...desk}
+              style={
+                {
+                  ...desk.style,
+                  objectFit: 'cover',
+                  '--focal': `${desktop?.focalX ?? 50}% ${desktop?.focalY ?? 50}%`,
+                  '--focal-mobile': `${mobile?.focalX ?? 50}% ${mobile?.focalY ?? 50}%`,
+                } as React.CSSProperties
+              }
+            />
           </picture>
         </div>
       ) : null}
@@ -123,19 +134,22 @@ export default async function HomePageView() {
   const cases = withDefaults(T.HOME_CASES_TEXTS, home.featuredCases)
   const videoTexts = { playAria: ui.common.playVideo, videoError: ui.common.videoError, watchOnYouTube: ui.common.watchOnYouTube, contactUs: ui.common.contactUs, opensNewTab: ui.common.opensNewTab }
 
+  const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND)
+  const bannerSlides = (home.banners?.slides ?? []).map((slide, index) => ({ slide, index })).filter(({ slide }) => slide.enabled !== false && slide.title)
+  // 主标题 h1 在第一张 Banner 里；Banner 模块隐藏或没有可播放的 Banner 时另给一个读屏可见的 h1（技术方案 8.1）
+  const bannerShown = bannerSlides.length > 0 && sections.some(({ module }) => module === 'banners')
+
   const render = (module: (typeof HOME_SECTIONS)[number]['value'], background: string) => {
     switch (module) {
       case 'banners': {
-        const slides = (home.banners?.slides ?? [])
-          .map((slide, index) => ({ slide, index }))
-          .filter(({ slide }) => slide.enabled !== false && slide.title)
-        if (!slides.length) return null
+        if (!bannerSlides.length) return null
         return (
           <BannerCarousel
             key={module}
+            ratio={defaultRatio(theme, 'banner')}
             texts={ui.banner}
             locate={locateGroup(L, U, 'banner', T.UI_BANNER)}
-            slides={slides.map(({ slide, index }, position) => (
+            slides={bannerSlides.map(({ slide, index }, position) => (
               <BannerSlide key={index} slide={slide} index={index} first={position === 0} ui={ui} L={L} draft={draft} />
             ))}
           />
@@ -300,7 +314,11 @@ export default async function HomePageView() {
     }
   }
 
-  const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND)
   const content = sections.map(({ module, background }) => render(module, background)).filter(Boolean)
-  return content.length ? <>{content}</> : <h1 className="sr-only">{settings.companyName || 'Home'}</h1>
+  return (
+    <>
+      {bannerShown ? null : <h1 className="sr-only">{settings.companyName || 'Home'}</h1>}
+      {content}
+    </>
+  )
 }

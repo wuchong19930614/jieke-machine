@@ -44,7 +44,7 @@ export function imageField({ name, label, location, required, hint, documents }:
               label: '图框比例',
               options: [...IMAGE_RATIOS],
               defaultValue: 'default',
-              admin: { width: '25%' },
+              admin: { width: '25%', description: at(location, '“按用途默认”取主题里的默认比例') },
             },
             {
               name: `${name}Fit`,
@@ -52,7 +52,7 @@ export function imageField({ name, label, location, required, hint, documents }:
               label: '适配方式',
               options: [...IMAGE_FITS],
               defaultValue: 'default',
-              admin: { width: '25%' },
+              admin: { width: '25%', description: at(location) },
             },
           ] satisfies Field[])),
     ],
@@ -107,7 +107,7 @@ export function slugField(source: string, location: string): TextField {
     validate: validateSlug,
     admin: {
       position: 'sidebar',
-      description: at(location, '留空时按英文名称自动生成；修改后系统自动把旧网址 301 跳转到新网址'),
+      description: at(location, '留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址'),
     },
     hooks: {
       beforeValidate: [
@@ -128,13 +128,13 @@ export function seoGroup(location: string): GroupField {
     label: 'SEO',
     admin: { description: `${location}的搜索标题和分享信息；不填时自动使用标题和简介` },
     fields: [
-      { name: 'seoTitle', type: 'text', label: 'SEO 标题', maxLength: 70, admin: { description: '建议 60 个字符以内' } },
+      { name: 'seoTitle', type: 'text', label: 'SEO 标题', maxLength: 70, admin: { description: at(`${location}的浏览器标签页标题、搜索结果标题`, '建议 60 个字符以内') } },
       {
         name: 'seoDescription',
         type: 'textarea',
         label: 'SEO 描述',
         maxLength: 200,
-        admin: { description: '建议 160 个字符以内' },
+        admin: { description: at(`${location}在搜索结果和分享预览里的摘要`, '建议 160 个字符以内') },
       },
       {
         name: 'ogImage',
@@ -142,7 +142,7 @@ export function seoGroup(location: string): GroupField {
         relationTo: 'media',
         label: '分享预览图',
         filterOptions: { mimeType: { contains: 'image' } },
-        admin: { description: '尺寸 1200×630；不填时用全站默认分享图' },
+        admin: { description: at(`${location}分享到社交平台时的预览图`, '尺寸 1200×630；不填时用全站默认分享图') },
       },
       {
         name: 'noindex',

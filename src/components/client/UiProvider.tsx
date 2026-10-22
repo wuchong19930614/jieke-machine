@@ -1,5 +1,6 @@
 'use client'
 // 前台弹层状态：联系弹窗、邮箱/电话弹层、红色客服窗口、蓝色在线沟通、Cookie 设置
+import { usePathname } from 'next/navigation'
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 export type Overlay = 'contact' | 'email' | 'phone' | 'chat' | 'blue' | 'cookie' | null
@@ -27,6 +28,14 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
   const [trigger, setTrigger] = useState<HTMLElement | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [productName, setProductName] = useState<string | null>(null)
+
+  // 换页时关掉所有弹层：这些状态挂在根布局上，站内跳转不会自动清空
+  const pathname = usePathname()
+  const [lastPath, setLastPath] = useState(pathname)
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    setOverlay(null)
+  }
 
   const open = useCallback((next: Exclude<Overlay, null>, from?: HTMLElement | null) => {
     setTrigger(from ?? (document.activeElement as HTMLElement | null))

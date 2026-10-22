@@ -7,6 +7,7 @@ import { checkFormToken, MIN_FILL_MS } from '@/lib/server/formToken'
 import { buildNotification, deliverInquiryMails, type MailTarget } from '@/lib/server/inquiryMail'
 import { nextInquiryRef, uniqueConflictField } from '@/lib/server/inquiryRef'
 import { sendMail } from '@/lib/server/mail'
+import { safeError } from '@/lib/server/logSafe'
 import { clientIp, hashIp, readJson } from '@/lib/server/request'
 import { getSettingsUncached } from '@/lib/server/settings'
 import { verifyTurnstile } from '@/lib/server/turnstile'
@@ -145,7 +146,7 @@ export async function POST(request: Request) {
       }
       // 同时提交的询盘算出了同一个编号，换一个再试
       if (conflict === 'inquiryRef' && attempt < 3) continue
-      payload.logger.error({ err: error, msg: '询盘写入数据库失败，改为直接发邮件' })
+      payload.logger.error({ error: safeError(error), msg: '询盘写入数据库失败，改为直接发邮件' })
       if (settings.notifyEmail) {
         const fallback = { ...inquiryData, id: 0, inquiryRef: '（未保存）', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } as unknown as Inquiry
         await sendMail(buildNotification(fallback, settings.notifyEmail, { dbFailed: true })).catch(() => undefined)
@@ -159,7 +160,7 @@ export async function POST(request: Request) {
   const targets: MailTarget[] = []
   if (inquiry.notifyStatus === 'pending') targets.push('notify')
   if (inquiry.autoReplyStatus === 'pending') targets.push('autoReply')
-  await deliverInquiryMails(payload, inquiry, targets).catch((error) => payload.logger.error({ err: error, msg: '询盘邮件发送状态写入失败' }))
+  await deliverInquiryMails(payload, inquiry, targets).catch((error) => payload.logger.error({ error: safeError(error), msg: '询盘邮件发送状态写入失败' }))
 
   // 7. 返回成功响应
   return Response.json({ ok: true, inquiryRef: inquiry.inquiryRef, redirect: REDIRECT }, { status: 201 })

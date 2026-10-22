@@ -1,4 +1,5 @@
 // 主题设置（技术方案 3.2）：只提供设计稿确认过的档位
+import { at } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { IMAGE_RATIOS } from '@/lib/constants'
 
@@ -25,13 +26,13 @@ export const FONTS = {
 
 const ratioOptions = IMAGE_RATIOS.filter((r) => r.value !== 'default').map((r) => ({ ...r }))
 
-const ratio = (name: string, label: string, defaultValue: string) => ({
+const ratio = (name: string, label: string, defaultValue: string, location: string, hint?: string) => ({
   name,
   type: 'select' as const,
   label,
   options: ratioOptions,
   defaultValue,
-  admin: { width: '33%' },
+  admin: { width: '33%', description: at(location, hint) },
 })
 
 export const Theme = editableGlobal({
@@ -50,7 +51,7 @@ export const Theme = editableGlobal({
           label: '配色',
           defaultValue: 'industrial-blue',
           options: Object.entries(PALETTES).map(([value, p]) => ({ label: p.label, value })),
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：深色区块、标题与正文文字、浅色底、分隔线、链接和按钮的主色') },
         },
         {
           name: 'quoteButtonColor',
@@ -58,7 +59,7 @@ export const Theme = editableGlobal({
           label: '询盘按钮颜色',
           defaultValue: 'orange',
           options: Object.entries(QUOTE_COLORS).map(([value, c]) => ({ label: c.label, value })),
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：询盘按钮和橙色强调元素') },
         },
       ],
     },
@@ -71,7 +72,7 @@ export const Theme = editableGlobal({
           label: '标题字体',
           defaultValue: 'system',
           options: ['system', 'inter', 'montserrat'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：各级标题') },
         },
         {
           name: 'bodyFont',
@@ -79,7 +80,7 @@ export const Theme = editableGlobal({
           label: '正文字体',
           defaultValue: 'system',
           options: ['system', 'inter', 'open-sans'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：正文文字') },
         },
       ],
     },
@@ -96,7 +97,7 @@ export const Theme = editableGlobal({
             { label: '标准', value: 'standard' },
             { label: '偏大', value: 'large' },
           ],
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：文字大小') },
         },
         {
           name: 'spacingScale',
@@ -108,7 +109,7 @@ export const Theme = editableGlobal({
             { label: '标准', value: 'standard' },
             { label: '宽松', value: 'relaxed' },
           ],
-          admin: { width: '50%' },
+          admin: { width: '50%', description: at('全站：各模块上下留白') },
         },
       ],
     },
@@ -121,14 +122,18 @@ export const Theme = editableGlobal({
         {
           type: 'row',
           fields: [
-            ratio('equipment', '设备', '4/3'),
-            ratio('factory', '工厂与团队', '4/3'),
-            ratio('case', '案例', '4/3'),
+            ratio('equipment', '设备', '4/3', '首页生产线卡片、产品列表、产品详情页的设备图'),
+            ratio('factory', '工厂与团队', '4/3', '首页工厂图集、关于我们、联系我们的配图'),
+            ratio('case', '案例', '4/3', '案例列表、案例详情、产品详情页的客户案例卡片'),
           ],
         },
         {
           type: 'row',
-          fields: [ratio('application', '成品', '1/1'), ratio('videoCover', '视频封面', '16/9'), ratio('banner', 'Banner', 'original')],
+          fields: [
+            ratio('application', '成品', '1/1', '产品详情 › 可生产成品'),
+            ratio('videoCover', '视频封面', '16/9', '首页 › 视频模块封面'),
+            ratio('banner', 'Banner', 'original', '首页 › Banner', '原图比例 = 保持原设计的高度；选具体比例时只在桌面按比例定高度，手机保持原高度'),
+          ],
         },
       ],
     },

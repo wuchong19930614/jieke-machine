@@ -40,9 +40,9 @@ export const AboutPage = editableGlobal({
           labels: { singular: '场景', plural: '场景' },
           admin: { components: { RowLabel: titleRowLabel('title') } },
           fields: [
-            { name: 'image', type: 'upload', relationTo: 'media', label: '图片', filterOptions: { mimeType: { contains: 'image' } } },
-            { name: 'title', type: 'text', label: '标题', required: true },
-            { name: 'description', type: 'textarea', label: '说明' },
+            { name: 'image', type: 'upload', relationTo: 'media', label: '图片', filterOptions: { mimeType: { contains: 'image' } }, admin: { description: at(`${A} › 生产场景与团队 › 卡片图片`) } },
+            { name: 'title', type: 'text', label: '标题', required: true, admin: { description: at(`${A} › 生产场景与团队 › 卡片标题`) } },
+            { name: 'description', type: 'textarea', label: '说明', admin: { description: at(`${A} › 生产场景与团队 › 卡片说明`) } },
           ],
         },
       ],
@@ -61,8 +61,8 @@ export const AboutPage = editableGlobal({
           admin: { components: { RowLabel: titleRowLabel('title') } },
           defaultValue: [{ title: 'Equipment Selection' }, { title: 'Custom Configuration' }, { title: 'After-Sales Support' }],
           fields: [
-            { name: 'title', type: 'text', label: '标题', required: true },
-            { name: 'description', type: 'textarea', label: '说明' },
+            { name: 'title', type: 'text', label: '标题', required: true, admin: { description: at(`${A} › 供应能力与服务支持 › 条目标题`) } },
+            { name: 'description', type: 'textarea', label: '说明', admin: { description: at(`${A} › 供应能力与服务支持 › 条目说明`) } },
           ],
         },
       ],

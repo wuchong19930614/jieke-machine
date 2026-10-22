@@ -129,6 +129,7 @@ export interface Config {
   };
   locale: null;
   widgets: {
+    'content-cards': ContentCardsWidget;
     collections: CollectionsWidget;
   };
   user: User;
@@ -170,6 +171,9 @@ export interface UserAuthOperations {
  */
 export interface Page {
   id: number;
+  /**
+   * 前台位置：选项里的网址；决定这条内容显示在哪个辅助页面
+   */
   slug: 'privacy-policy' | 'cookie-notice' | 'thank-you' | 'not-found';
   /**
    * 前台位置：页面主标题
@@ -198,15 +202,15 @@ export interface Page {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：本页的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：本页在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -222,11 +226,11 @@ export interface Page {
 export interface Media {
   id: number;
   /**
-   * 必填，英文。描述图片内容，例如 “Latiao production line in a customer factory”；PDF 填文件标题
+   * 前台位置：图片的替代文字：读屏软件朗读、图片加载失败时显示，搜索引擎也会读取。必填，英文。描述图片内容，例如 “Latiao production line in a customer factory”；PDF 填文件标题
    */
   alt: string;
   /**
-   * 便于在媒体库里筛选
+   * 前台位置：不在前台显示。便于在媒体库里筛选
    */
   usage?: ('equipment' | 'factory' | 'team' | 'case' | 'application' | 'banner' | 'document' | 'other') | null;
   /**
@@ -234,7 +238,7 @@ export interface Media {
    */
   caption?: string | null;
   /**
-   * 记录图片来源和使用授权，只在后台显示
+   * 前台位置：不在前台显示。记录图片来源和使用授权
    */
   licenseNote?: string | null;
   updatedAt: string;
@@ -273,29 +277,35 @@ export interface Product {
    */
   name: string;
   /**
-   * 只在后台显示，方便识别
+   * 前台位置：不在前台显示。只在后台显示，方便识别
    */
   nameZh?: string | null;
   /**
-   * 询盘会自动带入产品名称和编号
+   * 前台位置：不在页面上显示，写进产品结构化数据（sku）。询盘会自动带入产品名称和编号
    */
   productCode?: string | null;
   /**
-   * 首期只有生产线一类，前台不做分类筛选
+   * 前台位置：不在前台显示。首期只有生产线一类，前台不做分类筛选
    */
   category?: 'production-lines' | null;
   /**
    * 前台位置：首页生产线、产品列表、相关生产线卡片。默认 4:3
    */
   listImage?: (number | null) | Media;
+  /**
+   * 前台位置：首页生产线、产品列表、相关生产线卡片。“按用途默认”取主题里的默认比例
+   */
   listImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：首页生产线、产品列表、相关生产线卡片
+   */
   listImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：首页生产线、产品列表卡片里的简介。建议 160 个字符以内
    */
   listSummary?: string | null;
   /**
-   * 前台位置：网址 /products/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址 301 跳转到新网址
+   * 前台位置：网址 /products/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址
    */
   slug: string;
   /**
@@ -327,7 +337,13 @@ export interface Product {
    * 前台位置：产品详情 › 横幅。整条生产线或设备场景图
    */
   heroImage?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › 横幅。“按用途默认”取主题里的默认比例
+   */
   heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › 横幅
+   */
   heroImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › 横幅 › 小标题
@@ -374,7 +390,13 @@ export interface Product {
    * 前台位置：产品详情 › Product Introduction › 全景图。可点击放大
    */
   overviewImage?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › Product Introduction › 全景图。“按用途默认”取主题里的默认比例
+   */
   overviewImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › Product Introduction › 全景图
+   */
   overviewImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › Equipment Features
@@ -430,7 +452,13 @@ export interface Product {
    * 前台位置：产品详情 › Production Process › 流程图。默认保持原图比例，可点击放大
    */
   flowImage?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › Production Process › 流程图。“按用途默认”取主题里的默认比例
+   */
   flowImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › Production Process › 流程图
+   */
   flowImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › Technical Specifications。每个型号一列；勾选“公开”的行才在前台显示；单位写在参数名里，如 Capacity (kg/h)
@@ -484,7 +512,13 @@ export interface Product {
    * 前台位置：产品详情 › 适用客户与项目支持下方
    */
   detailImage?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › 适用客户与项目支持下方。“按用途默认”取主题里的默认比例
+   */
   detailImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › 适用客户与项目支持下方
+   */
   detailImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › Frequently Asked Questions
@@ -504,13 +538,22 @@ export interface Product {
    * 前台位置：产品详情 › Production Line Video
    */
   videoUrl?: string | null;
+  /**
+   * 前台位置：产品详情 › 视频标题
+   */
   videoTitle?: string | null;
   videoTitleHidden?: boolean | null;
   /**
    * 前台位置：产品详情 › 视频封面。16:9；不填时用 YouTube 缩略图
    */
   videoCover?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › 视频封面。“按用途默认”取主题里的默认比例
+   */
   videoCoverRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › 视频封面
+   */
   videoCoverFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › Equipment Advantages。编号 01、02… 按显示顺序自动生成
@@ -563,7 +606,13 @@ export interface Product {
    * 前台位置：产品详情 › 询盘区左侧
    */
   contactImage?: (number | null) | Media;
+  /**
+   * 前台位置：产品详情 › 询盘区左侧。“按用途默认”取主题里的默认比例
+   */
   contactImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：产品详情 › 询盘区左侧
+   */
   contactImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：产品详情 › 横幅 › Download Brochure 按钮。上传了 PDF 才显示下载按钮（Q24）
@@ -573,36 +622,129 @@ export interface Product {
    * 只在本产品与默认文案不同时填写；不填时使用“界面文案 › 产品详情模板”的文字
    */
   sectionTexts?: {
+    /**
+     * 前台位置：本产品的产品详情页 › 横幅按钮
+     */
     heroButton?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 手册下载按钮
+     */
     brochureButton?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 手册文件说明
+     */
     brochureMeta?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 可生产成品：标题
+     */
     applicationsTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 可生产成品：副标题
+     */
     applicationsSubtitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 可生产成品：区域朗读名
+     */
     applicationsAria?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 图文介绍：小标题
+     */
     introKicker?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 图文介绍：标题
+     */
     introTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 设备特点：标题
+     */
     featuresTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺流程：标题
+     */
     processTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 参数表：标题
+     */
     specsTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 参数表：表头第一格
+     */
     specsModel?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 参数表：手机横滑提示
+     */
     specsSwipe?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 参数表：空单元格
+     */
     specsEmpty?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 适用客户：标题
+     */
     audienceTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 项目支持：标题
+     */
     supportTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › FAQ：标题
+     */
     faqTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 设备优势：标题
+     */
     advantagesTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 设备优势：副标题
+     */
     advantagesSubtitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺步骤：小标题
+     */
     stepsKicker?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺步骤：标题
+     */
     stepsTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺步骤：副标题
+     */
     stepsSubtitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺步骤：列表朗读名
+     */
     stepsAria?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 工艺步骤：按钮朗读
+     */
     stepAria?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 相关生产线：标题
+     */
     relatedTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 相关生产线：副标题
+     */
     relatedSubtitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 相关生产线：卡片按钮
+     */
     relatedButton?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 客户案例：标题
+     */
     casesTitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 客户案例：副标题
+     */
     casesSubtitle?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 客户案例：卡片按钮
+     */
     casesButton?: string | null;
+    /**
+     * 前台位置：本产品的产品详情页 › 询盘区：小标题
+     */
     inquiryKicker?: string | null;
   };
   /**
@@ -610,15 +752,15 @@ export interface Product {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：本产品的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：本产品在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本产品分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -904,14 +1046,20 @@ export interface Case {
    * 前台位置：案例列表卡片、首页精选案例。默认 4:3（Q21）
    */
   coverImage?: (number | null) | Media;
+  /**
+   * 前台位置：案例列表卡片、首页精选案例。“按用途默认”取主题里的默认比例
+   */
   coverImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：案例列表卡片、首页精选案例
+   */
   coverImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：首页案例卡片、产品详情的客户案例块。建议 160 个字符以内
    */
   summary?: string | null;
   /**
-   * 前台位置：网址 /case-studies/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址 301 跳转到新网址
+   * 前台位置：网址 /case-studies/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址
    */
   slug: string;
   /**
@@ -992,7 +1140,13 @@ export interface Case {
    * 前台位置：案例详情顶部。不填时用封面图
    */
   heroImage?: (number | null) | Media;
+  /**
+   * 前台位置：案例详情顶部。“按用途默认”取主题里的默认比例
+   */
   heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：案例详情顶部
+   */
   heroImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：案例详情 › Project Photos。可点击放大
@@ -1006,27 +1160,81 @@ export interface Case {
    * 前台位置：首页精选案例、案例视频。16:9；不填时用 YouTube 缩略图
    */
   videoCover?: (number | null) | Media;
+  /**
+   * 前台位置：首页精选案例、案例视频。“按用途默认”取主题里的默认比例
+   */
   videoCoverRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：首页精选案例、案例视频
+   */
   videoCoverFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字
    */
   sectionTexts?: {
+    /**
+     * 前台位置：本案例的案例详情页 › 返回链接
+     */
     back?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 项目概况：标题
+     */
     overviewTitle?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 行：客户
+     */
     customer?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 行：国家 / 地区
+     */
     country?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 行：设备配置
+     */
     configuration?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 行：产能
+     */
     capacity?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 行：交付日期
+     */
     deliveryDate?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 正文小节 1
+     */
     requirements?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 正文小节 2
+     */
     solution?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 正文小节 3
+     */
     delivery?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 现场图片标题
+     */
     photos?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 视频标题
+     */
     video?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 所用生产线标题
+     */
     linesUsed?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 所用生产线链接
+     */
     linesButton?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 主按钮
+     */
     primaryButton?: string | null;
+    /**
+     * 前台位置：本案例的案例详情页 › 次按钮
+     */
     secondaryButton?: string | null;
   };
   /**
@@ -1034,15 +1242,15 @@ export interface Case {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：本案例的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：本案例在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本案例分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -1449,7 +1657,7 @@ export interface Redirect {
         } | null);
     url?: string | null;
   };
-  type: '301';
+  type: '308';
   updatedAt: string;
   createdAt: string;
 }
@@ -2261,11 +2469,11 @@ export interface SiteSetting {
    */
   email?: string | null;
   /**
-   * 带国际区号，如 +86 138 0000 0000
+   * 前台位置：页脚、联系页、电话弹层。带国际区号，如 +86 138 0000 0000
    */
   phone?: string | null;
   /**
-   * 带国际区号；点击时打开 WhatsApp 对话
+   * 前台位置：顶栏、页脚、联系页、提交成功页、手机底部按钮条。带国际区号；点击时打开 WhatsApp 对话
    */
   whatsapp?: string | null;
   /**
@@ -2540,11 +2748,11 @@ export interface SiteSetting {
     honeypotLabel?: string | null;
   };
   /**
-   * 在 tawk.to 后台 Administration › Chat Widget 中查看
+   * 前台位置：红色在线服务窗口、蓝色在线沟通面板接入的在线客服；不填时按离线处理。在 tawk.to 后台 Administration › Chat Widget 中查看
    */
   tawkPropertyId?: string | null;
   /**
-   * 同上，通常为 default 或一串字符
+   * 前台位置：同上。通常为 default 或一串字符
    */
   tawkWidgetId?: string | null;
   /**
@@ -2651,7 +2859,7 @@ export interface SiteSetting {
     productMessage?: string | null;
   };
   /**
-   * 新询盘通知发到这个邮箱（1 个）
+   * 前台位置：不在前台显示。新询盘通知发到这个邮箱（1 个）
    */
   notifyEmail?: string | null;
   /**
@@ -2676,13 +2884,16 @@ export interface SiteSetting {
    */
   allowIndexing?: boolean | null;
   /**
-   * GA4 和以后的广告转化都在 GTM 里配置
+   * 前台位置：不在页面上显示，用于加载统计代码。GA4 和以后的广告转化都在 GTM 里配置
    */
   gtmId?: string | null;
   /**
    * 垃圾询盘仍然很多时再开启；需同时在环境变量里配置密钥
    */
   turnstileEnabled?: boolean | null;
+  /**
+   * 前台位置：询盘表单里的人机验证框（开启人机验证后显示）
+   */
   turnstileSiteKey?: string | null;
   /**
    * 前台位置：浏览器标签标题和搜索结果描述。留空时使用默认文案（输入框里的灰色提示）。
@@ -2702,15 +2913,15 @@ export interface SiteSetting {
     defaultDescription?: string | null;
   };
   /**
-   * 1200×630；页面没有单独设置时使用
+   * 前台位置：分享到社交平台时的预览图。1200×630；页面没有单独设置时使用
    */
   defaultOgImage?: (number | null) | Media;
   /**
-   * 正方形 PNG，至少 48×48
+   * 前台位置：浏览器标签页上的小图标。正方形 PNG，至少 48×48
    */
   favicon?: (number | null) | Media;
   /**
-   * 180×180 PNG
+   * 前台位置：苹果设备添加到主屏幕时的图标。180×180 PNG
    */
   appleTouchIcon?: (number | null) | Media;
   _status?: ('draft' | 'published') | null;
@@ -2725,21 +2936,57 @@ export interface SiteSetting {
  */
 export interface Theme {
   id: number;
+  /**
+   * 前台位置：全站：深色区块、标题与正文文字、浅色底、分隔线、链接和按钮的主色
+   */
   palette?: ('industrial-blue' | 'graphite' | 'deep-green') | null;
+  /**
+   * 前台位置：全站：询盘按钮和橙色强调元素
+   */
   quoteButtonColor?: ('orange' | 'amber' | 'rust') | null;
+  /**
+   * 前台位置：全站：各级标题
+   */
   headingFont?: ('system' | 'inter' | 'montserrat') | null;
+  /**
+   * 前台位置：全站：正文文字
+   */
   bodyFont?: ('system' | 'inter' | 'open-sans') | null;
+  /**
+   * 前台位置：全站：文字大小
+   */
   fontScale?: ('small' | 'standard' | 'large') | null;
+  /**
+   * 前台位置：全站：各模块上下留白
+   */
   spacingScale?: ('compact' | 'standard' | 'relaxed') | null;
   /**
    * 按用途的默认比例；单个图片位置可在该位置另行设置
    */
   defaultRatios?: {
+    /**
+     * 前台位置：首页生产线卡片、产品列表、产品详情页的设备图
+     */
     equipment?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：首页工厂图集、关于我们、联系我们的配图
+     */
     factory?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：案例列表、案例详情、产品详情页的客户案例卡片
+     */
     case?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：产品详情 › 可生产成品
+     */
     application?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：首页 › 视频模块封面
+     */
     videoCover?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：首页 › Banner。原图比例 = 保持原设计的高度；选具体比例时只在桌面按比例定高度，手机保持原高度
+     */
     banner?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -3726,15 +3973,15 @@ export interface HomePage {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：首页的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：首页在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：首页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -3808,7 +4055,13 @@ export interface AboutPage {
      * 前台位置：关于我们 › 公司介绍右侧
      */
     image?: (number | null) | Media;
+    /**
+     * 前台位置：关于我们 › 公司介绍右侧。“按用途默认”取主题里的默认比例
+     */
     imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    /**
+     * 前台位置：关于我们 › 公司介绍右侧
+     */
     imageFit?: ('default' | 'contain' | 'cover') | null;
   };
   scenes?: {
@@ -3823,8 +4076,17 @@ export interface AboutPage {
     subtitle?: string | null;
     items?:
       | {
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片图片
+           */
           image?: (number | null) | Media;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片标题
+           */
           title: string;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片说明
+           */
           description?: string | null;
           id?: string | null;
         }[]
@@ -3842,7 +4104,13 @@ export interface AboutPage {
     subtitle?: string | null;
     items?:
       | {
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目标题
+           */
           title: string;
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目说明
+           */
           description?: string | null;
           id?: string | null;
         }[]
@@ -3853,15 +4121,15 @@ export interface AboutPage {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：关于我们的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：关于我们在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：关于我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -3896,15 +4164,15 @@ export interface ProductsPage {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：产品列表页的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：产品列表页在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：产品列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -3940,7 +4208,7 @@ export interface CasesPage {
   listSubtitle?: string | null;
   listSubtitleHidden?: boolean | null;
   /**
-   * 默认 9 个（桌面 3 列）
+   * 前台位置：案例列表 › 每页显示的案例数，超过自动分页。默认 9 个（桌面 3 列）
    */
   perPage?: number | null;
   /**
@@ -3948,15 +4216,15 @@ export interface CasesPage {
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：案例列表页的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：案例列表页在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：案例列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -4024,22 +4292,28 @@ export interface ContactPage {
    * 前台位置：联系我们 › 联系方式下方
    */
   image?: (number | null) | Media;
+  /**
+   * 前台位置：联系我们 › 联系方式下方。“按用途默认”取主题里的默认比例
+   */
   imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  /**
+   * 前台位置：联系我们 › 联系方式下方
+   */
   imageFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 联系我们的搜索标题和分享信息；不填时自动使用标题和简介
    */
   seo?: {
     /**
-     * 建议 60 个字符以内
+     * 前台位置：联系我们的浏览器标签页标题、搜索结果标题。建议 60 个字符以内
      */
     seoTitle?: string | null;
     /**
-     * 建议 160 个字符以内
+     * 前台位置：联系我们在搜索结果和分享预览里的摘要。建议 160 个字符以内
      */
     seoDescription?: string | null;
     /**
-     * 尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：联系我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
      */
     ogImage?: (number | null) | Media;
     noindex?: boolean | null;
@@ -4776,6 +5050,16 @@ export interface ContactPageSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-cards_widget".
+ */
+export interface ContentCardsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

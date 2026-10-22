@@ -25,6 +25,9 @@ next-env.d.ts
 # 本地上传的媒体和导出的备份
 /media/
 /backups/
+# 导入导出插件的上传文件（已配置为不落盘，这里防止旧版本或本地调试写出的文件被提交）
+/imports/
+/exports/
 
 # 日志
 *.log

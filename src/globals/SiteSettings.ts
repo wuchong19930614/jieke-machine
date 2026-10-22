@@ -67,14 +67,14 @@ export const SiteSettings = editableGlobal({
         {
           type: 'row',
           fields: [
-            { name: 'phone', type: 'text', label: '电话', admin: { width: '50%', description: '带国际区号，如 +86 138 0000 0000' } },
+            { name: 'phone', type: 'text', label: '电话', admin: { width: '50%', description: at('页脚、联系页、电话弹层', '带国际区号，如 +86 138 0000 0000') } },
             {
               name: 'whatsapp',
               type: 'text',
               label: 'WhatsApp 号码',
               validate: (value: string | null | undefined) =>
                 !value || /^\+?[0-9 ()-]{6,24}$/.test(value) ? true : '请填写带国际区号的号码，如 +86 138 0000 0000',
-              admin: { width: '50%', description: '带国际区号；点击时打开 WhatsApp 对话' },
+              admin: { width: '50%', description: at('顶栏、页脚、联系页、提交成功页、手机底部按钮条', '带国际区号；点击时打开 WhatsApp 对话') },
             },
           ],
         },
@@ -113,8 +113,8 @@ export const SiteSettings = editableGlobal({
         {
           type: 'row',
           fields: [
-            { name: 'tawkPropertyId', type: 'text', label: 'tawk.to Property ID', admin: { width: '50%', description: '在 tawk.to 后台 Administration › Chat Widget 中查看' } },
-            { name: 'tawkWidgetId', type: 'text', label: 'tawk.to Widget ID', admin: { width: '50%', description: '同上，通常为 default 或一串字符' } },
+            { name: 'tawkPropertyId', type: 'text', label: 'tawk.to Property ID', admin: { width: '50%', description: at('红色在线服务窗口、蓝色在线沟通面板接入的在线客服；不填时按离线处理', '在 tawk.to 后台 Administration › Chat Widget 中查看') } },
+            { name: 'tawkWidgetId', type: 'text', label: 'tawk.to Widget ID', admin: { width: '50%', description: at('同上', '通常为 default 或一串字符') } },
           ],
         },
         textGroup('redPanel', '红色在线服务窗口', '悬浮栏第 4 个按钮打开的窗口', RED_PANEL_TEXTS),
@@ -132,7 +132,7 @@ export const SiteSettings = editableGlobal({
       label: '询盘邮件',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'notifyEmail', type: 'email', label: '询盘通知邮箱', admin: { description: '新询盘通知发到这个邮箱（1 个）' } },
+        { name: 'notifyEmail', type: 'email', label: '询盘通知邮箱', admin: { description: at('不在前台显示', '新询盘通知发到这个邮箱（1 个）') } },
         textGroup('autoReply', '客户自动回复', '提交询盘后发给客户的确认邮件', AUTO_REPLY_TEXTS),
       ],
     },
@@ -153,13 +153,13 @@ export const SiteSettings = editableGlobal({
           type: 'text',
           label: 'GTM 容器编号',
           validate: (value: string | null | undefined) => (!value || /^GTM-[A-Z0-9]+$/.test(value) ? true : '格式应为 GTM-XXXXXXX'),
-          admin: { description: 'GA4 和以后的广告转化都在 GTM 里配置' },
+          admin: { description: at('不在页面上显示，用于加载统计代码', 'GA4 和以后的广告转化都在 GTM 里配置') },
         },
         {
           type: 'row',
           fields: [
             { name: 'turnstileEnabled', type: 'checkbox', label: '开启人机验证（Cloudflare Turnstile）', defaultValue: false, admin: { width: '50%', description: '垃圾询盘仍然很多时再开启；需同时在环境变量里配置密钥' } },
-            { name: 'turnstileSiteKey', type: 'text', label: 'Turnstile Site Key', admin: { width: '50%' } },
+            { name: 'turnstileSiteKey', type: 'text', label: 'Turnstile Site Key', admin: { width: '50%', description: at('询盘表单里的人机验证框（开启人机验证后显示）') } },
           ],
         },
       ],
@@ -176,13 +176,13 @@ export const SiteSettings = editableGlobal({
           relationTo: 'media',
           label: '默认分享图',
           filterOptions: { mimeType: { contains: 'image' } },
-          admin: { description: '1200×630；页面没有单独设置时使用' },
+          admin: { description: at('分享到社交平台时的预览图', '1200×630；页面没有单独设置时使用') },
         },
         {
           type: 'row',
           fields: [
-            { name: 'favicon', type: 'upload', relationTo: 'media', label: '网站图标', filterOptions: { mimeType: { equals: 'image/png' } }, admin: { width: '50%', description: '正方形 PNG，至少 48×48' } },
-            { name: 'appleTouchIcon', type: 'upload', relationTo: 'media', label: '苹果触屏图标', filterOptions: { mimeType: { equals: 'image/png' } }, admin: { width: '50%', description: '180×180 PNG' } },
+            { name: 'favicon', type: 'upload', relationTo: 'media', label: '网站图标', filterOptions: { mimeType: { equals: 'image/png' } }, admin: { width: '50%', description: at('浏览器标签页上的小图标', '正方形 PNG，至少 48×48') } },
+            { name: 'appleTouchIcon', type: 'upload', relationTo: 'media', label: '苹果触屏图标', filterOptions: { mimeType: { equals: 'image/png' } }, admin: { width: '50%', description: at('苹果设备添加到主屏幕时的图标', '180×180 PNG') } },
           ],
         },
       ],

@@ -1,4 +1,6 @@
 // 发信（技术方案 7.1）：通过 Resend 接口发送；本地没有配置密钥时只打印到控制台
+import { maskEmail } from './logSafe'
+
 export type MailMessage = {
   to: string
   subject: string
@@ -16,9 +18,10 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.MAIL_FROM
   if (!apiKey || !from) {
-    // 正文可能含客户资料或密码重置链接，生产环境只记收件人和主题
-    const body = process.env.NODE_ENV === 'production' ? '' : `\n${message.text}`
-    console.info(`[邮件未发送：未配置 RESEND_API_KEY / MAIL_FROM] 收件人 ${message.to}，主题：${message.subject}${body}`)
+    // 正文可能含客户资料或密码重置链接，生产环境只记打码后的收件人和主题
+    const production = process.env.NODE_ENV === 'production'
+    const body = production ? '' : `\n${message.text}`
+    console.info(`[邮件未发送：未配置 RESEND_API_KEY / MAIL_FROM] 收件人 ${production ? maskEmail(message.to) : message.to}，主题：${message.subject}${body}`)
     // 按失败处理：询盘里显示“失败”和原因，配置好后由定时任务或“重新发送”补发，不能记成已发送
     return { ok: false, error: '没有配置发信服务（RESEND_API_KEY / MAIL_FROM），邮件没有发出', notConfigured: true }
   }

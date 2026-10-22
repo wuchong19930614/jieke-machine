@@ -78,7 +78,7 @@ export const Media: CollectionConfig = {
       type: 'text',
       label: '替代文字',
       required: true,
-      admin: { description: '必填，英文。描述图片内容，例如 “Latiao production line in a customer factory”；PDF 填文件标题' },
+      admin: { description: at('图片的替代文字：读屏软件朗读、图片加载失败时显示，搜索引擎也会读取', '必填，英文。描述图片内容，例如 “Latiao production line in a customer factory”；PDF 填文件标题') },
     },
     {
       name: 'usage',
@@ -86,7 +86,7 @@ export const Media: CollectionConfig = {
       label: '用途',
       options: [...MEDIA_USAGES],
       defaultValue: 'other',
-      admin: { description: '便于在媒体库里筛选' },
+      admin: { description: at('不在前台显示', '便于在媒体库里筛选') },
     },
     { name: 'caption', type: 'text', label: '图片说明', admin: { description: at('图片放大层下方的说明（选填）') } },
     {
@@ -94,7 +94,7 @@ export const Media: CollectionConfig = {
       type: 'textarea',
       label: '授权说明',
       custom: { allowChinese: true },
-      admin: { description: '记录图片来源和使用授权，只在后台显示' },
+      admin: { description: at('不在前台显示', '记录图片来源和使用授权') },
     },
   ],
 }

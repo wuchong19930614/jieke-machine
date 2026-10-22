@@ -10,6 +10,7 @@ import { normalizePath } from '@/hooks/slugRedirect'
 import { COUNTRY_CODES, getCountries } from '@/lib/countries'
 import { labelForPath, walkFields } from '@/lib/fieldWalk'
 import { buildAutoReply } from '@/lib/server/inquiryMail'
+import { maskEmail, safeError } from '@/lib/server/logSafe'
 import { sendMail } from '@/lib/server/mail'
 import { uniqueConflictField } from '@/lib/server/inquiryRef'
 import { activeStepIndex } from '@/components/client/ProcessSteps'
@@ -346,5 +347,27 @@ describe('工艺步骤选中', () => {
   it('还没选过，或选中的步骤已被删除、隐藏时回到第一步', () => {
     expect(activeStepIndex(steps, null)).toBe(0)
     expect(activeStepIndex(steps, 'gone')).toBe(0)
+  })
+})
+
+describe('日志不带客户资料', () => {
+  it('数据库报错只留错误类型和不含参数的第一行', () => {
+    const cause = Object.assign(new Error('SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed: inquiries.submission_id'), { name: 'LibsqlError' })
+    const error = Object.assign(
+      new Error('Failed query: insert into "inquiries" ("name", "email") values (?, ?)\nparams: John Smith,john@example.com,+966 50 123 4567'),
+      { cause },
+    )
+    const safe = safeError(error)
+    expect(safe).toEqual({
+      name: 'Error',
+      message: 'Failed query: insert into "inquiries" ("name", "email") values (?, ?)',
+      cause: 'SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed: inquiries.submission_id',
+    })
+    expect(JSON.stringify(safe)).not.toMatch(/John|john@|966/)
+  })
+
+  it('邮箱打码只留首字母和域名', () => {
+    expect(maskEmail('john.smith@example.com')).toBe('j***@example.com')
+    expect(maskEmail('not-an-email')).toBe('not-an-email')
   })
 })

@@ -1,4 +1,4 @@
-// 产品或案例修改网址短名时自动新增 301 跳转，并把旧规则改为直接指向新网址（技术方案 3.9）
+// 产品或案例修改网址短名时自动新增永久跳转（308），并把旧规则改为直接指向新网址（技术方案 3.9）
 import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, PayloadRequest } from 'payload'
 
 export const normalizePath = (path: string): string => {
@@ -45,14 +45,14 @@ export async function upsertRedirect(req: PayloadRequest, fromPath: string, toPa
     await payload.update({
       collection: 'redirects',
       id: existing.docs[0].id,
-      data: { to: { type: 'custom', url: to }, type: '301' },
+      data: { to: { type: 'custom', url: to }, type: '308' },
       req,
       overrideAccess: true,
     })
   } else {
     await payload.create({
       collection: 'redirects',
-      data: { from, to: { type: 'custom', url: to }, type: '301' },
+      data: { from, to: { type: 'custom', url: to }, type: '308' },
       req,
       overrideAccess: true,
     })

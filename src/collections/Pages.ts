@@ -48,7 +48,7 @@ export const Pages: CollectionConfig = {
       required: true,
       unique: true,
       options: [...AUX_PAGES],
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', description: at('选项里的网址；决定这条内容显示在哪个辅助页面') },
     },
     { name: 'title', type: 'text', label: '页面标题', required: true, admin: { description: at('页面主标题') } },
     { name: 'content', type: 'richText', label: '正文', admin: { description: at('页面正文') } },
