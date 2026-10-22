@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { auxAttrs, AuxBody, auxTitle } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxPageName, auxTitle } from '@/components/AuxPage'
 import { ThankYouTracker } from '@/components/client/ThankYouTracker'
 import { Section } from '@/components/Section'
 import { getAuxPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
@@ -17,7 +17,7 @@ const U = globalDoc('ui-texts')
 export async function generateMetadata(): Promise<Metadata> {
   const draft = await isDraft()
   const [page, settings] = await Promise.all([getAuxPage(SLUG, draft), getSettings(draft)])
-  return buildMetadata({ settings, path: `/${SLUG}/`, pageName: auxTitle(SLUG, page), seo: page?.seo, noindex: true })
+  return buildMetadata({ settings, path: `/${SLUG}/`, pageName: auxPageName(SLUG, page), seo: page?.seo, noindex: true })
 }
 
 export default async function ThankYouPage() {

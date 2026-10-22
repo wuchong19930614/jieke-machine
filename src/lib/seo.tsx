@@ -28,12 +28,13 @@ type Options = {
 
 const asImage = (value: unknown): Media | null => (value && typeof value === 'object' && 'url' in value ? (value as Media) : null)
 
+// 页面标题模板（全站设置 › 默认 SEO），如 “Products | 公司名”
+export const templateTitle = (settings: Settings, pageName: string): string =>
+  fill(settings.seo.titleTemplate, { title: pageName, companyName: settings.companyName }) || pageName
+
 export function buildMetadata({ settings, path, pageName, description, seo, image, noindex, isHome }: Options): Metadata {
   const base = siteUrl()
-  const template = settings.seo.titleTemplate
-  const defaultTitle = isHome
-    ? fill(settings.seo.homeTitle, { companyName: settings.companyName }) || pageName
-    : fill(template, { title: pageName, companyName: settings.companyName }) || pageName
+  const defaultTitle = isHome ? fill(settings.seo.homeTitle, { companyName: settings.companyName }) || pageName : templateTitle(settings, pageName)
   const title = seo?.seoTitle || defaultTitle
   const desc = (seo?.seoDescription || description || settings.seo.defaultDescription || '').slice(0, 300) || undefined
   const og = asImage(seo?.ogImage) ?? image ?? settings.defaultOgImage

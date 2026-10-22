@@ -352,6 +352,6 @@ turso db import restore.db
 - 需要真实账号的部分还没有联调：Resend 实际发信、Vercel Blob 直传与图片优化、Turso、Vercel Cron、tawk.to 在线客服、GTM、Turnstile。本地均已按“未配置”分支验证（邮件打印到控制台、图片存本地、客服显示离线留言）。
 - “没有编辑权限的账号不能从前台跳到后台”已实现（点选前先查当前账号对该内容的编辑权限），但只用管理员账号在浏览器里实测过，业务人员账号的拦截提示还没在浏览器里点过。
 - 后台的“前后台定位”依赖 Payload 后台的懒渲染行为（折叠分组里的字段展开后才渲染）。已按 Payload 3.91.0 的 DOM 规则实现并实测了产品、案例、首页、关于页、界面文案，升级 Payload 后要回归测试这个功能。
-- 手机端右侧悬浮栏按需求固定显示，会压住首页 Banner 右侧的切换箭头（可以左右滑动或点圆点切换）。
+- 手机端右侧悬浮栏改为默认收起成一个按钮、点开展开（`src/components/client/FloatingTools.tsx`），避免压住正文右侧。需求书要求手机端调整悬浮栏先确认效果，这一改动**待业务方确认**；如不采用，删掉样式里手机端的收起规则即可恢复常驻一列。
 - 后台左侧菜单（`src/admin/components/Nav.tsx`）照 Payload 3.91.0 的默认菜单拼装，后台首页的集合卡片（`src/admin/components/DashboardCards.tsx`）用 Payload 自带的卡片组件生成后再重排，两处共用 `src/admin/navOrder.ts` 里的顺序；升级 Payload 后要回归检查这两处（卡片结构认不出来时会退回 Payload 默认顺序，不会报错）。编辑仪表板时仍能添加 Payload 自带的 Collections 卡片，那个是默认顺序。
 - 后台“操作教程”页面运行时读取 `docs/后台操作教程.md`，已在 `next.config.ts` 用 `outputFileTracingIncludes` 带进部署包，部署后要打开 `/admin/guide` 确认一次。

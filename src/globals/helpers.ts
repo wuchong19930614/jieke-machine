@@ -22,7 +22,12 @@ export function editableGlobal({ slug, label, group, fields, refresh, descriptio
   return {
     slug,
     label,
-    admin: { group, description },
+    admin: {
+      group,
+      description,
+      // 从没发布过时在保存按钮前提示：前台正在用默认内容
+      components: { elements: { beforeDocumentControls: ['@/admin/components/NeverPublishedNote#NeverPublishedNote'] } },
+    },
     access: {
       read: isLoggedIn,
       update: globalEditAccess(slug),

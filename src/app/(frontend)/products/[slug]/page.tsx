@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
+import { notFoundMetadata } from '@/components/AuxPage'
 import { CaseCard } from '@/components/CaseCard'
 import { InquiryForm } from '@/components/client/InquiryForm'
 import { ZoomButton } from '@/components/client/Lightbox'
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params
   const draft = await isDraft()
   const [product, settings] = await Promise.all([getProduct(slug, draft), getSettings(draft)])
-  if (!product) return {}
+  if (!product) return notFoundMetadata(draft)
   return buildMetadata({
     settings,
     path: `/products/${product.slug}/`,

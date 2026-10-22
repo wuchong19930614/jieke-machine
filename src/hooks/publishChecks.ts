@@ -1,6 +1,6 @@
 // 发布前检查：前台文字里出现中文时阻止发布（技术方案 5.1）
 import { ValidationError } from 'payload'
-import type { CollectionBeforeChangeHook, Field, GlobalBeforeChangeHook } from 'payload'
+import type { CollectionBeforeChangeHook, Field, GlobalBeforeChangeHook, PayloadRequest } from 'payload'
 
 const CJK = /[㐀-鿿豈-﫿　-〿！-｠]/
 
@@ -68,26 +68,32 @@ export function findChinese(fields: Field[], data: unknown, prefix = ''): Proble
   return problems
 }
 
-function toError(problems: Problem[], target: { collection?: string; global?: string }) {
-  return new ValidationError({
-    ...target,
-    errors: problems.slice(0, 20).map((p) => ({
-      path: p.path,
-      message: `“${p.label}”含有中文，前台只能使用英文。请修改后再发布。`,
-    })),
-  })
+// 传入 req.t 和字段名：右下角的汇总提示才会按后台语言显示“下面的字段是无效的：简介”，不显示英文和字段键名
+function toError(problems: Problem[], target: { collection?: string; global?: string }, req: PayloadRequest) {
+  return new ValidationError(
+    {
+      ...target,
+      req,
+      errors: problems.slice(0, 20).map((p) => ({
+        path: p.path,
+        label: p.label,
+        message: `“${p.label}”含有中文，前台只能使用英文。请修改后再发布。`,
+      })),
+    },
+    req.t,
+  )
 }
 
-export const rejectChineseOnPublish: CollectionBeforeChangeHook = ({ data, collection }) => {
+export const rejectChineseOnPublish: CollectionBeforeChangeHook = ({ data, collection, req }) => {
   if (data?._status !== 'published') return data
   const problems = findChinese(collection.fields, data)
-  if (problems.length) throw toError(problems, { collection: collection.slug })
+  if (problems.length) throw toError(problems, { collection: collection.slug }, req)
   return data
 }
 
-export const rejectChineseOnPublishGlobal: GlobalBeforeChangeHook = ({ data, global }) => {
+export const rejectChineseOnPublishGlobal: GlobalBeforeChangeHook = ({ data, global, req }) => {
   if (data?._status !== 'published') return data
   const problems = findChinese(global.fields, data)
-  if (problems.length) throw toError(problems, { global: global.slug })
+  if (problems.length) throw toError(problems, { global: global.slug }, req)
   return data
 }

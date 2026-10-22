@@ -2,13 +2,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { auxAttrs, AuxBody, auxTitle } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxTitle, notFoundMetadata } from '@/components/AuxPage'
 import { Section } from '@/components/Section'
 import { getAuxPage, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import { getLocator } from '@/lib/locator'
 
-export const metadata: Metadata = { title: 'Page Not Found', robots: { index: false, follow: true } }
+// 浏览器标签标题套用全站标题模板（英文界面文案第十八章）
+export async function generateMetadata(): Promise<Metadata> {
+  return notFoundMetadata(await isDraft())
+}
 
 const U = globalDoc('ui-texts')
 

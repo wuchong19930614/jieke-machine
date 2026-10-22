@@ -53,6 +53,7 @@ export function ChatsAndDialogs({ settings, ui, L }: { settings: Settings; ui: U
         companyName={settings.companyName}
         logoUrl={settings.logo?.url}
         tawk={tawk}
+        privacyLink={settings.form.privacyLinkText}
         locate={locateGroup(L, S, 'bluePanel', BLUE_PANEL_TEXTS)}
         brandLocate={{ companyName: L(S, 'companyName'), logo: L(S, 'logo') }}
       />

@@ -615,7 +615,7 @@ export interface Product {
    */
   contactImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：产品详情 › 横幅 › Download Brochure 按钮。上传了 PDF 才显示下载按钮（Q24）
+   * 前台位置：产品详情 › 横幅 › Download Brochure 按钮。上传了 PDF 才显示下载按钮
    */
   brochure?: (number | null) | Media;
   /**
@@ -1043,7 +1043,7 @@ export interface Case {
    */
   capacity?: string | null;
   /**
-   * 前台位置：案例列表卡片、首页精选案例。默认 4:3（Q21）
+   * 前台位置：案例列表卡片、首页精选案例。默认 4:3
    */
   coverImage?: (number | null) | Media;
   /**
@@ -1153,7 +1153,7 @@ export interface Case {
    */
   gallery?: (number | Media)[] | null;
   /**
-   * 前台位置：案例详情 › Project Video；首页精选案例。为空时首页和详情显示封面图（Q17）
+   * 前台位置：案例详情 › Project Video；首页精选案例。为空时首页和详情显示封面图
    */
   videoUrl?: string | null;
   /**
@@ -2561,6 +2561,14 @@ export interface SiteSetting {
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 6（在线沟通）
      */
     blue?: string | null;
+    /**
+     * 前台位置：右侧悬浮栏的提示文字 › 手机：展开按钮朗读。手机上六个按钮收起成一个，点开后展开
+     */
+    expand?: string | null;
+    /**
+     * 前台位置：右侧悬浮栏的提示文字 › 手机：收起按钮朗读
+     */
+    collapse?: string | null;
   };
   /**
    * 前台位置：所有页面的页脚上方。留空时使用默认文案（输入框里的灰色提示）。
@@ -3101,6 +3109,10 @@ export interface UiText {
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 复制成功提示
      */
     copied?: string | null;
+    /**
+     * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 复制失败提示。浏览器不允许复制时显示，同时选中文字方便访客手动复制
+     */
+    copyFailed?: string | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › WhatsApp 链接朗读
      */
@@ -4359,6 +4371,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         chat?: T;
         top?: T;
         blue?: T;
+        expand?: T;
+        collapse?: T;
       };
   contactBand?:
     | T
@@ -4535,6 +4549,7 @@ export interface UiTextsSelect<T extends boolean = true> {
         callNow?: T;
         copy?: T;
         copied?: T;
+        copyFailed?: T;
         whatsappAria?: T;
         home?: T;
       };

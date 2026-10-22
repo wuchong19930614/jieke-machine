@@ -252,7 +252,13 @@ export function LocateProvider({ children }: { children: React.ReactNode }) {
     const onFocus = (event: FocusEvent) => {
       const target = event.target as Element | null
       if (!target || target.closest('.jk-locate-button')) return
-      if (!target.closest('.document-fields, .render-fields')) return
+      // 焦点进了媒体选择、关联选择这类抽屉或弹窗，或者离开了编辑区：立即隐藏，不压在抽屉上面
+      if (target.closest('.payload__modal-item, [role="dialog"]') || !target.closest('.document-fields, .render-fields')) {
+        if (hideTimer.current) window.clearTimeout(hideTimer.current)
+        anchor = null
+        setButton(null)
+        return
+      }
       const path = pathFromElement(target)
       if (!path) return
       if (hideTimer.current) window.clearTimeout(hideTimer.current)

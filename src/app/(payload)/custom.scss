@@ -235,7 +235,8 @@
 // 前台定位
 .jk-locate-button {
   position: fixed;
-  z-index: 10000;
+  // 低于 Payload 的抽屉和弹窗（--z-modal），即使没来得及隐藏也不会压在抽屉上面
+  z-index: calc(var(--z-modal) - 1);
   padding: 4px 10px;
   border: 0;
   border-radius: 4px;
@@ -313,4 +314,16 @@
   a {
     color: var(--theme-success-600);
   }
+}
+
+// 页面配置从没发布过时，保存按钮前的提示
+.jk-unpublished-note {
+  align-self: center;
+  margin-right: calc(var(--base) * 0.5);
+  padding: 3px 8px;
+  border-radius: var(--style-radius-s);
+  background: var(--theme-warning-100);
+  color: var(--theme-warning-800);
+  font-size: 12px;
+  white-space: nowrap;
 }

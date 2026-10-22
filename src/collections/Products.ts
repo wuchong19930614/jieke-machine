@@ -366,7 +366,7 @@ export const Products: CollectionConfig = {
       label: '产品手册',
       admin: { initCollapsed: true },
       fields: [
-        imageField({ name: 'brochure', label: '产品手册 PDF', location: `${D} › 横幅 › Download Brochure 按钮`, hint: '上传了 PDF 才显示下载按钮（Q24）', documents: true }),
+        imageField({ name: 'brochure', label: '产品手册 PDF', location: `${D} › 横幅 › Download Brochure 按钮`, hint: '上传了 PDF 才显示下载按钮', documents: true }),
       ],
     },
     {

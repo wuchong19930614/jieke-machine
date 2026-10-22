@@ -16,24 +16,52 @@ type Common = TextsOf<typeof UI_COMMON>
 
 type CommonLocate = Partial<Record<keyof Common, LocateAttrs>>
 
+// 先用剪贴板接口；非 HTTPS 或权限被拒时，用临时文本框再试一次。
+// 文本框放在弹窗里：模态弹窗打开时，弹窗外的元素不能获得焦点，放到 body 下会复制失败
+async function copyText(value: string, container: HTMLElement): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(value)
+    return true
+  } catch {
+    // 继续用下面的方式
+  }
+  const area = document.createElement('textarea')
+  area.value = value
+  area.setAttribute('readonly', '')
+  area.style.cssText = 'position:absolute;opacity:0;pointer-events:none'
+  container.appendChild(area)
+  area.select()
+  try {
+    return document.execCommand('copy')
+  } catch {
+    return false
+  } finally {
+    area.remove()
+  }
+}
+
 function CopyButton({ value, texts, locate }: { value: string; texts: Common; locate: CommonLocate }) {
-  const [copied, setCopied] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
+  const label = { idle: texts.copy, copied: texts.copied, failed: texts.copyFailed }[status]
+  const attrs = { idle: locate.copy, copied: locate.copied, failed: locate.copyFailed }[status]
   return (
     <button
       type="button"
       className="lp-outline"
-      {...(copied ? locate.copied : locate.copy)}
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(value)
-          setCopied(true)
-          window.setTimeout(() => setCopied(false), 2000)
-        } catch {
-          // 浏览器不允许时忽略
+      {...attrs}
+      onClick={async (e) => {
+        const button = e.currentTarget
+        const ok = await copyText(value, button.parentElement ?? button)
+        setStatus(ok ? 'copied' : 'failed')
+        // 复制失败时选中号码或邮箱，访客可以直接长按或按快捷键复制
+        if (!ok) {
+          const text = button.closest('dialog')?.querySelector('.lp-info-value')
+          if (text) window.getSelection()?.selectAllChildren(text)
         }
+        window.setTimeout(() => setStatus('idle'), ok ? 2000 : 4000)
       }}
     >
-      {copied ? texts.copied : texts.copy}
+      {label}
     </button>
   )
 }

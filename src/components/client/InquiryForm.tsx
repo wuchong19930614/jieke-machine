@@ -1,7 +1,7 @@
 'use client'
 // 询盘表单：联系页、产品页、联系弹窗和离线留言共用（技术方案 4.5、6.1）
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 
 import type { TextsOf } from '@/content/defineTexts'
 import { fill } from '@/content/defineTexts'
@@ -13,6 +13,7 @@ import type { Country } from '@/lib/countries'
 import { type InquiryField, LIMITS, validateInquiry } from '@/lib/inquirySchema'
 import type { LocateAttrs } from '@/lib/locator'
 
+import { PrivacyText } from './PrivacyText'
 import { useUi } from './UiProvider'
 
 type FormTexts = TextsOf<typeof FORM_TEXTS>
@@ -237,22 +238,6 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
       </span>
     ) : null
 
-  const privacy = useMemo(() => {
-    const note = texts.privacyNote
-    const link = texts.privacyLinkText
-    const index = link ? note.indexOf(link) : -1
-    if (index < 0) return <>{note}</>
-    return (
-      <>
-        {note.slice(0, index)}
-        <a href="/privacy-policy/" target="_blank" rel="noopener">
-          {link}
-        </a>
-        {note.slice(index + link.length)}
-      </>
-    )
-  }, [texts.privacyNote, texts.privacyLinkText])
-
   useEffect(() => {
     setValues((v) => (defaultProductModel && !v.productModel ? { ...v, productModel: defaultProductModel } : v))
   }, [defaultProductModel])
@@ -378,7 +363,7 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
         </button>
       </div>
       <p className="lp-form-note" {...L('privacyNote')}>
-        {privacy}
+        <PrivacyText note={texts.privacyNote} link={texts.privacyLinkText} />
       </p>
     </form>
   )

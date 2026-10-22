@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+import { notFoundMetadata } from '@/components/AuxPage'
 import { ZoomButton } from '@/components/client/Lightbox'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
 import { Img, mediaOf } from '@/components/Img'
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params
   const draft = await isDraft()
   const [item, settings] = await Promise.all([getCase(slug, draft), getSettings(draft)])
-  if (!item) return {}
+  if (!item) return notFoundMetadata(draft)
   return buildMetadata({
     settings,
     path: `/case-studies/${item.slug}/`,

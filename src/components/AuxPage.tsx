@@ -1,15 +1,34 @@
 // 辅助页面正文：后台有已发布内容时用后台的，没有时用默认段落（英文界面文案第十五、十六章）
+import type { Metadata } from 'next'
 import React from 'react'
 
 import { hasRichText, RichText } from '@/components/RichText'
 import { AUX_PAGES } from '@/collections/Pages'
 import { PAGE_DEFAULTS, type AuxPageSlug } from '@/content/texts'
+import { getAuxPage, getSettings } from '@/lib/data'
 import { collectionDoc, newDoc } from '@/lib/locate'
 import type { LocateAttrs, Locator } from '@/lib/locator'
+import { templateTitle } from '@/lib/seo'
 import type { Page } from '@/payload-types'
 
 export function auxTitle(slug: AuxPageSlug, page: Page | null): string {
   return page?.title || PAGE_DEFAULTS[slug].title
+}
+
+// 浏览器标签里的页面名：感谢页、404 页用固定的短名（Thank You、Page Not Found），其余用页面标题
+export function auxPageName(slug: AuxPageSlug, page: Page | null): string {
+  const defaults = PAGE_DEFAULTS[slug]
+  return 'pageName' in defaults ? defaults.pageName : auxTitle(slug, page)
+}
+
+// 404 页的标题，如 “Page Not Found | 公司名”；后台填了 SEO 标题时优先用它。
+// 产品、案例找不到和兜底路由显示 404 时也要返回它：这些路由自己没有标题，浏览器接管页面后会把标签标题清空
+export async function notFoundMetadata(draft: boolean): Promise<Metadata> {
+  const [settings, page] = await Promise.all([getSettings(draft), getAuxPage('not-found', draft)])
+  return {
+    title: { absolute: page?.seo?.seoTitle || templateTitle(settings, auxPageName('not-found', page)) },
+    robots: { index: false, follow: true },
+  }
 }
 
 // 预览里的定位：有记录时定位到记录的字段；还没建记录时显示的是默认文字，点选后打开后台新建页

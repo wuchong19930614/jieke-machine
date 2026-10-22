@@ -11,6 +11,7 @@ import type { LocateAttrs } from '@/lib/locator'
 
 import { Dialog } from './Dialog'
 import { InquiryForm } from './InquiryForm'
+import { PrivacyText } from './PrivacyText'
 import { useUi } from './UiProvider'
 
 type ChatState = 'connecting' | 'online' | 'offline' | 'failed'
@@ -106,7 +107,7 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
               {opening ? texts.opening : texts.startChat}
             </button>
             <p className="lp-small-note" {...L('chatPrivacy')}>
-              {texts.chatPrivacy}
+              <PrivacyText note={texts.chatPrivacy} link={form.privacyLinkText} />
             </p>
           </div>
         ) : null}
@@ -127,11 +128,13 @@ type BlueProps = {
   companyName: string
   logoUrl?: string | null
   tawk: { propertyId: string; widgetId: string }
+  // 隐私说明里变成链接的文字，取表单文案的同一项
+  privacyLink?: string
   locate?: Partial<Record<keyof typeof BLUE_PANEL_TEXTS, LocateAttrs>>
   brandLocate?: { companyName?: LocateAttrs; logo?: LocateAttrs }
 }
 
-export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {}, brandLocate = {} }: BlueProps) {
+export function BluePanel({ texts, companyName, logoUrl, tawk, privacyLink, locate = {}, brandLocate = {} }: BlueProps) {
   const { overlay, close, open } = useUi()
   const isOpen = overlay === 'blue'
   const [state, setState] = useState<'idle' | 'connecting' | 'failed'>('idle')
@@ -192,7 +195,7 @@ export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {}, bran
             <MessageCircle aria-hidden="true" size={18} /> {state === 'connecting' ? texts.connecting : texts.enterChat}
           </button>
           <p className="lp-small-note" {...L('privacy')}>
-            {texts.privacy}
+            <PrivacyText note={texts.privacy} link={privacyLink} />
           </p>
           {state === 'failed' ? (
             <div role="alert">

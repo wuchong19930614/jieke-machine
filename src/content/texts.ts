@@ -20,6 +20,8 @@ export const FLOATING_TEXTS = {
   chat: ['按钮 4（在线客服）', 'Online Service'],
   top: ['按钮 5（返回顶部）', 'Back to Top'],
   blue: ['按钮 6（在线沟通）', 'Chat with Us'],
+  expand: ['手机：展开按钮朗读', 'Show contact options', { hint: '手机上六个按钮收起成一个，点开后展开' }],
+  collapse: ['手机：收起按钮朗读', 'Hide contact options'],
 } as const satisfies TextDefs
 
 export const CONTACT_BAND_TEXTS = {
@@ -72,7 +74,7 @@ export const FORM_TEXTS = {
   ],
   errServer: [
     '服务器错误',
-    "Sorry, we couldn't send your inquiry. Please try again, or contact us by email at {businessEmail} or on WhatsApp.",
+    "Sorry, we couldn't send your inquiry. Please try again, or email us at {businessEmail}.",
   ],
   errNetwork: [
     '网络失败',
@@ -181,6 +183,7 @@ export const UI_COMMON = {
   callNow: ['电话弹层按钮', 'Call Now'],
   copy: ['复制按钮', 'Copy'],
   copied: ['复制成功提示', 'Copied'],
+  copyFailed: ['复制失败提示', 'Copy failed', { hint: '浏览器不允许复制时显示，同时选中文字方便访客手动复制' }],
   whatsappAria: ['WhatsApp 链接朗读', 'Chat on WhatsApp (opens in a new tab)'],
   home: ['面包屑首页', 'Home'],
 } as const satisfies TextDefs
@@ -463,12 +466,13 @@ export const CONTACT_PAGE_TEXTS = {
   hoursLabel: ['联系项：办公时间', 'Office Hours'],
 } as const satisfies TextDefs
 
-// 辅助页面（pages 集合）没有录入时的默认标题和正文段落
+// 辅助页面（pages 集合）没有录入时的默认标题和正文段落；pageName 是浏览器标签里的页面名（英文界面文案第十八章），不写时用标题
 export const PAGE_DEFAULTS = {
   'privacy-policy': { title: 'Privacy Policy', body: [] as string[] },
   'cookie-notice': { title: 'Cookie Notice', body: [] as string[] },
   'thank-you': {
     title: 'Thank You for Your Inquiry',
+    pageName: 'Thank You',
     body: [
       'We have received your inquiry. Our team will review your requirements and reply to you by email as soon as possible.',
       'What Happens Next',
@@ -479,6 +483,7 @@ export const PAGE_DEFAULTS = {
   },
   'not-found': {
     title: 'Page Not Found',
+    pageName: 'Page Not Found',
     body: ["Sorry, the page you're looking for doesn't exist or may have been moved."],
   },
 } as const
