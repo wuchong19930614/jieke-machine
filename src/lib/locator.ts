@@ -1,6 +1,8 @@
 // 前台定位标注：只在后台预览（草稿模式）时给元素加 data-locate，公开页面不输出字段路径
 import { cache } from 'react'
 
+import { defaultsOf, type TextDefs } from '@/content/defineTexts'
+
 import { isDraft } from './data'
 import { labelForPath } from './fieldWalk'
 import type { DocKey } from './locate'
@@ -32,3 +34,13 @@ export const getLocator = cache(async (): Promise<Locator> => {
     }
   }
 })
+
+// 为一组文案字段生成定位标注，传给客户端组件（只在预览时有内容）
+export function locateGroup<T extends TextDefs>(L: Locator, doc: DocKey, group: string, defs: T): Partial<Record<keyof T, LocateAttrs>> {
+  const result: Partial<Record<keyof T, LocateAttrs>> = {}
+  for (const key of Object.keys(defaultsOf(defs)) as (keyof T)[]) {
+    const attrs = L(doc, `${group}.${String(key)}`)
+    if (attrs['data-locate']) result[key] = attrs
+  }
+  return result
+}

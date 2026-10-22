@@ -7,7 +7,7 @@ import { UI_CASE_DETAIL } from '@/content/texts'
 import { at, imageField, seoGroup, slugField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
-import { slugRedirectHook } from '@/hooks/slugRedirect'
+import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
 import { getCountries } from '@/lib/countries'
 import { validateYoutubeUrl } from '@/lib/youtube'
 
@@ -48,7 +48,7 @@ export const Cases: CollectionConfig = {
     maxPerDoc: 50,
   },
   hooks: {
-    beforeChange: [rejectChineseOnPublish],
+    beforeChange: [rejectChineseOnPublish, rememberPublishedSlug],
     afterChange: [slugRedirectHook('/case-studies'), refresh],
     afterDelete: [refreshAfterDelete],
   },

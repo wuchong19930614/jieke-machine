@@ -2,7 +2,7 @@
 import Link from 'next/link'
 
 import { CaseCard } from '@/components/CaseCard'
-import { Breadcrumbs, PageBanner, Section, SectionTitle } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section, SectionTitle } from '@/components/Section'
 import { fill, withDefaults } from '@/content/defineTexts'
 import { CASES_PAGE_TEXTS } from '@/content/texts'
 import { CASES_PER_PAGE_DEFAULT } from '@/lib/constants'
@@ -13,6 +13,7 @@ import { breadcrumbJsonLd, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 
 const G = globalDoc('cases-page')
+const U = globalDoc('ui-texts')
 
 export const pageHref = (n: number) => (n <= 1 ? '/case-studies/' : `/case-studies/page/${n}/`)
 
@@ -31,7 +32,7 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
   return (
     <>
       <PageBanner
-        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[{ href: '/', text: ui.common.home }, { text: settings.nav.cases }]} />}
+        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/case-studies/', settings.nav.cases, 'cases', L)]} />}
         title={{ text: texts.title, attrs: L(G, 'title') }}
         subtitle={{ text: texts.subtitle, attrs: L(G, 'subtitle') }}
       />
@@ -46,6 +47,7 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
                   item={item}
                   L={L}
                   buttonText={t.viewCase}
+                  buttonAttrs={L(U, 'caseList.viewCase')}
                   ratio={defaultRatio(theme, 'case')}
                   variant="list"
                   labels={{ country: t.countryLabel, equipment: t.equipmentLabel }}
@@ -58,11 +60,11 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
                 <ul>
                   <li>
                     {pageNumber > 1 ? (
-                      <Link href={pageHref(pageNumber - 1)} rel="prev">
+                      <Link href={pageHref(pageNumber - 1)} rel="prev" {...L(U, 'caseList.previous')}>
                         {t.previous}
                       </Link>
                     ) : (
-                      <span className="is-disabled" aria-disabled="true">
+                      <span className="is-disabled" aria-disabled="true" {...L(U, 'caseList.previous')}>
                         {t.previous}
                       </span>
                     )}
@@ -76,17 +78,17 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
                   ))}
                   <li>
                     {pageNumber < totalPages ? (
-                      <Link href={pageHref(pageNumber + 1)} rel="next">
+                      <Link href={pageHref(pageNumber + 1)} rel="next" {...L(U, 'caseList.next')}>
                         {t.next}
                       </Link>
                     ) : (
-                      <span className="is-disabled" aria-disabled="true">
+                      <span className="is-disabled" aria-disabled="true" {...L(U, 'caseList.next')}>
                         {t.next}
                       </span>
                     )}
                   </li>
                 </ul>
-                <p className="lp-muted" style={{ textAlign: 'center' }}>
+                <p className="lp-muted" style={{ textAlign: 'center' }} {...L(U, 'caseList.pageOf')}>
                   {fill(t.pageOf, { n: pageNumber, total: totalPages })}
                 </p>
               </nav>
@@ -94,8 +96,8 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
           </>
         ) : (
           <div className="lp-empty">
-            <p>{t.emptyText}</p>
-            <Link href="/contact/" className="lp-action">
+            <p {...L(U, 'caseList.emptyText')}>{t.emptyText}</p>
+            <Link href="/contact/" className="lp-action" {...L(U, 'caseList.emptyButton')}>
               {t.emptyButton}
             </Link>
           </div>

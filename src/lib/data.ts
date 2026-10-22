@@ -74,7 +74,8 @@ export const getSettings = cache(async (draft: boolean) => {
     gtmId: settings.gtmId ?? '',
     allowIndexing: Boolean(settings.allowIndexing),
     turnstileEnabled: Boolean(settings.turnstileEnabled && settings.turnstileSiteKey),
-    turnstileSiteKey: settings.turnstileSiteKey ?? '',
+    // 没开启人机验证时为空，表单就不加载验证组件
+    turnstileSiteKey: settings.turnstileEnabled ? (settings.turnstileSiteKey ?? '') : '',
     defaultOgImage: asMedia(settings.defaultOgImage),
     favicon: asMedia(settings.favicon),
     appleTouchIcon: asMedia(settings.appleTouchIcon),

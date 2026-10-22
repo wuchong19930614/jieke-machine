@@ -73,24 +73,37 @@ function containersFor(fields: ClientField[], segments: string[], parentPath = '
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-// 等元素渲染出来；一直没有时往下滚一屏，让懒渲染的内容进入视口（最多约 6 秒）
-async function findById(id: string): Promise<HTMLElement | null> {
+// 在外层容器范围内逐屏往下滚，让懒渲染的内容进入视口。每次都按容器当前的位置计算：
+// 上方的字段渲染出来后高度会变，只滚一次的话容器会被挤出视口，里面的字段就一直不渲染
+function scrollWithin(container: HTMLElement | null, step: number) {
+  if (!container) {
+    window.scrollBy({ top: window.innerHeight * 0.8 })
+    return
+  }
+  const rect = container.getBoundingClientRect()
+  const span = Math.max(0, rect.height - window.innerHeight * 0.5)
+  const offset = span ? (step * window.innerHeight * 0.8) % (span + 1) : 0
+  window.scrollTo({ top: rect.top + window.scrollY + offset })
+}
+
+// 等元素渲染出来；一直没有时在外层容器里往下滚（最多约 6 秒）
+async function findById(id: string, within: HTMLElement | null): Promise<HTMLElement | null> {
   for (let i = 0; i < 40; i++) {
     const el = document.getElementById(id)
     if (el) return el
-    if (i >= 3) window.scrollBy({ top: window.innerHeight * 0.8 })
+    if (i >= 3) scrollWithin(within, i - 3)
     await wait(150)
   }
   return null
 }
 
-async function openContainer(container: Container): Promise<void> {
-  const el = await findById(container.id)
-  if (!el) return
+async function openContainer(container: Container, within: HTMLElement | null): Promise<HTMLElement | null> {
+  const el = await findById(container.id, within)
+  if (!el) return null
   if (container.kind === 'field') {
     el.scrollIntoView({ block: 'start' })
     await wait(200)
-    return
+    return el
   }
   const box = el.classList.contains('collapsible')
     ? el
@@ -101,6 +114,7 @@ async function openContainer(container: Container): Promise<void> {
   }
   ;(box ?? el).scrollIntoView({ block: 'start' })
   await wait(120)
+  return box ?? el
 }
 
 // 字段已渲染但外层仍折叠时（例如用户手动收起过），从外到内依次展开
@@ -128,13 +142,18 @@ async function waitForForm(): Promise<void> {
 async function focusField(path: string, fields: ClientField[] | undefined): Promise<boolean> {
   await waitForForm()
   let element = findField(path)
+  // 最内层已打开的容器（分组、数组行）
+  let within: HTMLElement | null = null
   if (!element && fields) {
-    for (const container of containersFor(fields, path.split('.')) ?? []) await openContainer(container)
+    for (const container of containersFor(fields, path.split('.')) ?? []) within = (await openContainer(container, within)) ?? within
   }
   // 分组内容靠滚动进视口触发渲染，较慢的电脑上可能要等一会，最多等 6 秒
   for (let i = 0; i < 30 && !element; i++) {
     element = findField(path)
-    if (!element) await wait(200)
+    if (!element) {
+      if (within) scrollWithin(within, i)
+      await wait(200)
+    }
   }
   if (!element) return false
   await expandAncestors(element)

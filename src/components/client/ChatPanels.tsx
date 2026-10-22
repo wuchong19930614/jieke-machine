@@ -5,8 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { TextsOf } from '@/content/defineTexts'
 import type { BLUE_PANEL_TEXTS, FORM_TEXTS, RED_PANEL_TEXTS } from '@/content/texts'
-import { track } from '@/lib/client/analytics'
-import { loadTawk, onTawkChatStarted, openTawkChat, type TawkApi } from '@/lib/client/tawk'
+import { loadTawk, openTawkChat, type TawkApi } from '@/lib/client/tawk'
 import type { Country } from '@/lib/countries'
 import type { LocateAttrs } from '@/lib/locator'
 
@@ -25,16 +24,10 @@ type RedProps = {
   tawk: { propertyId: string; widgetId: string }
   locate?: Partial<Record<keyof typeof RED_PANEL_TEXTS, LocateAttrs>>
   formLocate?: Partial<Record<keyof typeof FORM_TEXTS, LocateAttrs>>
+  turnstileSiteKey?: string
 }
 
-let lastEntry: 'red' | 'blue' = 'red'
-
-// 对话开始的统计（弹出式聊天窗口中不触发，可能少计，见技术方案 7.3）
-function useStartChatTracking() {
-  useEffect(() => onTawkChatStarted(() => track('start_chat', { entry: lastEntry })), [])
-}
-
-export function RedChat({ texts, form, closeLabel, countries, businessEmail, tawk, locate = {}, formLocate }: RedProps) {
+export function RedChat({ texts, form, closeLabel, countries, businessEmail, tawk, locate = {}, formLocate, turnstileSiteKey }: RedProps) {
   const { overlay, close, open } = useUi()
   const isOpen = overlay === 'chat'
   const [loadState, setState] = useState<ChatState>('connecting')
@@ -44,7 +37,6 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
   const [api, setApi] = useState<TawkApi | null>(null)
   const [opening, setOpening] = useState(false)
   const L = (key: keyof typeof RED_PANEL_TEXTS) => locate[key] ?? {}
-  useStartChatTracking()
 
   useEffect(() => {
     if (!isOpen || !configured) return
@@ -63,7 +55,8 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
     }
   }, [isOpen, configured, tawk.propertyId, tawk.widgetId])
 
-  const statusText = state === 'connecting' ? texts.connecting : state === 'online' ? texts.onlineStatus : texts.offlineStatus
+  const statusKey = state === 'connecting' ? 'connecting' : state === 'online' ? 'onlineStatus' : 'offlineStatus'
+  const statusText = texts[statusKey]
 
   return (
     <Dialog
@@ -80,7 +73,7 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
           <h3 id="lp-chat-title" {...L('title')}>
             {texts.title}
           </h3>
-          <small aria-live="polite">
+          <small aria-live="polite" {...L(statusKey)}>
             <span className={`lp-status-dot${state === 'online' ? ' is-online' : ''}`} aria-hidden="true" />
             {statusText}
           </small>
@@ -105,8 +98,7 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
               onClick={() => {
                 if (!api) return
                 setOpening(true)
-                lastEntry = 'red'
-                openTawkChat(api)
+                openTawkChat(api, 'red')
                 close()
                 setOpening(false)
               }}
@@ -122,7 +114,7 @@ export function RedChat({ texts, form, closeLabel, countries, businessEmail, taw
           <div>
             <p {...L(state === 'failed' ? 'failedText' : 'offlineText')}>{state === 'failed' ? texts.failedText : texts.offlineText}</p>
             <h3 {...L('formTitle')}>{texts.formTitle}</h3>
-            <InquiryForm source="offline_message" variant="chat" texts={form} countries={countries} businessEmail={businessEmail} locate={formLocate} />
+            <InquiryForm source="offline_message" variant="chat" texts={form} countries={countries} businessEmail={businessEmail} locate={formLocate} turnstileSiteKey={turnstileSiteKey} />
           </div>
         ) : null}
       </div>
@@ -136,15 +128,15 @@ type BlueProps = {
   logoUrl?: string | null
   tawk: { propertyId: string; widgetId: string }
   locate?: Partial<Record<keyof typeof BLUE_PANEL_TEXTS, LocateAttrs>>
+  brandLocate?: { companyName?: LocateAttrs; logo?: LocateAttrs }
 }
 
-export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {} }: BlueProps) {
+export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {}, brandLocate = {} }: BlueProps) {
   const { overlay, close, open } = useUi()
   const isOpen = overlay === 'blue'
   const [state, setState] = useState<'idle' | 'connecting' | 'failed'>('idle')
   const panelRef = useRef<HTMLElement>(null)
   const L = (key: keyof typeof BLUE_PANEL_TEXTS) => locate[key] ?? {}
-  useStartChatTracking()
 
   // 预览里定位到面板内的文字时先打开面板
   useEffect(() => {
@@ -159,8 +151,7 @@ export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {} }: Bl
     setState('connecting')
     try {
       const api = await loadTawk(tawk.propertyId, tawk.widgetId)
-      lastEntry = 'blue'
-      openTawkChat(api)
+      openTawkChat(api, 'blue')
       setState('idle')
       close()
     } catch {
@@ -189,12 +180,14 @@ export function BluePanel({ texts, companyName, logoUrl, tawk, locate = {} }: Bl
       <div className="lp-blue-welcome">
         <div className="lp-blue-brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {logoUrl ? <img src={logoUrl} alt="" /> : null}
-          <strong>{companyName}</strong>
+          {logoUrl ? <img src={logoUrl} alt="" {...brandLocate.logo} /> : null}
+          <strong {...brandLocate.companyName}>{companyName}</strong>
         </div>
         <h2 {...L('welcome')}>{texts.welcome}</h2>
         <div className="lp-blue-entry">
-          <div className="lp-blue-avatar">{companyName}</div>
+          <div className="lp-blue-avatar" {...brandLocate.companyName}>
+            {companyName}
+          </div>
           <button type="button" className="lp-blue-enter" disabled={state === 'connecting'} onClick={enter} {...L('enterChat')}>
             <MessageCircle aria-hidden="true" size={18} /> {state === 'connecting' ? texts.connecting : texts.enterChat}
           </button>

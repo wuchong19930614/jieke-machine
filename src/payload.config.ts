@@ -28,6 +28,7 @@ import { UiTexts } from './globals/UiTexts'
 import { PATHS, revalidate } from './hooks/revalidate'
 import { siteUrl } from './lib/previewPath'
 import { resendEmailAdapter } from './lib/server/payloadEmail'
+import { keepSessionInPlugin } from './lib/server/pluginSession'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -121,6 +122,9 @@ export default buildConfig({
       },
     }),
     importExportPlugin({
+      // 插件按用户编号重新查当前用户，会丢掉双重验证的会话标记，见 lib/server/pluginSession.ts
+      overrideExportCollection: keepSessionInPlugin,
+      overrideImportCollection: keepSessionInPlugin,
       collections: [
         // 询盘只导出 CSV（技术方案 5.5）；同步导出、不在服务器保存文件
         { slug: 'inquiries', export: { format: 'csv', disableJobsQueue: true, disableSave: true }, import: false },

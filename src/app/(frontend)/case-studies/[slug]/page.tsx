@@ -6,7 +6,7 @@ import { ZoomButton } from '@/components/client/Lightbox'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
 import { Img, mediaOf } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
-import { Breadcrumbs, PageBanner, Section } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
 import { fill } from '@/content/defineTexts'
 import { overrideTexts } from '@/content/overrideFields'
 import { countryName } from '@/lib/countries'
@@ -61,12 +61,12 @@ export default async function CaseDetailPage({ params }: Params) {
   const heroField = mediaOf(item.heroImage) ? 'heroImage' : 'coverImage'
 
   const overview = [
-    item.showCustomerName && item.customerName ? { label: t.customer, value: item.customerName, path: 'customerName' } : null,
-    item.country ? { label: t.country, value: countryName(item.country), path: 'country' } : null,
-    item.equipmentConfiguration ? { label: t.configuration, value: item.equipmentConfiguration, path: 'equipmentConfiguration' } : null,
-    item.capacity ? { label: t.capacity, value: item.capacity, path: 'capacity' } : null,
-    item.deliveryDate ? { label: t.deliveryDate, value: formatMonth(item.deliveryDate), path: 'deliveryDate' } : null,
-  ].filter(Boolean) as { label: string; value: string; path: string }[]
+    item.showCustomerName && item.customerName ? { label: t.customer, labelKey: 'customer', value: item.customerName, path: 'customerName' } : null,
+    item.country ? { label: t.country, labelKey: 'country', value: countryName(item.country), path: 'country' } : null,
+    item.equipmentConfiguration ? { label: t.configuration, labelKey: 'configuration', value: item.equipmentConfiguration, path: 'equipmentConfiguration' } : null,
+    item.capacity ? { label: t.capacity, labelKey: 'capacity', value: item.capacity, path: 'capacity' } : null,
+    item.deliveryDate ? { label: t.deliveryDate, labelKey: 'deliveryDate', value: formatMonth(item.deliveryDate), path: 'deliveryDate' } : null,
+  ].filter(Boolean) as { label: string; labelKey: string; value: string; path: string }[]
 
   const body = [
     { key: 'customerRequirements', title: t.requirements, titlePath: 'sectionTexts.requirements' },
@@ -80,7 +80,7 @@ export default async function CaseDetailPage({ params }: Params) {
         breadcrumb={
           <Breadcrumbs
             label={ui.common.breadcrumb}
-            items={[{ href: '/', text: ui.common.home }, { href: '/case-studies/', text: settings.nav.cases }, { text: item.title }]}
+            items={[crumbHome(ui.common.home, L), crumbNav('/case-studies/', settings.nav.cases, 'cases', L), { text: item.title, attrs: L(C, 'title') }]}
           />
         }
         title={{ text: item.title, attrs: L(C, 'title') }}
@@ -112,7 +112,7 @@ export default async function CaseDetailPage({ params }: Params) {
                 <tbody>
                   {overview.map((row) => (
                     <tr key={row.path}>
-                      <th scope="row" style={{ width: '42%' }}>
+                      <th scope="row" style={{ width: '42%' }} {...L(C, `sectionTexts.${row.labelKey}`)}>
                         {row.label}
                       </th>
                       <td style={{ whiteSpace: 'pre-line' }} {...L(C, row.path)}>
@@ -178,7 +178,7 @@ export default async function CaseDetailPage({ params }: Params) {
                     {t.linesButton ? (
                       <>
                         {p.name} —{' '}
-                        <Link href={`/products/${p.slug}/`} className="lp-link">
+                        <Link href={`/products/${p.slug}/`} className="lp-link" {...L(C, 'sectionTexts.linesButton')}>
                           {t.linesButton}
                         </Link>
                       </>

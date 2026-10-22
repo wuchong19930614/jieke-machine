@@ -7,7 +7,7 @@ import { UI_PRODUCT } from '@/content/texts'
 import { at, hideField, imageField, sectionsField, seoGroup, slugField, titleRowLabel, visibleField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
-import { slugRedirectHook } from '@/hooks/slugRedirect'
+import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
 import { PRODUCT_SECTION_DEFAULT_BACKGROUND, PRODUCT_SECTIONS } from '@/lib/constants'
 import { defaultSpecTable, normalizeSpecTable, validateSpecTable } from '@/lib/specTable'
 import { validateYoutubeUrl } from '@/lib/youtube'
@@ -69,6 +69,7 @@ export const Products: CollectionConfig = {
         return data
       },
       rejectChineseOnPublish,
+      rememberPublishedSlug,
     ],
     afterChange: [slugRedirectHook('/products'), refresh],
     afterDelete: [refreshAfterDelete],

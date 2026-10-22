@@ -2,7 +2,7 @@
 import Link from 'next/link'
 
 import { collectionDoc } from '@/lib/locate'
-import type { Locator } from '@/lib/locator'
+import type { LocateAttrs, Locator } from '@/lib/locator'
 import type { Product } from '@/payload-types'
 
 import { Img } from './Img'
@@ -11,6 +11,7 @@ export function ProductLineCard({
   product,
   index,
   buttonText,
+  buttonAttrs,
   L,
   ratio,
   headingLevel = 'h2',
@@ -18,6 +19,8 @@ export function ProductLineCard({
   product: Product
   index: number
   buttonText: string
+  // 按钮文字所在字段的定位标注（首页在首页配置，产品列表在界面文案）
+  buttonAttrs?: LocateAttrs
   L: Locator
   ratio: string
   headingLevel?: 'h2' | 'h3'
@@ -49,7 +52,7 @@ export function ProductLineCard({
           </p>
         ) : null}
         {buttonText ? (
-          <Link href={href} className="lp-link">
+          <Link href={href} className="lp-link" {...buttonAttrs}>
             {buttonText}
           </Link>
         ) : null}

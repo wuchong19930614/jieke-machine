@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import { fill } from '@/content/defineTexts'
+import type { LocateAttrs } from '@/lib/locator'
 
 type Texts = {
   prev: string
@@ -27,7 +28,7 @@ const subscribeReducedMotion = (onChange: () => void) => {
   return () => query.removeEventListener('change', onChange)
 }
 
-export function BannerCarousel({ slides, texts }: { slides: React.ReactNode[]; texts: Texts }) {
+export function BannerCarousel({ slides, texts, locate = {} }: { slides: React.ReactNode[]; texts: Texts; locate?: Partial<Record<keyof Texts, LocateAttrs>> }) {
   const total = slides.length
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -46,6 +47,23 @@ export function BannerCarousel({ slides, texts }: { slides: React.ReactNode[]; t
     const timer = window.setInterval(() => setIndex((i) => (i + 1) % total), INTERVAL)
     return () => window.clearInterval(timer)
   }, [total, paused, hovering, reducedMotion])
+
+  // 首屏加载完后再加载其余 Banner 的图片（技术方案 4.3 第 4 条）。
+  // 没轮到的幻灯片是隐藏的，懒加载的图片不会自己下载，切换过去时会先空白一下
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root || total < 2) return
+    const warm = () =>
+      root.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
+        img.loading = 'eager'
+      })
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback
+    // 最多等 1.5 秒空闲，尽量赶在第一次切换（5 秒）之前下载好
+    const start = () => (idle ? idle.call(window, warm, { timeout: 1500 }) : window.setTimeout(warm, 500))
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
+    return () => window.removeEventListener('load', start)
+  }, [total])
 
   // 预览里定位到某张 Banner 的文字时切到那一张并暂停
   useEffect(() => {
@@ -114,13 +132,16 @@ export function BannerCarousel({ slides, texts }: { slides: React.ReactNode[]; t
                 onClick={() => go(i)}
               />
             ))}
-            <span className="lp-banner-count">{fill(texts.count, { n: index + 1, total })}</span>
+            <span className="lp-banner-count" {...locate.count}>
+              {fill(texts.count, { n: index + 1, total })}
+            </span>
             <button
               type="button"
               className="lp-banner-pause"
               aria-label={paused ? texts.playAria : texts.pauseAria}
               aria-pressed={paused}
               onClick={() => setPaused((p) => !p)}
+              {...(paused ? locate.play : locate.pause)}
             >
               {paused ? texts.play : texts.pause}
             </button>

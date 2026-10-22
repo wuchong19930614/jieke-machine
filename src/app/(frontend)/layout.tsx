@@ -10,6 +10,7 @@ import { PreviewTools } from '@/components/client/PreviewTools'
 import { UiProvider } from '@/components/client/UiProvider'
 import { ContactBand, MobileBar, SiteFooter, SiteHeader, TopBar } from '@/components/SiteChrome'
 import { getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
+import { globalDoc } from '@/lib/locate'
 import { getLocator } from '@/lib/locator'
 import { siteUrl } from '@/lib/previewPath'
 import { indexingAllowed, JsonLd, organizationJsonLd } from '@/lib/seo'
@@ -46,7 +47,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
       <body>
         <UiProvider>
           <LightboxProvider texts={ui.common}>
-            <a className="skip-link" href="#main">
+            <a className="skip-link" href="#main" {...L(globalDoc('ui-texts'), 'common.skipToContent')}>
               {ui.common.skipToContent}
             </a>
             <TopBar settings={settings} ui={ui} L={L} />

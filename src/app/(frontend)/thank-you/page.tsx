@@ -2,11 +2,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { AuxBody, auxTitle } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxTitle } from '@/components/AuxPage'
 import { ThankYouTracker } from '@/components/client/ThankYouTracker'
 import { Section } from '@/components/Section'
 import { getAuxPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
-import { collectionDoc, globalDoc } from '@/lib/locate'
+import { globalDoc } from '@/lib/locate'
 import { getLocator } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { whatsappLink } from '@/lib/whatsapp'
@@ -32,7 +32,7 @@ export default async function ThankYouPage() {
             {t.kicker}
           </div>
         ) : null}
-        <h1 {...(page ? L(collectionDoc('pages', page.id), 'title') : {})}>{auxTitle(SLUG, page)}</h1>
+        <h1 {...auxAttrs(SLUG, page, L, 'title')}>{auxTitle(SLUG, page)}</h1>
         <div className="lp-steps">
           <AuxBody slug={SLUG} page={page} L={L} />
         </div>

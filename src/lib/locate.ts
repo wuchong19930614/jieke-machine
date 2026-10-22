@@ -11,6 +11,9 @@ export type LocateMessage =
 
 export const collectionDoc = (collection: string, id: number | string): DocKey => `${collection}:${id}`
 export const globalDoc = (slug: string): DocKey => `global:${slug}`
+// 还没有记录的内容（例如没建过的辅助页面）：点选后打开后台的新建页
+export const NEW_DOC_REF = 'create'
+export const newDoc = (collection: string): DocKey => `${collection}:${NEW_DOC_REF}`
 
 export function isLocateMessage(data: unknown): data is LocateMessage {
   return Boolean(data && typeof data === 'object' && (data as { source?: unknown }).source === LOCATE_SOURCE)

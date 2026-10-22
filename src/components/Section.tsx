@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import React from 'react'
 
-import type { LocateAttrs } from '@/lib/locator'
+import { globalDoc } from '@/lib/locate'
+import type { LocateAttrs, Locator } from '@/lib/locator'
 
 const BG: Record<string, string> = { default: '', light: 'lp-bg-light', dark: 'lp-bg-dark', blue: 'lp-bg-blue' }
 
@@ -45,18 +46,37 @@ export function SectionTitle({ kicker, title, subtitle, as = 'h2' }: { kicker?: 
   )
 }
 
-export function Breadcrumbs({ label, items }: { label: string; items: { href?: string; text: string }[] }) {
+export type Crumb = { href?: string; text: string; attrs?: LocateAttrs }
+
+export function Breadcrumbs({ label, items }: { label: string; items: Crumb[] }) {
   return (
     <nav className="lp-breadcrumb" aria-label={label}>
       <ol>
         {items.map((item, i) => (
           <li key={`${item.text}-${i}`}>
-            {item.href && i < items.length - 1 ? <Link href={item.href}>{item.text}</Link> : <span aria-current={i === items.length - 1 ? 'page' : undefined}>{item.text}</span>}
+            {item.href && i < items.length - 1 ? (
+              <Link href={item.href} {...item.attrs}>
+                {item.text}
+              </Link>
+            ) : (
+              <span aria-current={i === items.length - 1 ? 'page' : undefined} {...item.attrs}>
+                {item.text}
+              </span>
+            )}
           </li>
         ))}
       </ol>
     </nav>
   )
+}
+
+// 面包屑前两级（首页、栏目）的定位：首页文字在界面文案，栏目名在全站设置的导航
+export function crumbHome(text: string, L: Locator): Crumb {
+  return { href: '/', text, attrs: L(globalDoc('ui-texts'), 'common.home') }
+}
+
+export function crumbNav(href: string, text: string, key: 'about' | 'products' | 'cases' | 'contact', L: Locator): Crumb {
+  return { href, text, attrs: L(globalDoc('site-settings'), `navLabels.${key}`) }
 }
 
 export function PageBanner({

@@ -1,6 +1,9 @@
 // tawk.to 加载（技术方案 4.5、7.2）：页面打开时不加载；访客第一次点击客服入口时才加载脚本，
 // autoStart = false 并始终隐藏自带入口，由红蓝两个入口调用 start()、maximize() 打开对话
+import { track } from './analytics'
+
 type TawkStatus = 'online' | 'away' | 'offline'
+export type ChatEntry = 'red' | 'blue'
 
 type TawkApi = {
   autoStart?: boolean
@@ -24,15 +27,11 @@ declare global {
 
 type Waiter = { resolve: (api: TawkApi) => void; reject: (error: Error) => void }
 
-const startedListeners = new Set<() => void>()
 const waiters = new Set<Waiter>()
 let loadedApi: TawkApi | null = null
 let script: HTMLScriptElement | null = null
-
-export function onTawkChatStarted(listener: () => void): () => void {
-  startedListeners.add(listener)
-  return () => startedListeners.delete(listener)
-}
+// 最近一次从哪个入口打开对话，用于 start_chat 统计
+let lastEntry: ChatEntry = 'red'
 
 export function loadTawk(propertyId: string, widgetId: string, timeoutMs = 12000): Promise<TawkApi> {
   if (!propertyId || !widgetId) return Promise.reject(new Error('tawk.to 未配置'))
@@ -68,7 +67,8 @@ export function loadTawk(propertyId: string, widgetId: string, timeoutMs = 12000
     }
     // 对话窗口收起时再次隐藏自带入口
     api.onChatMinimized = () => api.hideWidget?.()
-    api.onChatStarted = () => startedListeners.forEach((listener) => listener())
+    // 对话开始的统计只在这里推送一次（弹出式聊天窗口中不触发，可能少计，见技术方案 7.3）
+    api.onChatStarted = () => track('start_chat', { entry: lastEntry })
     script = document.createElement('script')
     script.async = true
     script.src = `https://embed.tawk.to/${encodeURIComponent(propertyId)}/${encodeURIComponent(widgetId)}`
@@ -88,7 +88,8 @@ export function loadTawk(propertyId: string, widgetId: string, timeoutMs = 12000
 }
 
 // 打开对话窗口
-export function openTawkChat(api: TawkApi): void {
+export function openTawkChat(api: TawkApi, entry: ChatEntry): void {
+  lastEntry = entry
   api.showWidget?.()
   api.maximize?.()
 }

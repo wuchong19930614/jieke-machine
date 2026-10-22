@@ -6,9 +6,8 @@ import { fill } from '@/content/defineTexts'
 import type { Settings, UiTexts } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import type { Locator } from '@/lib/locator'
-import { whatsappLink } from '@/lib/whatsapp'
-
 import { OpenOverlayButton } from './client/UiProvider'
+import { WhatsAppLink } from './client/WhatsAppLink'
 import { SOCIAL_ICONS } from './SocialIcons'
 import { SiteNav } from './client/SiteNav'
 
@@ -33,17 +32,17 @@ export function TopBar({ settings, ui, L }: ChromeProps) {
           </a>
         ) : null}
         {whatsapp ? (
-          <a
-            href={whatsappLink(settings.whatsapp, settings.whatsappTexts.message)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <WhatsAppLink
+            number={settings.whatsapp}
+            message={settings.whatsappTexts.message}
+            productMessage={settings.whatsappTexts.productMessage}
             aria-label={ui.common.whatsappAria}
             data-track="click_whatsapp"
             data-track-location="top_bar"
             {...L(S, 'whatsapp')}
           >
             {whatsapp}
-          </a>
+          </WhatsAppLink>
         ) : null}
       </span>
     </div>
@@ -68,7 +67,7 @@ export function SiteHeader({ settings, ui, L }: ChromeProps) {
         ) : null}
         {settings.companyName ? <span>{settings.companyName}</span> : null}
       </Link>
-      <SiteNav items={items} texts={ui.common} />
+      <SiteNav items={items} texts={ui.common} menuLocate={L(U, 'common.menu')} />
     </header>
   )
 }
@@ -107,13 +106,7 @@ export function SiteFooter({ settings, ui, L }: ChromeProps) {
   const lines = [
     { key: 'email', text: fill(f.email, { businessEmail: settings.email }), href: `mailto:${settings.email}`, track: 'click_email' },
     { key: 'phone', text: fill(f.phone, { phone: settings.phone }), href: `tel:${settings.phone.replace(/[^\d+]/g, '')}`, track: 'click_phone' },
-    {
-      key: 'whatsapp',
-      text: fill(f.whatsapp, { whatsapp: settings.whatsapp }),
-      href: whatsappLink(settings.whatsapp, settings.whatsappTexts.message),
-      track: 'click_whatsapp',
-      external: true,
-    },
+    { key: 'whatsapp', text: fill(f.whatsapp, { whatsapp: settings.whatsapp }), whatsapp: true },
     { key: 'address', text: fill(f.address, { address: settings.address }) },
   ].filter((line) => line.text)
   return (
@@ -140,7 +133,9 @@ export function SiteFooter({ settings, ui, L }: ChromeProps) {
               ] as const
             ).map(([href, key]) => (
               <li key={href}>
-                <Link href={href}>{settings.nav[key]}</Link>
+                <Link href={href} {...L(S, `navLabels.${key}`)}>
+                  {settings.nav[key]}
+                </Link>
               </li>
             ))}
           </ul>
@@ -150,13 +145,19 @@ export function SiteFooter({ settings, ui, L }: ChromeProps) {
           <ul>
             {lines.map((line) => (
               <li key={line.key} {...L(S, line.key)}>
-                {line.href ? (
-                  <a
-                    href={line.href}
-                    data-track={line.track}
+                {line.whatsapp ? (
+                  <WhatsAppLink
+                    number={settings.whatsapp}
+                    message={settings.whatsappTexts.message}
+                    productMessage={settings.whatsappTexts.productMessage}
+                    aria-label={ui.common.whatsappAria}
+                    data-track="click_whatsapp"
                     data-track-location="footer"
-                    {...(line.external ? { target: '_blank', rel: 'noopener noreferrer', 'aria-label': ui.common.whatsappAria } : {})}
                   >
+                    {line.text}
+                  </WhatsAppLink>
+                ) : line.href ? (
+                  <a href={line.href} data-track={line.track} data-track-location="footer">
                     {line.text}
                   </a>
                 ) : (
@@ -200,26 +201,25 @@ export function SiteFooter({ settings, ui, L }: ChromeProps) {
   )
 }
 
-export function MobileBar({ settings, ui, L, quoteHref = '/contact/', productName }: ChromeProps & { quoteHref?: string; productName?: string }) {
-  const message = productName ? fill(settings.whatsappTexts.productMessage, { productName }) || settings.whatsappTexts.message : settings.whatsappTexts.message
+export function MobileBar({ settings, ui, L, quoteHref = '/contact/' }: ChromeProps & { quoteHref?: string }) {
   return (
     <div className="lp-mobile-bar">
       <Link href={quoteHref} className="lp-action" {...L(U, 'mobileBar.quote')}>
         {ui.mobileBar.quote}
       </Link>
       {settings.whatsapp ? (
-        <a
-          href={whatsappLink(settings.whatsapp, message)}
+        <WhatsAppLink
+          number={settings.whatsapp}
+          message={settings.whatsappTexts.message}
+          productMessage={settings.whatsappTexts.productMessage}
           className="lp-outline"
-          target="_blank"
-          rel="noopener noreferrer"
           aria-label={ui.common.whatsappAria}
           data-track="click_whatsapp"
           data-track-location="mobile_bar"
           {...L(U, 'mobileBar.whatsapp')}
         >
           <MessageCircle size={16} aria-hidden="true" /> {ui.mobileBar.whatsapp}
-        </a>
+        </WhatsAppLink>
       ) : null}
     </div>
   )

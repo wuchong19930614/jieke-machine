@@ -9,17 +9,19 @@ import { InquiryForm } from '@/components/client/InquiryForm'
 import { ZoomButton } from '@/components/client/Lightbox'
 import { ProcessSteps } from '@/components/client/ProcessSteps'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
+import { CurrentProduct } from '@/components/client/WhatsAppLink'
 import { Img, mediaOf } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
-import { Breadcrumbs, orderedSections, Section, SectionTitle } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, orderedSections, Section, SectionTitle } from '@/components/Section'
 import { SpecTable } from '@/components/SpecTable'
 import { fill } from '@/content/defineTexts'
 import { overrideTexts } from '@/content/overrideFields'
+import { FORM_TEXTS } from '@/content/texts'
 import { PRODUCT_SECTION_DEFAULT_BACKGROUND, PRODUCT_SECTIONS, type ProductSectionKey } from '@/lib/constants'
 import { getCountries } from '@/lib/countries'
 import { getProduct, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc, publishedSlugs } from '@/lib/data'
-import { collectionDoc } from '@/lib/locate'
-import { getLocator } from '@/lib/locator'
+import { collectionDoc, globalDoc } from '@/lib/locate'
+import { getLocator, locateGroup } from '@/lib/locator'
 import { redirectOr404 } from '@/lib/redirectOr404'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { siteUrl } from '@/lib/previewPath'
@@ -330,13 +332,14 @@ export default async function ProductPage({ params }: Params) {
                 </>
               }
               steps={steps.map(({ item, index }) => ({
-                key: String(index),
+                // 用列表行的固定编号，调整顺序或删除条目后选中状态不会错位
+                key: item.id ?? `step-${index}`,
                 title: item.title,
                 titleAttrs: L(P, `processSteps.${index}.title`) as Record<string, string>,
                 panel: (
                   <>
                     <Img media={item.image} defaultRatio={defaultRatio(theme, 'equipment')} defaultFit="contain" sizes="(max-width: 767px) 100vw, 640px" attrs={L(P, `processSteps.${index}.image`)} />
-                    <h3>{item.title}</h3>
+                    <h3 {...L(P, `processSteps.${index}.title`)}>{item.title}</h3>
                     {item.description ? (
                       <p className="lp-muted" style={{ whiteSpace: 'pre-line' }} {...L(P, `processSteps.${index}.description`)}>
                         {item.description}
@@ -366,7 +369,7 @@ export default async function ProductPage({ params }: Params) {
                         <Link href={`/products/${item.slug}/`}>{item.name}</Link>
                       </h3>
                       {t.relatedButton ? (
-                        <Link href={`/products/${item.slug}/`} className="lp-link">
+                        <Link href={`/products/${item.slug}/`} className="lp-link" {...L(P, 'sectionTexts.relatedButton')}>
                           {t.relatedButton}
                         </Link>
                       ) : null}
@@ -386,7 +389,16 @@ export default async function ProductPage({ params }: Params) {
             <SectionTitle title={{ text: t.casesTitle, attrs: L(P, 'sectionTexts.casesTitle') }} subtitle={{ text: t.casesSubtitle }} />
             <div className="lp-grid3" {...L(P, 'relatedCases')}>
               {list.map((item) => (
-                <CaseCard key={item.id} item={item} L={L} buttonText={t.casesButton} ratio={defaultRatio(theme, 'case')} variant="related" draft={draft} />
+                <CaseCard
+                  key={item.id}
+                  item={item}
+                  L={L}
+                  buttonText={t.casesButton}
+                  buttonAttrs={L(P, 'sectionTexts.casesButton')}
+                  ratio={defaultRatio(theme, 'case')}
+                  variant="related"
+                  draft={draft}
+                />
               ))}
             </div>
           </Section>
@@ -416,6 +428,8 @@ export default async function ProductPage({ params }: Params) {
                 countries={getCountries()}
                 businessEmail={settings.email}
                 product={{ id: product.id, name: product.name, code: product.productCode }}
+                turnstileSiteKey={settings.turnstileSiteKey}
+                locate={locateGroup(L, globalDoc('site-settings'), 'formTexts', FORM_TEXTS)}
               />
             </div>
           </Section>
@@ -437,14 +451,12 @@ export default async function ProductPage({ params }: Params) {
       <div className="lp-section" style={{ paddingTop: 15, paddingBottom: 0 }}>
         <Breadcrumbs
           label={ui.common.breadcrumb}
-          items={[
-            { href: '/', text: ui.common.home },
-            { href: '/products/', text: settings.nav.products },
-            { text: product.name },
-          ]}
+          items={[crumbHome(ui.common.home, L), crumbNav('/products/', settings.nav.products, 'products', L), { text: product.name, attrs: L(P, 'name') }]}
         />
       </div>
       {sections.map(({ module, background }) => render(module, background))}
+      {/* 本页的 WhatsApp 链接预填带产品名的消息 */}
+      <CurrentProduct name={product.name} />
       <JsonLd
         data={[
           breadcrumbJsonLd([

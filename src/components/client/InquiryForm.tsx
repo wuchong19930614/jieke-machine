@@ -7,6 +7,7 @@ import type { TextsOf } from '@/content/defineTexts'
 import { fill } from '@/content/defineTexts'
 import type { FORM_TEXTS } from '@/content/texts'
 import { readAttribution } from '@/lib/client/attribution'
+import { loadTurnstile } from '@/lib/client/turnstile'
 import type { InquirySource } from '@/lib/constants'
 import type { Country } from '@/lib/countries'
 import { type InquiryField, LIMITS, validateInquiry } from '@/lib/inquirySchema'
@@ -24,6 +25,8 @@ type Props = {
   // 预览里给各文案加的定位标注（服务端算好后传入）
   locate?: Partial<Record<keyof FormTexts, LocateAttrs>>
   defaultProductModel?: string
+  // 后台开启人机验证时传入 Site Key，没开启时为空
+  turnstileSiteKey?: string
 }
 
 type Values = Record<InquiryField, string>
@@ -39,7 +42,7 @@ function newSubmissionId(): string {
 
 const withFallback = (template: string, vars: Record<string, string>, fallback: string) => fill(template, vars) || fallback
 
-export function InquiryForm({ source, texts, countries, businessEmail, product, variant = 'page', locate = {}, defaultProductModel }: Props) {
+export function InquiryForm({ source, texts, countries, businessEmail, product, variant = 'page', locate = {}, defaultProductModel, turnstileSiteKey }: Props) {
   const router = useRouter()
   const uid = useId().replace(/:/g, '')
   const formRef = useRef<HTMLFormElement>(null)
@@ -51,6 +54,11 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
   const token = useRef<TokenState>(null)
   const tokenRequest = useRef<Promise<TokenState> | null>(null)
   const submissionId = useRef<string>(newSubmissionId())
+  // 人机验证：和表单令牌一样，访客第一次操作表单时才加载（技术方案 4.5）
+  const [captchaOn, setCaptchaOn] = useState(false)
+  const captchaBox = useRef<HTMLDivElement>(null)
+  const captchaWidget = useRef<string | null>(null)
+  const captchaToken = useRef('')
 
   const showCompany = source !== 'offline_message'
   const showProduct = source === 'contact_page' || source === 'product_page'
@@ -73,6 +81,48 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
         })
     }
     return tokenRequest.current
+  }
+
+  const activate = () => {
+    void ensureToken()
+    if (turnstileSiteKey && !captchaOn) setCaptchaOn(true)
+  }
+
+  useEffect(() => {
+    if (!captchaOn || !turnstileSiteKey) return
+    let cancelled = false
+    loadTurnstile()
+      .then((api) => {
+        if (cancelled || !captchaBox.current) return
+        captchaWidget.current = api.render(captchaBox.current, {
+          sitekey: turnstileSiteKey,
+          language: 'en',
+          callback: (value) => {
+            captchaToken.current = value
+          },
+          'expired-callback': () => {
+            captchaToken.current = ''
+          },
+          'error-callback': () => {
+            captchaToken.current = ''
+          },
+        })
+      })
+      .catch(() => {
+        if (!cancelled) setAlert(texts.captchaFailed)
+      })
+    return () => {
+      cancelled = true
+      if (captchaWidget.current) window.turnstile?.remove(captchaWidget.current)
+      captchaWidget.current = null
+      captchaToken.current = ''
+    }
+  }, [captchaOn, turnstileSiteKey, texts.captchaFailed])
+
+  // 验证结果只能用一次，提交失败后重新验证
+  const resetCaptcha = () => {
+    captchaToken.current = ''
+    if (captchaWidget.current) window.turnstile?.reset(captchaWidget.current)
   }
 
   const set = (field: InquiryField) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -99,6 +149,11 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
       focusFirstError(mapped)
       return
     }
+    if (turnstileSiteKey && !captchaToken.current) {
+      setCaptchaOn(true)
+      setAlert(texts.captchaPrompt)
+      return
+    }
     setSubmitting(true)
     try {
       const formToken = await ensureToken()
@@ -115,6 +170,7 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
           ...(attribution.utm ? { utm: attribution.utm } : {}),
           submissionId: submissionId.current,
           formToken: formToken?.token ?? '',
+          ...(turnstileSiteKey ? { turnstileToken: captchaToken.current } : {}),
           website: honeypot,
         }),
       })
@@ -138,6 +194,7 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
         router.push(data.redirect || '/thank-you/')
         return
       }
+      resetCaptcha()
       if (data.fields) {
         setErrors(data.fields)
         focusFirstError(data.fields)
@@ -147,6 +204,7 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
           withFallback(texts.errServer, { businessEmail }, 'Sorry, we could not send your inquiry. Please try again later.'),
       )
     } catch {
+      resetCaptcha()
       setAlert(texts.errNetwork)
     } finally {
       setSubmitting(false)
@@ -245,8 +303,8 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
       className={`lp-form${variant === 'popup' ? ' lp-form--popup' : ''}`}
       noValidate
       onSubmit={onSubmit}
-      onFocus={() => void ensureToken()}
-      onPointerDown={() => void ensureToken()}
+      onFocus={activate}
+      onPointerDown={activate}
     >
       <p className="lp-form-note" {...L('requiredNote')}>
         {texts.requiredNote}
@@ -294,6 +352,7 @@ export function InquiryForm({ source, texts, countries, businessEmail, product, 
         <label htmlFor={id('website')}>{texts.honeypotLabel}</label>
         <input id={id('website')} name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
       </div>
+      {turnstileSiteKey && captchaOn ? <div className="lp-full lp-captcha" ref={captchaBox} /> : null}
       {alert ? (
         <div className="lp-form-alert" role="alert">
           {alert}

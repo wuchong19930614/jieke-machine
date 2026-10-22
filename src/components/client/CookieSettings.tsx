@@ -57,7 +57,7 @@ export function CookieSettings({ texts, closeLabel, locate = {} }: Props) {
           <h3 {...L('analyticsTitle')}>{texts.analyticsTitle}</h3>
           <label className="lp-switch">
             <input type="checkbox" role="switch" checked={analytics} aria-label={texts.analyticsToggle} onChange={(e) => setAnalytics(e.target.checked)} />
-            {analytics ? texts.on : texts.off}
+            <span {...L(analytics ? 'on' : 'off')}>{analytics ? texts.on : texts.off}</span>
           </label>
         </header>
         <p {...L('analyticsText')}>{texts.analyticsText}</p>

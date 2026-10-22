@@ -4,7 +4,7 @@ import { RefreshRouteOnSave } from '@payloadcms/live-preview-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { adminUrl, type DocKey, isLocateMessage, LOCATE_SOURCE } from '@/lib/locate'
+import { adminUrl, type DocKey, isLocateMessage, LOCATE_SOURCE, NEW_DOC_REF } from '@/lib/locate'
 
 const allowed = (value: unknown): boolean => {
   if (value === true) return true
@@ -16,6 +16,13 @@ const allowed = (value: unknown): boolean => {
 // 集合级权限会显示为“可编辑”，只看集合级会让他们跳到范围外的记录
 async function fetchCanEdit(doc: DocKey): Promise<boolean> {
   const [kind, ref] = doc.split(':')
+  // 还没有记录的内容：看能否在这个集合里新建
+  if (ref === NEW_DOC_REF) {
+    const access = (await fetch('/api/cms/access', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null)) as { collections?: Record<string, { create?: unknown }> } | null
+    return allowed(access?.collections?.[kind]?.create)
+  }
   const url = kind === 'global' ? `/api/cms/globals/${ref}/access` : `/api/cms/${kind}/access/${encodeURIComponent(ref)}`
   const result = (await fetch(url, { method: 'POST', credentials: 'include' })
     .then((r) => (r.ok ? r.json() : null))

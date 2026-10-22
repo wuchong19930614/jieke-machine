@@ -4,6 +4,7 @@ import type { CollectionConfig } from 'payload'
 
 import { adminFieldOnly, getStaff, hasRole, isAdmin } from '@/access'
 import { ROLES } from '@/lib/constants'
+import { restoreSessionStrategy } from '@/lib/server/pluginSession'
 
 const MIN_PASSWORD = 12
 
@@ -32,6 +33,8 @@ export const Users: CollectionConfig = {
     admin: ({ req }) => Boolean(getStaff(req)),
   },
   hooks: {
+    // 导入导出插件重新查当前用户时补回会话的双重验证标记（见 lib/server/pluginSession.ts）
+    afterRead: [restoreSessionStrategy],
     beforeChange: [
       // 系统里还没有用户时，第一个账号自动设为管理员（创建首个用户时还没人能分配角色）
       async ({ data, operation, req }) => {

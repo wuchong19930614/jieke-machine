@@ -5,13 +5,13 @@ import { Suspense } from 'react'
 import { ContactForm } from '@/components/client/ContactForm'
 import { InquiryForm } from '@/components/client/InquiryForm'
 import { Img } from '@/components/Img'
-import { Breadcrumbs, PageBanner, Section } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
 import { withDefaults } from '@/content/defineTexts'
-import { CONTACT_PAGE_TEXTS } from '@/content/texts'
+import { CONTACT_PAGE_TEXTS, FORM_TEXTS } from '@/content/texts'
 import { getCountries } from '@/lib/countries'
 import { getContactPage, getProducts, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
-import { getLocator } from '@/lib/locator'
+import { getLocator, locateGroup } from '@/lib/locator'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import { whatsappLink } from '@/lib/whatsapp'
@@ -38,12 +38,18 @@ export default async function ContactPageView() {
   ])
   const t = withDefaults(CONTACT_PAGE_TEXTS, page)
   const samePhone = settings.phone && settings.whatsapp && settings.phone.replace(/\D/g, '') === settings.whatsapp.replace(/\D/g, '')
-  const formProps = { texts: settings.form, countries: getCountries(), businessEmail: settings.email }
+  const formProps = {
+    texts: settings.form,
+    countries: getCountries(),
+    businessEmail: settings.email,
+    turnstileSiteKey: settings.turnstileSiteKey,
+    locate: locateGroup(L, S, 'formTexts', FORM_TEXTS),
+  }
 
   return (
     <>
       <PageBanner
-        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[{ href: '/', text: ui.common.home }, { text: settings.nav.contact }]} />}
+        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/contact/', settings.nav.contact, 'contact', L)]} />}
         title={{ text: t.title, attrs: L(G, 'title') }}
       />
       <Section>

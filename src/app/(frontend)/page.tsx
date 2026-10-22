@@ -29,12 +29,14 @@ import * as T from '@/content/texts'
 import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS } from '@/lib/constants'
 import { getHomePage, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
-import { getLocator, type Locator } from '@/lib/locator'
+import { getLocator, locateGroup, type Locator } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import type { Case, HomePage, Product } from '@/payload-types'
 
 const H = globalDoc('home-page')
+const S = globalDoc('site-settings')
+const U = globalDoc('ui-texts')
 
 const ICONS: Record<string, React.ComponentType<{ size?: number; 'aria-hidden'?: boolean }>> = {
   factory: Factory,
@@ -132,6 +134,7 @@ export default async function HomePageView() {
           <BannerCarousel
             key={module}
             texts={ui.banner}
+            locate={locateGroup(L, U, 'banner', T.UI_BANNER)}
             slides={slides.map(({ slide, index }, position) => (
               <BannerSlide key={index} slide={slide} index={index} first={position === 0} ui={ui} L={L} draft={draft} />
             ))}
@@ -165,7 +168,7 @@ export default async function HomePageView() {
           <div key={module} className={`lp-store-company ${background === 'default' ? 'lp-bg-blue' : `lp-bg-${background}`}`}>
             <div className="lp-store-brandline">
               {stats.supplierLabel ? <span {...L(H, 'companyStats.supplierLabel')}>{stats.supplierLabel}</span> : null}
-              {settings.companyName ? <strong>{settings.companyName}</strong> : null}
+              {settings.companyName ? <strong {...L(S, 'companyName')}>{settings.companyName}</strong> : null}
             </div>
             {list.length ? (
               <ul className="lp-store-stats">
@@ -243,7 +246,15 @@ export default async function HomePageView() {
               <SectionTitle title={{ text: lines.title, attrs: L(H, 'productLines.title') }} />
             ) : null}
             {products.map((product, index) => (
-              <ProductLineCard key={product.id} product={product} index={index} buttonText={lines.buttonText} L={L} ratio={defaultRatio(theme, 'equipment')} />
+              <ProductLineCard
+                key={product.id}
+                product={product}
+                index={index}
+                buttonText={lines.buttonText}
+                buttonAttrs={L(H, 'productLines.buttonText')}
+                L={L}
+                ratio={defaultRatio(theme, 'equipment')}
+              />
             ))}
           </Section>
         )
@@ -261,7 +272,17 @@ export default async function HomePageView() {
             />
             <div className="lp-grid3">
               {list.map((item) => (
-                <CaseCard key={item.id} item={item} L={L} buttonText={cases.cardButton} ratio={defaultRatio(theme, 'videoCover')} variant="featured" videoTexts={videoTexts} draft={draft} />
+                <CaseCard
+                  key={item.id}
+                  item={item}
+                  L={L}
+                  buttonText={cases.cardButton}
+                  buttonAttrs={L(H, 'featuredCases.cardButton')}
+                  ratio={defaultRatio(theme, 'videoCover')}
+                  variant="featured"
+                  videoTexts={videoTexts}
+                  draft={draft}
+                />
               ))}
             </div>
             {cases.allButton ? (

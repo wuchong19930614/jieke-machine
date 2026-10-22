@@ -5,7 +5,7 @@ import React from 'react'
 
 import { Img, mediaOf } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
-import { Breadcrumbs, orderedSections, PageBanner, Section, SectionTitle } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, orderedSections, PageBanner, Section, SectionTitle } from '@/components/Section'
 import { withDefaults } from '@/content/defineTexts'
 import * as T from '@/content/texts'
 import { ABOUT_SECTION_DEFAULT_BACKGROUND, ABOUT_SECTIONS } from '@/lib/constants'
@@ -111,7 +111,7 @@ export default async function AboutPageView() {
   return (
     <>
       <PageBanner
-        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[{ href: '/', text: ui.common.home }, { text: settings.nav.about }]} />}
+        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/about/', settings.nav.about, 'about', L)]} />}
         title={{ text: banner.title, attrs: L(A, 'banner.title') }}
         subtitle={{ text: banner.subtitle, attrs: L(A, 'banner.subtitle') }}
       />

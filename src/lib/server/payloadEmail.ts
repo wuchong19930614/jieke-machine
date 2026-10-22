@@ -29,7 +29,9 @@ export const resendEmailAdapter: EmailAdapter = () => ({
     const subject = message.subject ?? ''
     const results = await Promise.all(addressesOf(message.to).map((to) => sendMail({ to, subject, text, html: html || text })))
     const failed = results.find((result) => !result.ok)
-    if (failed && !failed.ok) throw new Error(`邮件发送失败：${failed.error}`)
+    // 本地开发没配置发信时，邮件内容（如重置密码链接）已打印到控制台，不当作失败；线上没配置要报错
+    const localOnly = failed && !failed.ok && failed.notConfigured && process.env.NODE_ENV !== 'production'
+    if (failed && !failed.ok && !localOnly) throw new Error(`邮件发送失败：${failed.error}`)
     return results
   },
 })

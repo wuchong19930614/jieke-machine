@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { ProductLineCard } from '@/components/ProductLineCard'
-import { Breadcrumbs, PageBanner, Section } from '@/components/Section'
+import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
 import { withDefaults } from '@/content/defineTexts'
 import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
 import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
@@ -13,6 +13,7 @@ import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 
 const G = globalDoc('products-page')
+const U = globalDoc('ui-texts')
 
 export async function generateMetadata(): Promise<Metadata> {
   const draft = await isDraft()
@@ -35,7 +36,7 @@ export default async function ProductsListPage() {
   return (
     <>
       <PageBanner
-        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[{ href: '/', text: ui.common.home }, { text: settings.nav.products }]} />}
+        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/products/', settings.nav.products, 'products', L)]} />}
         title={{ text: texts.title, attrs: L(G, 'title') }}
         subtitle={{ text: texts.subtitle, attrs: L(G, 'subtitle') }}
       >
@@ -48,14 +49,22 @@ export default async function ProductsListPage() {
       {products.length ? (
         <Section background="blue" className="lp-store-lines">
           {products.map((product, index) => (
-            <ProductLineCard key={product.id} product={product} index={index} buttonText={ui.productList.viewDetails} L={L} ratio={defaultRatio(theme, 'equipment')} />
+            <ProductLineCard
+              key={product.id}
+              product={product}
+              index={index}
+              buttonText={ui.productList.viewDetails}
+              buttonAttrs={L(U, 'productList.viewDetails')}
+              L={L}
+              ratio={defaultRatio(theme, 'equipment')}
+            />
           ))}
         </Section>
       ) : (
         <Section>
           <div className="lp-empty">
-            <p>{ui.productList.emptyText}</p>
-            <Link href="/contact/" className="lp-action">
+            <p {...L(U, 'productList.emptyText')}>{ui.productList.emptyText}</p>
+            <Link href="/contact/" className="lp-action" {...L(U, 'productList.emptyButton')}>
               {ui.productList.emptyButton}
             </Link>
           </div>

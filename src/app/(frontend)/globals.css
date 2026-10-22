@@ -956,6 +956,10 @@ p {
   color: #c62828;
   font-size: 0.93em;
 }
+/* Turnstile 验证组件的占位高度，加载时表单不跳动 */
+.lp-captcha {
+  min-height: 65px;
+}
 .lp-form-alert {
   grid-column: 1 / -1;
   padding: 10px 12px;

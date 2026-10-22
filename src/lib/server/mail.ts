@@ -8,7 +8,7 @@ export type MailMessage = {
   fromName?: string
 }
 
-export type MailResult = { ok: true; id?: string; skipped?: boolean } | { ok: false; error: string }
+export type MailResult = { ok: true; id?: string } | { ok: false; error: string; notConfigured?: boolean }
 
 const TIMEOUT_MS = 5000
 
@@ -19,7 +19,8 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
     // 正文可能含客户资料或密码重置链接，生产环境只记收件人和主题
     const body = process.env.NODE_ENV === 'production' ? '' : `\n${message.text}`
     console.info(`[邮件未发送：未配置 RESEND_API_KEY / MAIL_FROM] 收件人 ${message.to}，主题：${message.subject}${body}`)
-    return { ok: true, skipped: true }
+    // 按失败处理：询盘里显示“失败”和原因，配置好后由定时任务或“重新发送”补发，不能记成已发送
+    return { ok: false, error: '没有配置发信服务（RESEND_API_KEY / MAIL_FROM），邮件没有发出', notConfigured: true }
   }
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)

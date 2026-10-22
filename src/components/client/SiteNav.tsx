@@ -8,7 +8,15 @@ import type { LocateAttrs } from '@/lib/locator'
 
 type Item = { href: string; label: string; locate?: LocateAttrs }
 
-export function SiteNav({ items, texts }: { items: Item[]; texts: { menu: string; menuOpen: string; menuClose: string; mainNav: string } }) {
+export function SiteNav({
+  items,
+  texts,
+  menuLocate,
+}: {
+  items: Item[]
+  texts: { menu: string; menuOpen: string; menuClose: string; mainNav: string }
+  menuLocate?: LocateAttrs
+}) {
   const pathname = usePathname() || '/'
   const [open, setOpen] = useState(false)
   // 切换页面后收起手机菜单
@@ -29,6 +37,7 @@ export function SiteNav({ items, texts }: { items: Item[]; texts: { menu: string
         aria-controls="lp-main-nav"
         aria-label={open ? texts.menuClose : texts.menuOpen}
         onClick={() => setOpen((v) => !v)}
+        {...menuLocate}
       >
         {texts.menu}
       </button>

@@ -10,7 +10,9 @@ import { normalizePath } from '@/hooks/slugRedirect'
 import { COUNTRY_CODES, getCountries } from '@/lib/countries'
 import { labelForPath, walkFields } from '@/lib/fieldWalk'
 import { buildAutoReply } from '@/lib/server/inquiryMail'
+import { sendMail } from '@/lib/server/mail'
 import { uniqueConflictField } from '@/lib/server/inquiryRef'
+import { activeStepIndex } from '@/components/client/ProcessSteps'
 import { Inquiries } from '@/collections/Inquiries'
 import { Users } from '@/collections/Users'
 import { countLinks, validateInquiry } from '@/lib/inquirySchema'
@@ -317,5 +319,32 @@ describe('隐藏勾选（技术方案 5.2）', () => {
       seen[leaf.path] = leaf.hidden
     })
     expect(seen).toMatchObject({ title: true, note: false })
+  })
+})
+
+describe('发信未配置', () => {
+  it('没有配置发信服务时按失败返回，询盘不会记成已发送', async () => {
+    vi.stubEnv('RESEND_API_KEY', '')
+    vi.stubEnv('MAIL_FROM', '')
+    const log = vi.spyOn(console, 'info').mockImplementation(() => undefined)
+    const result = await sendMail({ to: 'a@example.com', subject: 'S', text: 'T', html: '<p>T</p>' })
+    expect(result).toMatchObject({ ok: false, notConfigured: true })
+    expect(log).toHaveBeenCalledOnce()
+    log.mockRestore()
+    vi.unstubAllEnvs()
+  })
+})
+
+describe('工艺步骤选中', () => {
+  const steps = [{ key: 'a' }, { key: 'b' }, { key: 'c' }]
+
+  it('按条目编号找选中的步骤，调整顺序后仍是同一步', () => {
+    expect(activeStepIndex(steps, 'c')).toBe(2)
+    expect(activeStepIndex([{ key: 'c' }, { key: 'a' }, { key: 'b' }], 'c')).toBe(0)
+  })
+
+  it('还没选过，或选中的步骤已被删除、隐藏时回到第一步', () => {
+    expect(activeStepIndex(steps, null)).toBe(0)
+    expect(activeStepIndex(steps, 'gone')).toBe(0)
   })
 })

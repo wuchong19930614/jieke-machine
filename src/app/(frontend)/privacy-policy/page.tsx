@@ -1,10 +1,9 @@
 // 隐私政策（正文按 docs/隐私政策与Cookie说明模板（含巴西LGPD）.md 在后台录入）
 import type { Metadata } from 'next'
 
-import { AuxBody, auxTitle } from '@/components/AuxPage'
-import { Breadcrumbs, PageBanner, Section } from '@/components/Section'
+import { auxAttrs, AuxBody, auxTitle } from '@/components/AuxPage'
+import { Breadcrumbs, crumbHome, PageBanner, Section } from '@/components/Section'
 import { getAuxPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
-import { collectionDoc } from '@/lib/locate'
 import { getLocator } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 
@@ -23,8 +22,8 @@ export default async function PrivacyPolicyPage() {
   return (
     <>
       <PageBanner
-        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[{ href: '/', text: ui.common.home }, { text: title }]} />}
-        title={{ text: title, attrs: page ? L(collectionDoc('pages', page.id), 'title') : {} }}
+        breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), { text: title, attrs: auxAttrs(SLUG, page, L, 'title') }]} />}
+        title={{ text: title, attrs: auxAttrs(SLUG, page, L, 'title') }}
       />
       <Section>
         <div className="lp-article">

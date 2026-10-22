@@ -9,6 +9,9 @@ type UiContextValue = {
   open: (overlay: Exclude<Overlay, null>, trigger?: HTMLElement | null) => void
   close: () => void
   toast: (message: string) => void
+  // 当前所在的产品详情页的产品名，WhatsApp 预填消息用（技术方案 4.5）；其他页面为空
+  productName: string | null
+  setProductName: (name: string | null) => void
 }
 
 const UiContext = createContext<UiContextValue | null>(null)
@@ -23,6 +26,7 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
   const [overlay, setOverlay] = useState<Overlay>(null)
   const [trigger, setTrigger] = useState<HTMLElement | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [productName, setProductName] = useState<string | null>(null)
 
   const open = useCallback((next: Exclude<Overlay, null>, from?: HTMLElement | null) => {
     setTrigger(from ?? (document.activeElement as HTMLElement | null))
@@ -56,7 +60,7 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const value = useMemo(() => ({ overlay, open, close, toast }), [overlay, open, close, toast])
+  const value = useMemo(() => ({ overlay, open, close, toast, productName, setProductName }), [overlay, open, close, toast, productName])
 
   return (
     <UiContext.Provider value={value}>

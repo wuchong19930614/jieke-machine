@@ -14,12 +14,15 @@ import { useUi } from './UiProvider'
 
 type Common = TextsOf<typeof UI_COMMON>
 
-function CopyButton({ value, texts }: { value: string; texts: Common }) {
+type CommonLocate = Partial<Record<keyof Common, LocateAttrs>>
+
+function CopyButton({ value, texts, locate }: { value: string; texts: Common; locate: CommonLocate }) {
   const [copied, setCopied] = useState(false)
   return (
     <button
       type="button"
       className="lp-outline"
+      {...(copied ? locate.copied : locate.copy)}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value)
@@ -35,29 +38,60 @@ function CopyButton({ value, texts }: { value: string; texts: Common }) {
   )
 }
 
-export function InfoDialogs({ email, phone, texts }: { email: string; phone: string; texts: Common }) {
-  const { overlay, close } = useUi()
+type InfoProps = {
+  email: string
+  phone: string
+  texts: Common
+  // 预览里的定位标注：弹层文字在界面文案，邮箱和电话在全站设置
+  locate?: CommonLocate
+  valueLocate?: { email?: LocateAttrs; phone?: LocateAttrs }
+}
+
+export function InfoDialogs({ email, phone, texts, locate = {}, valueLocate = {} }: InfoProps) {
+  const { overlay, close, open } = useUi()
   const telHref = `tel:${phone.replace(/[^\d+]/g, '')}`
   return (
     <>
-      <Dialog open={overlay === 'email'} onClose={close} className="lp-tool-dialog lp-info-dialog" labelledBy="lp-email-title" closeLabel={texts.close}>
-        <h2 id="lp-email-title">{texts.emailTitle}</h2>
-        <p className="lp-info-value">{email}</p>
+      <Dialog
+        open={overlay === 'email'}
+        onClose={close}
+        onReveal={() => open('email')}
+        className="lp-tool-dialog lp-info-dialog"
+        labelledBy="lp-email-title"
+        closeLabel={texts.close}
+      >
+        <h2 id="lp-email-title" {...locate.emailTitle}>
+          {texts.emailTitle}
+        </h2>
+        <p className="lp-info-value" {...valueLocate.email}>
+          {email}
+        </p>
         <div className="lp-actions">
-          <a className="lp-action" href={`mailto:${email}`} onClick={() => track('click_email', { location: 'floating' })}>
+          <a className="lp-action" href={`mailto:${email}`} onClick={() => track('click_email', { location: 'floating' })} {...locate.sendEmail}>
             {texts.sendEmail}
           </a>
-          <CopyButton value={email} texts={texts} />
+          <CopyButton value={email} texts={texts} locate={locate} />
         </div>
       </Dialog>
-      <Dialog open={overlay === 'phone'} onClose={close} className="lp-tool-dialog lp-info-dialog" labelledBy="lp-phone-title" closeLabel={texts.close}>
-        <h2 id="lp-phone-title">{texts.phoneTitle}</h2>
-        <p className="lp-info-value">{phone}</p>
+      <Dialog
+        open={overlay === 'phone'}
+        onClose={close}
+        onReveal={() => open('phone')}
+        className="lp-tool-dialog lp-info-dialog"
+        labelledBy="lp-phone-title"
+        closeLabel={texts.close}
+      >
+        <h2 id="lp-phone-title" {...locate.phoneTitle}>
+          {texts.phoneTitle}
+        </h2>
+        <p className="lp-info-value" {...valueLocate.phone}>
+          {phone}
+        </p>
         <div className="lp-actions">
-          <a className="lp-action" href={telHref} onClick={() => track('click_phone', { location: 'floating' })}>
+          <a className="lp-action" href={telHref} onClick={() => track('click_phone', { location: 'floating' })} {...locate.callNow}>
             {texts.callNow}
           </a>
-          <CopyButton value={phone} texts={texts} />
+          <CopyButton value={phone} texts={texts} locate={locate} />
         </div>
       </Dialog>
     </>
@@ -66,14 +100,16 @@ export function InfoDialogs({ email, phone, texts }: { email: string; phone: str
 
 type ContactDialogProps = {
   title: string
+  titleLocate?: LocateAttrs
   closeLabel: string
   form: TextsOf<typeof FORM_TEXTS>
   countries: Country[]
   businessEmail: string
   locate?: Partial<Record<keyof typeof FORM_TEXTS, LocateAttrs>>
+  turnstileSiteKey?: string
 }
 
-export function ContactDialog({ title, closeLabel, form, countries, businessEmail, locate }: ContactDialogProps) {
+export function ContactDialog({ title, titleLocate, closeLabel, form, countries, businessEmail, locate, turnstileSiteKey }: ContactDialogProps) {
   const { overlay, close, open } = useUi()
   return (
     <Dialog
@@ -84,8 +120,10 @@ export function ContactDialog({ title, closeLabel, form, countries, businessEmai
       labelledBy="lp-contact-dialog-title"
       closeLabel={closeLabel}
     >
-      <h2 id="lp-contact-dialog-title">{title}</h2>
-      <InquiryForm source="popup" variant="popup" texts={form} countries={countries} businessEmail={businessEmail} locate={locate} />
+      <h2 id="lp-contact-dialog-title" {...titleLocate}>
+        {title}
+      </h2>
+      <InquiryForm source="popup" variant="popup" texts={form} countries={countries} businessEmail={businessEmail} locate={locate} turnstileSiteKey={turnstileSiteKey} />
     </Dialog>
   )
 }

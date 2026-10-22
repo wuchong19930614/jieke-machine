@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { countryName } from '@/lib/countries'
 import { collectionDoc } from '@/lib/locate'
-import type { Locator } from '@/lib/locator'
+import type { LocateAttrs, Locator } from '@/lib/locator'
 import { youtubeId } from '@/lib/youtube'
 import type { Case, Product } from '@/payload-types'
 
@@ -14,6 +14,8 @@ type Props = {
   item: Case
   L: Locator
   buttonText: string
+  // 按钮文字所在字段的定位标注（各页面来源不同，由调用处传入）
+  buttonAttrs?: LocateAttrs
   ratio: string
   variant: 'featured' | 'list' | 'related'
   labels?: { country: string; equipment: string }
@@ -21,7 +23,7 @@ type Props = {
   draft: boolean
 }
 
-export function CaseCard({ item, L, buttonText, ratio, variant, labels, videoTexts, draft }: Props) {
+export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, labels, videoTexts, draft }: Props) {
   const doc = collectionDoc('cases', item.id)
   const href = `/case-studies/${item.slug}/`
   const video = variant === 'featured' ? youtubeId(item.videoUrl) : null
@@ -78,7 +80,7 @@ export function CaseCard({ item, L, buttonText, ratio, variant, labels, videoTex
           </div>
         ) : null}
         {buttonText ? (
-          <Link href={href} className="lp-link">
+          <Link href={href} className="lp-link" {...buttonAttrs}>
             {buttonText}
           </Link>
         ) : null}
