@@ -1,0 +1,62 @@
+{
+  "name": "jieke-machine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "捷科公司的海外独立站官网（Next.js + Payload CMS）",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "build:vercel": "npm run payload migrate && npm run build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed.ts",
+    "decrypt-backup": "tsx scripts/decrypt-backup.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@libsql/client": "0.14.0",
+    "@payloadcms/db-sqlite": "3.91.0",
+    "@payloadcms/live-preview-react": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/plugin-import-export": "3.91.0",
+    "@payloadcms/plugin-redirects": "3.91.0",
+    "@payloadcms/richtext-lexical": "3.91.0",
+    "@payloadcms/storage-vercel-blob": "3.91.0",
+    "@payloadcms/translations": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
+    "@vercel/blob": "2.8.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "16.4.7",
+    "graphql": "^16.8.1",
+    "lucide-react": "1.61.0",
+    "next": "16.4.2",
+    "payload": "3.91.0",
+    "payload-totp": "3.0.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sharp": "0.35.4",
+    "web-vitals": "6.2.3",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "16.4.2",
+    "tsx": "4.23.15",
+    "typescript": "5.7.3",
+    "vite-tsconfig-paths": "6.0.5",
+    "vitest": "4.0.18"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

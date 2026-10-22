@@ -1,0 +1,285 @@
+// 首页（技术方案 3.3、4.3）
+import {
+  Award,
+  ClipboardList,
+  Factory,
+  Globe,
+  Headset,
+  Package,
+  Settings as Gear,
+  ShieldCheck,
+  Truck,
+  Users,
+  Wrench,
+  Zap,
+} from 'lucide-react'
+import type { Metadata } from 'next'
+import { getImageProps } from 'next/image'
+import Link from 'next/link'
+import React from 'react'
+
+import { CaseCard } from '@/components/CaseCard'
+import { BannerCarousel } from '@/components/client/BannerCarousel'
+import { imageSrc, Img, mediaOf } from '@/components/Img'
+import { ProductLineCard } from '@/components/ProductLineCard'
+import { hasRichText, RichText } from '@/components/RichText'
+import { orderedSections, Section, SectionTitle } from '@/components/Section'
+import { fill, withDefaults } from '@/content/defineTexts'
+import * as T from '@/content/texts'
+import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS } from '@/lib/constants'
+import { getHomePage, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
+import { globalDoc } from '@/lib/locate'
+import { getLocator, type Locator } from '@/lib/locator'
+import { buildMetadata } from '@/lib/seo'
+import { defaultRatio } from '@/lib/theme'
+import type { Case, HomePage, Product } from '@/payload-types'
+
+const H = globalDoc('home-page')
+
+const ICONS: Record<string, React.ComponentType<{ size?: number; 'aria-hidden'?: boolean }>> = {
+  factory: Factory,
+  settings: Gear,
+  'clipboard-list': ClipboardList,
+  wrench: Wrench,
+  package: Package,
+  headset: Headset,
+  truck: Truck,
+  globe: Globe,
+  'shield-check': ShieldCheck,
+  award: Award,
+  users: Users,
+  zap: Zap,
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = await isDraft()
+  const [settings, home] = await Promise.all([getSettings(draft), getHomePage(draft)])
+  return buildMetadata({ settings, path: '/', pageName: settings.companyName || 'Home', seo: home.seo, isHome: true })
+}
+
+// index 是后台列表里的序号（用于定位字段）；first 表示显示出来的第一张：它的标题用 h1，图片优先加载
+function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable<NonNullable<HomePage['banners']>['slides']>[number]; index: number; first: boolean; ui: Awaited<ReturnType<typeof getUiTexts>>; L: Locator; draft: boolean }) {
+  const desktop = mediaOf(slide.desktopImage)
+  const mobile = mediaOf(slide.mobileImage) ?? desktop
+  const product = isVisibleDoc<Product>(slide.product, draft) ? slide.product : null
+  const path = `banners.slides.${index}`
+  // 勾选了“隐藏”的不显示；没填时用界面文案里的默认值
+  const kicker = slide.kickerHidden ? '' : slide.kicker || ui.banner.kickerDefault
+  const quoteText = slide.quoteButtonTextHidden ? '' : slide.quoteButtonText || ui.banner.quoteButton
+  const productText = product && !slide.productButtonTextHidden ? slide.productButtonText || ui.banner.productButton : ''
+  const common = { alt: desktop?.alt ?? '', fill: true, priority: first, loading: first ? undefined : ('lazy' as const) }
+  // 桌面和手机分别使用各自的图片（技术方案 4.3 第 4 条）
+  const desk = desktop?.url ? getImageProps({ ...common, src: imageSrc(desktop.url), sizes: '100vw', quality: 80 }).props : null
+  const mob = mobile?.url ? getImageProps({ ...common, src: imageSrc(mobile.url), sizes: '100vw', quality: 75 }).props : null
+  return (
+    <>
+      {desk ? (
+        <div className="lp-banner-slide" {...L(H, `${path}.desktopImage`)}>
+          <picture>
+            {mob ? <source media="(max-width: 767px)" srcSet={mob.srcSet} /> : null}
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <img {...desk} style={{ ...desk.style, objectFit: 'cover', objectPosition: `${desktop?.focalX ?? 50}% ${desktop?.focalY ?? 50}%` }} />
+          </picture>
+        </div>
+      ) : null}
+      <div className="lp-banner-copy">
+        {kicker ? (
+          <div className="lp-kicker" {...L(H, `${path}.kicker`)}>
+            {kicker}
+          </div>
+        ) : null}
+        {first ? <h1 {...L(H, `${path}.title`)}>{slide.title}</h1> : <h2 className="lp-h1" {...L(H, `${path}.title`)}>{slide.title}</h2>}
+        {slide.subtitle ? <p {...L(H, `${path}.subtitle`)}>{slide.subtitle}</p> : null}
+        {quoteText || productText ? (
+          <div className="lp-actions">
+            {quoteText ? (
+              <Link href={product ? `/contact/?product=${encodeURIComponent(product.slug)}` : '/contact/'} className="lp-action" {...L(H, `${path}.quoteButtonText`)}>
+                {quoteText}
+              </Link>
+            ) : null}
+            {product && productText ? (
+              <Link href={`/products/${product.slug}/`} className="lp-outline" {...L(H, `${path}.productButtonText`)}>
+                {productText}
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    </>
+  )
+}
+
+export default async function HomePageView() {
+  const draft = await isDraft()
+  const [home, settings, ui, theme, L] = await Promise.all([getHomePage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
+
+  const services = withDefaults(T.HOME_SERVICES_TEXTS, home.services)
+  const stats = withDefaults(T.HOME_STATS_TEXTS, home.companyStats)
+  const about = withDefaults(T.HOME_ABOUT_TEXTS, home.aboutIntro)
+  const factory = withDefaults(T.HOME_FACTORY_TEXTS, home.factoryGallery)
+  const lines = withDefaults(T.HOME_LINES_TEXTS, home.productLines)
+  const cases = withDefaults(T.HOME_CASES_TEXTS, home.featuredCases)
+  const videoTexts = { playAria: ui.common.playVideo, videoError: ui.common.videoError, watchOnYouTube: ui.common.watchOnYouTube, contactUs: ui.common.contactUs, opensNewTab: ui.common.opensNewTab }
+
+  const render = (module: (typeof HOME_SECTIONS)[number]['value'], background: string) => {
+    switch (module) {
+      case 'banners': {
+        const slides = (home.banners?.slides ?? [])
+          .map((slide, index) => ({ slide, index }))
+          .filter(({ slide }) => slide.enabled !== false && slide.title)
+        if (!slides.length) return null
+        return (
+          <BannerCarousel
+            key={module}
+            texts={ui.banner}
+            slides={slides.map(({ slide, index }, position) => (
+              <BannerSlide key={index} slide={slide} index={index} first={position === 0} ui={ui} L={L} draft={draft} />
+            ))}
+          />
+        )
+      }
+      case 'services': {
+        const items = (home.services?.items ?? []).map((item, index) => ({ item, index })).filter(({ item }) => item.name)
+        if (!items.length) return null
+        return (
+          <Section key={module} background={background}>
+            <SectionTitle title={{ text: services.title, attrs: L(H, 'services.title') }} subtitle={{ text: services.subtitle, attrs: L(H, 'services.subtitle') }} />
+            <ul className="lp-store-service-grid">
+              {items.map(({ item, index }) => {
+                const Icon = ICONS[item.icon ?? 'factory'] ?? Factory
+                return (
+                  <li key={index} {...L(H, `services.items.${index}.name`)}>
+                    <Icon aria-hidden />
+                    <span>{item.name}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </Section>
+        )
+      }
+      case 'companyStats': {
+        const list = (home.companyStats?.stats ?? []).map((s, index) => ({ s, index })).filter(({ s }) => s.value && s.label)
+        if (!list.length && !settings.companyName) return null
+        return (
+          <div key={module} className={`lp-store-company ${background === 'default' ? 'lp-bg-blue' : `lp-bg-${background}`}`}>
+            <div className="lp-store-brandline">
+              {stats.supplierLabel ? <span {...L(H, 'companyStats.supplierLabel')}>{stats.supplierLabel}</span> : null}
+              {settings.companyName ? <strong>{settings.companyName}</strong> : null}
+            </div>
+            {list.length ? (
+              <ul className="lp-store-stats">
+                {list.map(({ s, index }) => (
+                  <li key={index} {...L(H, `companyStats.stats.${index}.value`)}>
+                    <strong>{s.value}</strong>
+                    <span>{s.label}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        )
+      }
+      case 'aboutIntro': {
+        const tags = (home.aboutIntro?.tags ?? []).map((t, index) => ({ t, index })).filter(({ t }) => t.label)
+        const companyTitle = fill(about.companyTitle, { companyName: settings.companyName })
+        // 正文、公司名标题、标签都没有时整个模块不显示（小标题、标题和按钮只是模块外壳）
+        if (!companyTitle && !hasRichText(home.aboutIntro?.body) && !tags.length) return null
+        return (
+          <Section key={module} background={background} className="lp-store-about">
+            <aside>
+              {about.kicker ? (
+                <div className="lp-kicker" {...L(H, 'aboutIntro.kicker')}>
+                  {about.kicker}
+                </div>
+              ) : null}
+              {about.title ? <h2 {...L(H, 'aboutIntro.title')}>{about.title}</h2> : null}
+              {tags.length ? (
+                <ul>
+                  {tags.map(({ t, index }) => (
+                    <li key={index} {...L(H, `aboutIntro.tags.${index}.label`)}>
+                      {t.label}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </aside>
+            <div className="lp-store-about-copy">
+              {companyTitle ? <h3 {...L(H, 'aboutIntro.companyTitle')}>{companyTitle}</h3> : null}
+              <RichText data={home.aboutIntro?.body} attrs={L(H, 'aboutIntro.body')} />
+              {about.buttonText ? (
+                <Link href="/about/" className="lp-store-blue-button" {...L(H, 'aboutIntro.buttonText')}>
+                  {about.buttonText}
+                </Link>
+              ) : null}
+            </div>
+          </Section>
+        )
+      }
+      case 'factoryGallery': {
+        const images = (home.factoryGallery?.images ?? []).map(mediaOf).filter(Boolean)
+        if (!images.length) return null
+        return (
+          <Section key={module} background={background}>
+            <SectionTitle
+              kicker={{ text: factory.kicker, attrs: L(H, 'factoryGallery.kicker') }}
+              title={{ text: factory.title, attrs: L(H, 'factoryGallery.title') }}
+              subtitle={{ text: factory.subtitle, attrs: L(H, 'factoryGallery.subtitle') }}
+            />
+            <div className="lp-store-factory-grid" {...L(H, 'factoryGallery.images')}>
+              {images.map((m, i) => (
+                <Img key={m!.id ?? i} media={m} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 400px" />
+              ))}
+            </div>
+          </Section>
+        )
+      }
+      case 'productLines': {
+        const products = (home.productLines?.products ?? []).filter((p): p is Product => isVisibleDoc<Product>(p, draft))
+        if (!products.length) return null
+        return (
+          <Section key={module} background={background} className="lp-store-lines">
+            {lines.title ? (
+              <SectionTitle title={{ text: lines.title, attrs: L(H, 'productLines.title') }} />
+            ) : null}
+            {products.map((product, index) => (
+              <ProductLineCard key={product.id} product={product} index={index} buttonText={lines.buttonText} L={L} ratio={defaultRatio(theme, 'equipment')} />
+            ))}
+          </Section>
+        )
+      }
+      case 'featuredCases': {
+        // 案例被撤下后自动从首页精选中消失，不留空卡片（技术方案 3.5）
+        const list = (home.featuredCases?.cases ?? []).filter((c): c is Case => isVisibleDoc<Case>(c, draft)).slice(0, 3)
+        if (!list.length) return null
+        return (
+          <Section key={module} background={background}>
+            <SectionTitle
+              kicker={{ text: cases.kicker, attrs: L(H, 'featuredCases.kicker') }}
+              title={{ text: cases.title, attrs: L(H, 'featuredCases.title') }}
+              subtitle={{ text: cases.subtitle, attrs: L(H, 'featuredCases.subtitle') }}
+            />
+            <div className="lp-grid3">
+              {list.map((item) => (
+                <CaseCard key={item.id} item={item} L={L} buttonText={cases.cardButton} ratio={defaultRatio(theme, 'videoCover')} variant="featured" videoTexts={videoTexts} draft={draft} />
+              ))}
+            </div>
+            {cases.allButton ? (
+              <div style={{ textAlign: 'center', marginTop: 26 }}>
+                <Link href="/case-studies/" className="lp-outline" {...L(H, 'featuredCases.allButton')}>
+                  {cases.allButton}
+                </Link>
+              </div>
+            ) : null}
+          </Section>
+        )
+      }
+      default:
+        return null
+    }
+  }
+
+  const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND)
+  const content = sections.map(({ module, background }) => render(module, background)).filter(Boolean)
+  return content.length ? <>{content}</> : <h1 className="sr-only">{settings.companyName || 'Home'}</h1>
+}

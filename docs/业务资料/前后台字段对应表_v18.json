@@ -1,0 +1,3318 @@
+{
+  "fields": [
+    {
+      "id": "f2-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "FOOD PROCESSING MACHINERY",
+      "block": "lp-top"
+    },
+    {
+      "id": "f3-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Email: __________　 WhatsApp: __________　 EN",
+      "block": "lp-top"
+    },
+    {
+      "id": "f5",
+      "scope": "global",
+      "type": "image",
+      "label": "YOUR LOGO品牌名称待补充",
+      "block": "lp-header"
+    },
+    {
+      "id": "f5-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "YOUR LOGO",
+      "block": "lp-header"
+    },
+    {
+      "id": "f6-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "品牌名称待补充",
+      "block": "lp-header"
+    },
+    {
+      "id": "f7-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Menu",
+      "block": "lp-header"
+    },
+    {
+      "id": "f7-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 展开导航",
+      "block": "lp-header"
+    },
+    {
+      "id": "f8-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 网站导航",
+      "block": "lp-header"
+    },
+    {
+      "id": "f9-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Home",
+      "block": "lp-header"
+    },
+    {
+      "id": "f10-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "About Us",
+      "block": "lp-header"
+    },
+    {
+      "id": "f11-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Products",
+      "block": "lp-header"
+    },
+    {
+      "id": "f12-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Case Studies",
+      "block": "lp-header"
+    },
+    {
+      "id": "f13-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Contact Us",
+      "block": "lp-header"
+    },
+    {
+      "id": "f18",
+      "scope": "home",
+      "type": "image",
+      "label": "净菜加工流水线 Banner 图片 · 待补充",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f20",
+      "scope": "home",
+      "type": "image",
+      "label": "食品烘干生产线 Banner 图片 · 待补充",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f22",
+      "scope": "home",
+      "type": "image",
+      "label": "大蒜 / 洋葱加工生产线 Banner 图片 · 待补充",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f24",
+      "scope": "home",
+      "type": "image",
+      "label": "辣条生产线 Banner 图片 · 待补充",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f27-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "LATIAO PROCESSING EQUIPMENT",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f28-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Vegetable Processing Line",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f29-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "净菜加工流水线 · 卖点文案待补充",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f31-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Get a Quote",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f32-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Explore Products →",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f33-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "‹",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f33-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 上一张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f34-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "›",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f34-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 下一张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f35-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · Banner 轮播控制",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f36-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 切换到第 1 张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f37-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 切换到第 2 张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f38-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 切换到第 3 张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f39-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 切换到第 4 张 Banner",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f40-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "1 / 4",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f41-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "播放",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f41-aria-label",
+      "scope": "home",
+      "type": "text",
+      "label": "aria-label · 开始自动播放",
+      "block": "Vegetable Processing Line"
+    },
+    {
+      "id": "f44-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Solutions for Your Requirements",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f45-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "您的需求我们来满足",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f49-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f52-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f55-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f58-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f61-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f64-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "服务项目待补充",
+      "block": "Solutions for Your Requirements"
+    },
+    {
+      "id": "f67-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "食品机械设备供应商",
+      "block": "公共区域"
+    },
+    {
+      "id": "f68-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司名称待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f71-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "—",
+      "block": "公共区域"
+    },
+    {
+      "id": "f72-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司数据待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f74-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "—",
+      "block": "公共区域"
+    },
+    {
+      "id": "f75-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司数据待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f77-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "—",
+      "block": "公共区域"
+    },
+    {
+      "id": "f78-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司数据待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f80-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "—",
+      "block": "公共区域"
+    },
+    {
+      "id": "f81-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司数据待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f83-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "—",
+      "block": "公共区域"
+    },
+    {
+      "id": "f84-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司数据待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f87-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "ABOUT US",
+      "block": "关于我们"
+    },
+    {
+      "id": "f88-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "关于我们",
+      "block": "关于我们"
+    },
+    {
+      "id": "f89-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "诚信商家",
+      "block": "关于我们"
+    },
+    {
+      "id": "f90-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "经验丰富",
+      "block": "关于我们"
+    },
+    {
+      "id": "f91-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "规格多样",
+      "block": "关于我们"
+    },
+    {
+      "id": "f92-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "严格检验",
+      "block": "关于我们"
+    },
+    {
+      "id": "f94-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司名称待补充",
+      "block": "关于我们"
+    },
+    {
+      "id": "f95-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "公司介绍、业务身份、生产能力及服务范围待补充",
+      "block": "关于我们"
+    },
+    {
+      "id": "f97-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "关于我们"
+    },
+    {
+      "id": "f98-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Learn About Us →",
+      "block": "关于我们"
+    },
+    {
+      "id": "f101-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "ENGINEERING CASE PRESENTATION",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f102-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Factory & Workshop",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f103-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "厂房实拍展示",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f105",
+      "scope": "home",
+      "type": "image",
+      "label": "厂房实拍 1",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f106",
+      "scope": "home",
+      "type": "image",
+      "label": "厂房实拍 2",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f107",
+      "scope": "home",
+      "type": "image",
+      "label": "车间实拍 3",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f108",
+      "scope": "home",
+      "type": "image",
+      "label": "车间实拍 4",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f109",
+      "scope": "home",
+      "type": "image",
+      "label": "设备实拍 5",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f110",
+      "scope": "home",
+      "type": "image",
+      "label": "设备实拍 6",
+      "block": "Factory & Workshop"
+    },
+    {
+      "id": "f113",
+      "scope": "home",
+      "type": "image",
+      "label": "净菜加工流水线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f116-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "净菜加工流水线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f117-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Vegetable Processing Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f119-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f120-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f122",
+      "scope": "home",
+      "type": "image",
+      "label": "食品烘干生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f125-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "食品烘干生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f126-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Food Drying Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f128-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f129-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f131",
+      "scope": "home",
+      "type": "image",
+      "label": "大蒜洋葱加工生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f134-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "大蒜 / 洋葱加工生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f135-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Garlic & Onion Processing Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f137-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f138-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f140",
+      "scope": "home",
+      "type": "image",
+      "label": "辣条生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f143-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "辣条生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f144-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Latiao Production Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f146-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f147-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f150-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "CUSTOMER CASES",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f151-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "Customer Case Studies",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f152-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "客户案例展示",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f155",
+      "scope": "home",
+      "type": "video",
+      "label": "设备运行视频 1视频与封面待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f158-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "客户案例标题 1 · 待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f159-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "设备名称、客户国家与项目说明待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f160-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Case Studies →",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f162",
+      "scope": "home",
+      "type": "video",
+      "label": "设备运行视频 2视频与封面待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f165-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "客户案例标题 2 · 待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f166-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "设备名称、客户国家与项目说明待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f167-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Case Studies →",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f169",
+      "scope": "home",
+      "type": "video",
+      "label": "设备运行视频 3视频与封面待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f172-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "客户案例标题 3 · 待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f173-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "设备名称、客户国家与项目说明待补充",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f174-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View Case Studies →",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f176-t0",
+      "scope": "home",
+      "type": "text",
+      "label": "View All Case Studies →",
+      "block": "Customer Case Studies"
+    },
+    {
+      "id": "f179-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Home / Products",
+      "block": "Products"
+    },
+    {
+      "id": "f180-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Products",
+      "block": "Products"
+    },
+    {
+      "id": "f181-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "产品分类与机型信息待补充",
+      "block": "Products"
+    },
+    {
+      "id": "f184",
+      "scope": "products",
+      "type": "image",
+      "label": "净菜加工流水线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f187-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "净菜加工流水线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f188-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Vegetable Processing Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f190-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f191-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f193",
+      "scope": "products",
+      "type": "image",
+      "label": "食品烘干生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f196-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "食品烘干生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f197-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Food Drying Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f199-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f200-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f202",
+      "scope": "products",
+      "type": "image",
+      "label": "大蒜洋葱加工生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f205-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "大蒜 / 洋葱加工生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f206-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Garlic & Onion Processing Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f208-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f209-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f211",
+      "scope": "products",
+      "type": "image",
+      "label": "辣条生产线图片待补充",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f214-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "辣条生产线",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f215-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Latiao Production Line",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f217-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f218-t0",
+      "scope": "products",
+      "type": "text",
+      "label": "View Details →",
+      "block": "净菜加工流水线"
+    },
+    {
+      "id": "f220-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Home / Products /",
+      "block": "lp-section lp-breadcrumb"
+    },
+    {
+      "id": "f221-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "生产线名称 1 · 待补充",
+      "block": "lp-section lp-breadcrumb"
+    },
+    {
+      "id": "f223",
+      "scope": "detail",
+      "type": "image",
+      "label": "产品介绍横幅图片整条生产线或设备场景图 · 待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f226-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "LATIAO PROCESSING SOLUTION",
+      "block": "公共区域"
+    },
+    {
+      "id": "f227-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "生产线名称 1 · 待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f228-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "产品简介、适用范围与主要卖点待补充",
+      "block": "公共区域"
+    },
+    {
+      "id": "f230-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "公共区域"
+    },
+    {
+      "id": "f231-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Contact Us →",
+      "block": "公共区域"
+    },
+    {
+      "id": "f234-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Products You Can Make",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f235-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "可生产的成品",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f236-aria-label",
+      "scope": "detail",
+      "type": "text",
+      "label": "aria-label · 选择成品",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f238",
+      "scope": "detail",
+      "type": "image",
+      "label": "成品图片 1",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f239-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "成品名称待补充",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f241",
+      "scope": "detail",
+      "type": "image",
+      "label": "成品图片 2",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f242-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "成品名称待补充",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f244",
+      "scope": "detail",
+      "type": "image",
+      "label": "成品图片 3",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f245-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "成品名称待补充",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f247",
+      "scope": "detail",
+      "type": "image",
+      "label": "成品图片 4",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f248-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "成品名称待补充",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f249-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "成品 1 的适用配置与说明待补充",
+      "block": "Products You Can Make"
+    },
+    {
+      "id": "f252-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "PRODUCTION LINE OVERVIEW",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f253-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Product Introduction",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f254-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备用途、生产能力、自动化程度与适用客户待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f256-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f257",
+      "scope": "detail",
+      "type": "image",
+      "label": "生产线全景或设备布局图待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f259-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Equipment Features",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f260-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "真实优势与选配说明待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f262-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f265-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Discuss Your Production Line Configuration",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f266-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "报价范围和定制服务说明待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f267-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Get a Quote →",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f268-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Production Process",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f269-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "实际工艺流程及包含设备待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f270",
+      "scope": "detail",
+      "type": "image",
+      "label": "工艺流程图待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f273-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Technical Specifications",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f277-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Item",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f278-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Specification",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f281-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Model",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f282-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f284-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Raw Material",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f285-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f287-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Final Product",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f288-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f290-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Capacity · kg/h",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f291-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f293-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Power · kW",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f294-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f296-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Voltage · V / Hz",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f297-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f299-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Dimensions · mm",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f300-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f302-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Material",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f303-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f305-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Included Equipment",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f306-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f309-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Who This Line Is For",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f310-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "适用客户和项目条件待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f312-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f314-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Project Support",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f315-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "安装、培训、保修和备件范围待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f317-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f318",
+      "scope": "detail",
+      "type": "image",
+      "label": "设备细节或交付现场图片待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f320-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Frequently Asked Questions",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f322-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "How do I select the right capacity?",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f323-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "选型说明待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f325-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Can the configuration be customized?",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f326-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "可定制范围待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f328-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "What installation and warranty support is available?",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f329-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "安装与保修条款待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f331-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Production Line Video",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f332",
+      "scope": "detail",
+      "type": "video",
+      "label": "生产线运行视频真实视频与封面待补充",
+      "block": "Product Introduction"
+    },
+    {
+      "id": "f337-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Equipment Advantages",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f338-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备优势",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f341-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "01",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f342-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "优势标题待补充",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f344-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f346-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "02",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f347-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "优势标题待补充",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f349-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f351-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "03",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f352-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "优势标题待补充",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f354-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Equipment Advantages"
+    },
+    {
+      "id": "f358-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "STEP BY STEP",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f359-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Every Step of Production",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f360-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤与对应设备",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f361-aria-label",
+      "scope": "detail",
+      "type": "text",
+      "label": "aria-label · 生产工艺步骤",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f362-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f363-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "01",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f364-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f365-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "02",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f366-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f367-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "03",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f368-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f369-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "04",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f370-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f371-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "05",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f372-t1",
+      "scope": "detail",
+      "type": "text",
+      "label": "工艺步骤名称待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f373-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "06",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f375",
+      "scope": "detail",
+      "type": "image",
+      "label": "步骤 1 对应设备图片待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f377-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "步骤 1 说明",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f378-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备名称、工作原理和作用待补充",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f380-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Every Step of Production"
+    },
+    {
+      "id": "f383-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Related Equipment",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f384-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "相关设备",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f387",
+      "scope": "detail",
+      "type": "image",
+      "label": "相关设备图片",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f389-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备名称待补充",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f390-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Explore Equipment →",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f392",
+      "scope": "detail",
+      "type": "image",
+      "label": "相关设备图片",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f394-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备名称待补充",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f395-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Explore Equipment →",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f397",
+      "scope": "detail",
+      "type": "image",
+      "label": "相关设备图片",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f399-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "设备名称待补充",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f400-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Explore Equipment →",
+      "block": "Related Equipment"
+    },
+    {
+      "id": "f403-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Customer Stories & Project Cases",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f404-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "真实项目案例待补充",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f406",
+      "scope": "detail",
+      "type": "image",
+      "label": "项目现场或交付图片待补充",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f409-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "案例标题待补充",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f410-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "国家、项目需求、设备配置和交付情况待补充",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f412-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f413-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "View Project Cases →",
+      "block": "Customer Stories & Project Cases"
+    },
+    {
+      "id": "f417-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "CONTACT OUR TEAM",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f418-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Request a Quote",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f418-t2",
+      "scope": "detail",
+      "type": "text",
+      "label": "& Equipment Proposal",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f420-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "告诉我们你的生产需求",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f421",
+      "scope": "detail",
+      "type": "image",
+      "label": "联系区域图片待补充",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f425-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Name *",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f427-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Email *",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f429-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Country / Region *",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f431-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Phone / WhatsApp",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f433-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Company",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f435-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Product / Model",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f436-placeholder",
+      "scope": "detail",
+      "type": "text",
+      "label": "placeholder · 生产线名称 1 · 待补充",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f437-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Your Requirements *",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f441-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "I agree to the Privacy Policy · 政策内容待补充",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f443-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "Send Inquiry",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f444-t0",
+      "scope": "detail",
+      "type": "text",
+      "label": "原型演示，不发送任何信息。",
+      "block": "Request a Quote& Equipment Proposal"
+    },
+    {
+      "id": "f447-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Home / About Us",
+      "block": "About Us"
+    },
+    {
+      "id": "f448-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "About Us",
+      "block": "About Us"
+    },
+    {
+      "id": "f449-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "关于我们",
+      "block": "About Us"
+    },
+    {
+      "id": "f453-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "OUR COMPANY",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f454-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Company Introduction",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f455-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "公司名称、真实业务身份、发展经历与主营设备待补充",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f457-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f459-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Contact Us →",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f460",
+      "scope": "about",
+      "type": "image",
+      "label": "公司或工厂全景图片待补充",
+      "block": "Company Introduction"
+    },
+    {
+      "id": "f464-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Facilities & Team",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f465-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "生产场景与团队",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f468",
+      "scope": "about",
+      "type": "image",
+      "label": "场景图片 1",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f469-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "场景名称待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f470-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "说明待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f472",
+      "scope": "about",
+      "type": "image",
+      "label": "场景图片 2",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f473-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "场景名称待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f474-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "说明待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f476",
+      "scope": "about",
+      "type": "image",
+      "label": "团队图片",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f477-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "团队介绍待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f478-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "说明待补充",
+      "block": "Facilities & Team"
+    },
+    {
+      "id": "f481-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Capabilities & Support",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f482-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "供应能力与服务范围",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f485-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Equipment Selection",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f486-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "选型支持待补充",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f488-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f490-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Configuration",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f491-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "配置与定制能力待补充",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f493-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f495-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "After-sales Support",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f496-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "安装、培训及售后范围待补充",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f498-t0",
+      "scope": "about",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Capabilities & Support"
+    },
+    {
+      "id": "f501-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Home / Case Studies",
+      "block": "Case Studies"
+    },
+    {
+      "id": "f502-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Case Studies",
+      "block": "Case Studies"
+    },
+    {
+      "id": "f503-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "案例 · 真实项目资料待补充",
+      "block": "Case Studies"
+    },
+    {
+      "id": "f506-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Project Stories",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f507-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "设备交付、客户生产及安装调试案例",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f510",
+      "scope": "cases",
+      "type": "image",
+      "label": "案例封面图片 1",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f512-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "案例标题 1 · 待补充",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f514-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Country",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f516-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Equipment",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f518-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "View Case →",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f520",
+      "scope": "cases",
+      "type": "image",
+      "label": "案例封面图片 2",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f522-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "案例标题 2 · 待补充",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f524-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Country",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f526-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Equipment",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f528-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "View Case →",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f530",
+      "scope": "cases",
+      "type": "image",
+      "label": "案例封面图片 3",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f532-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "案例标题 3 · 待补充",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f534-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Country",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f536-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "Equipment",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f538-t0",
+      "scope": "cases",
+      "type": "text",
+      "label": "View Case →",
+      "block": "Project Stories"
+    },
+    {
+      "id": "f541-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Home / Case Studies / Project",
+      "block": "案例标题 1 · 待补充"
+    },
+    {
+      "id": "f542-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "案例标题 1 · 待补充",
+      "block": "案例标题 1 · 待补充"
+    },
+    {
+      "id": "f543-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "← Back to Case Studies",
+      "block": "案例标题 1 · 待补充"
+    },
+    {
+      "id": "f546",
+      "scope": "case-detail",
+      "type": "image",
+      "label": "项目现场主图待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f548-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Project Overview",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f552-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Country / Region",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f553-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f555-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Equipment Configuration",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f556-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f558-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Capacity · kg/h",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f559-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f561-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Delivery Date",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f562-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f563-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Customer Requirements",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f564-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "项目需求与选型条件待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f566-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f567-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Equipment Solution",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f568-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "实际设备组成、配置及交付范围待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f570-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f571",
+      "scope": "case-detail",
+      "type": "image",
+      "label": "配置或生产现场图片待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f573-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Delivery & Operation",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f574-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "安装、调试和真实运行情况待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f576-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f577",
+      "scope": "case-detail",
+      "type": "video",
+      "label": "项目运行视频待补充",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f579-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Discuss a Similar Project →",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f580-t0",
+      "scope": "case-detail",
+      "type": "text",
+      "label": "Explore Products",
+      "block": "Project Overview"
+    },
+    {
+      "id": "f583-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Home / Contact Us",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f584-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Contact Us",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f588-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "GET IN TOUCH",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f589-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Talk to Our Team",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f590-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "公司名称与联系方式待补充",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f593-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Email",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f594-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f596-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "WhatsApp / Phone",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f597-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f599-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Address",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f600-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f602-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Office Hours",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f603-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Not specified",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f604",
+      "scope": "contact",
+      "type": "image",
+      "label": "公司位置或联系图片待补充",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f606-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Send Your Inquiry",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f609-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Name *",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f611-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Email *",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f613-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Country / Region *",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f615-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Phone / WhatsApp",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f617-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Company",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f619-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Product / Model",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f620-placeholder",
+      "scope": "contact",
+      "type": "text",
+      "label": "placeholder · 产品或型号",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f621-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Your Requirements *",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f625-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "I agree to the Privacy Policy · 政策内容待补充",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f627-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "Send Inquiry",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f628-t0",
+      "scope": "contact",
+      "type": "text",
+      "label": "原型演示，不发送任何信息。",
+      "block": "Talk to Our Team"
+    },
+    {
+      "id": "f631-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "视频位置已预留",
+      "block": "公共区域"
+    },
+    {
+      "id": "f632-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "补充真实视频后，此处播放设备演示。",
+      "block": "公共区域"
+    },
+    {
+      "id": "f633-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Close",
+      "block": "公共区域"
+    },
+    {
+      "id": "f636-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Discuss Your Production Requirements",
+      "block": "公共区域"
+    },
+    {
+      "id": "f637-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Get the right equipment configuration for your project.",
+      "block": "公共区域"
+    },
+    {
+      "id": "f638-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Get a Quote →",
+      "block": "公共区域"
+    },
+    {
+      "id": "f642-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "YOUR LOGO",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f643-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "品牌名称与公司介绍待补充",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f645-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Add your English description.",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f647-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Quick Links",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f648-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Home",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f649-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "About Us",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f650-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Products",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f651-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Case Studies",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f652-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Contact Us",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f654-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Contact",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f655-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Email: __________",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f655-t2",
+      "scope": "global",
+      "type": "text",
+      "label": "WhatsApp: __________",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f655-t4",
+      "scope": "global",
+      "type": "text",
+      "label": "Address: __________",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f659-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "© Your Company · 信息待补充",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f660-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Privacy Policy · 页面待补充",
+      "block": "YOUR LOGO"
+    },
+    {
+      "id": "f662-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "×",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f662-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 关闭联系我们",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f663-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Contact Us",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f665-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Name *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f666-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Name *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f667-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Phone",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f668-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Phone",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f669-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Email *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f670-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Email *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f671-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Company",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f672-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Company name",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f673-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Country / Region *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f674-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Country / Region *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f683-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Message *",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f684-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Tell us the equipment you need and your production requirements.",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f687-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "I agree to the Privacy Policy · 内容待补充",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f689-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Submit →",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f690-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "原型演示，信息不会发送。",
+      "block": "Contact Us"
+    },
+    {
+      "id": "f692-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "×",
+      "block": "Email"
+    },
+    {
+      "id": "f692-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 关闭联系方式",
+      "block": "Email"
+    },
+    {
+      "id": "f693-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Email",
+      "block": "Email"
+    },
+    {
+      "id": "f695-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "联系方式待补充",
+      "block": "Email"
+    },
+    {
+      "id": "f696-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "补充真实联系方式后，可通过此入口发送邮件或拨打电话。",
+      "block": "Email"
+    },
+    {
+      "id": "f700-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Online Service",
+      "block": "Online Service"
+    },
+    {
+      "id": "f701-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "在线客服 · 原型演示",
+      "block": "Online Service"
+    },
+    {
+      "id": "f702-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "×",
+      "block": "Online Service"
+    },
+    {
+      "id": "f702-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 关闭在线客服",
+      "block": "Online Service"
+    },
+    {
+      "id": "f704-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Welcome! Tell us about the equipment you need.",
+      "block": "Online Service"
+    },
+    {
+      "id": "f706-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "客服状态待接入，可先留言。",
+      "block": "Online Service"
+    },
+    {
+      "id": "f709-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Leave a Message",
+      "block": "Online Service"
+    },
+    {
+      "id": "f710-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Name *",
+      "block": "Online Service"
+    },
+    {
+      "id": "f711-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Your name",
+      "block": "Online Service"
+    },
+    {
+      "id": "f712-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Phone",
+      "block": "Online Service"
+    },
+    {
+      "id": "f713-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Phone",
+      "block": "Online Service"
+    },
+    {
+      "id": "f714-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Email *",
+      "block": "Online Service"
+    },
+    {
+      "id": "f715-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Email",
+      "block": "Online Service"
+    },
+    {
+      "id": "f716-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Message *",
+      "block": "Online Service"
+    },
+    {
+      "id": "f717-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Your equipment requirements",
+      "block": "Online Service"
+    },
+    {
+      "id": "f719-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Send Message",
+      "block": "Online Service"
+    },
+    {
+      "id": "f720-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "演示对话，不连接真实客服。",
+      "block": "Online Service"
+    },
+    {
+      "id": "f722-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Get a Quote",
+      "block": "公共区域"
+    },
+    {
+      "id": "f723-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "WhatsApp",
+      "block": "公共区域"
+    },
+    {
+      "id": "f724-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "×",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f724-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 关闭在线沟通",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f727-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "LOGO",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f728-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Your Company",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f729-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "👋 Hi there! We're here to help.",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f731-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "LOGO",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f732-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "品牌待补充",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f733-t1",
+      "scope": "global",
+      "type": "text",
+      "label": "Enter chat",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f737-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 返回欢迎面板",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f740-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "LOGO",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f741-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "Your Company",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f743-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "对话效果预览 · 客服待接入",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f745-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 添加附件",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f748-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 插入表情",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f750-placeholder",
+      "scope": "global",
+      "type": "text",
+      "label": "placeholder · Type a message...",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f750-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 消息内容",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f751-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 发送消息",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f753-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "原型演示，消息不会发送。",
+      "block": "👋 Hi there! We're here to help."
+    },
+    {
+      "id": "f754-title",
+      "scope": "global",
+      "type": "text",
+      "label": "title · 邮箱",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f754-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 邮箱",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f756-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "邮箱",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f757-title",
+      "scope": "global",
+      "type": "text",
+      "label": "title · 电话",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f757-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 电话",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f759-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "电话",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f760-title",
+      "scope": "global",
+      "type": "text",
+      "label": "title · 联系我们",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f760-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 联系我们弹窗",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f762-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "联系我们",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f763-title",
+      "scope": "global",
+      "type": "text",
+      "label": "title · 在线客服",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f763-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 在线客服",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f765-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "在线客服",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f766-title",
+      "scope": "global",
+      "type": "text",
+      "label": "title · 返回顶部",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f766-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 返回顶部",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f768-t0",
+      "scope": "global",
+      "type": "text",
+      "label": "返回顶部",
+      "block": "lp-floating-tools"
+    },
+    {
+      "id": "f769-aria-label",
+      "scope": "global",
+      "type": "text",
+      "label": "aria-label · 打开在线沟通",
+      "block": "lp-floating-tools"
+    }
+  ],
+  "repeaters": [
+    {
+      "id": "list-0",
+      "scope": "detail",
+      "label": "工艺步骤",
+      "kind": "steps"
+    },
+    {
+      "id": "list-1",
+      "scope": "detail",
+      "label": "参数表行",
+      "kind": "params"
+    },
+    {
+      "id": "list-2",
+      "scope": "detail",
+      "label": "可生产成品",
+      "kind": "cards"
+    },
+    {
+      "id": "list-3",
+      "scope": "detail",
+      "label": "设备优势",
+      "kind": "cards"
+    },
+    {
+      "id": "list-4",
+      "scope": "detail",
+      "label": "常见问题 FAQ",
+      "kind": "faq"
+    },
+    {
+      "id": "list-5",
+      "scope": "about",
+      "label": "生产场景与团队",
+      "kind": "cards"
+    }
+  ]
+}
