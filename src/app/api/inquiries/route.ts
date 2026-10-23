@@ -1,4 +1,6 @@
 // POST /api/inquiries：提交询盘（技术方案 6.1），四种表单共用，无需登录
+import { after } from 'next/server'
+
 import { fill } from '@/content/defineTexts'
 import type { SpamFlag } from '@/lib/constants'
 import { countLinks, validateInquiry } from '@/lib/inquirySchema'
@@ -9,11 +11,14 @@ import { nextInquiryRef, uniqueConflictField } from '@/lib/server/inquiryRef'
 import { sendMail } from '@/lib/server/mail'
 import { safeError } from '@/lib/server/logSafe'
 import { clientIp, hashIp, readJson } from '@/lib/server/request'
+import { retryFailedMail } from '@/lib/server/retryMail'
 import { getSettingsUncached } from '@/lib/server/settings'
 import { verifyTurnstile } from '@/lib/server/turnstile'
 import type { Inquiry } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
+// 本条邮件和响应后的重发每封最多等 5 秒，最坏约 40 秒；留足时间，避免邮件已发出但状态没来得及写回
+export const maxDuration = 60
 
 const RATE_LIMIT_PER_HOUR = 5
 const DEDUPE_MINUTES = 10
@@ -156,11 +161,15 @@ export async function POST(request: Request) {
   }
   if (!inquiry) return Response.json({ ok: false, code: 'SERVER_ERROR', message: withEmail(t.errServer) }, { status: 500 })
 
-  // 6. 发送邮件：各自最多等 5 秒；失败的交给定时任务重发，不影响返回成功
+  // 6. 发送邮件：各自最多等 5 秒；失败的交给之后的重发，不影响返回成功
   const targets: MailTarget[] = []
   if (inquiry.notifyStatus === 'pending') targets.push('notify')
   if (inquiry.autoReplyStatus === 'pending') targets.push('autoReply')
   await deliverInquiryMails(payload, inquiry, targets).catch((error) => payload.logger.error({ error: safeError(error), msg: '询盘邮件发送状态写入失败' }))
+  // 返回响应后顺手重发之前失败的邮件（不含本条，两种邮件各最多 3 封）：免费版定时任务每天只跑一次，靠这里让失败的邮件尽早补发
+  after(() =>
+    retryFailedMail(payload, { limit: 3, excludeId: inquiry.id }).catch((error) => payload.logger.error({ error: safeError(error), msg: '提交询盘后重发失败邮件出错' })),
+  )
 
   // 7. 返回成功响应
   return Response.json({ ok: true, inquiryRef: inquiry.inquiryRef, redirect: REDIRECT }, { status: 201 })

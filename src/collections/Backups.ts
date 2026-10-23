@@ -10,7 +10,7 @@ export const Backups: CollectionConfig = {
     group: '系统',
     useAsTitle: 'file',
     defaultColumns: ['createdAt', 'kind', 'status', 'sizeBytes', 'download'],
-    description: '每天 02:00（UTC）备份数据库，03:00 备份新增的图片和 PDF。失败时会给管理员发邮件。',
+    description: '每天 02:00–02:59（UTC）之间先备份数据库，再备份新增的图片和 PDF。失败时会给管理员发邮件。',
   },
   access: {
     read: isAdminOrDeveloper,

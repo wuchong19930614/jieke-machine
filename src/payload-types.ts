@@ -1613,7 +1613,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * 每天 02:00（UTC）备份数据库，03:00 备份新增的图片和 PDF。失败时会给管理员发邮件。
+ * 每天 02:00–02:59（UTC）之间先备份数据库，再备份新增的图片和 PDF。失败时会给管理员发邮件。
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "backups".
