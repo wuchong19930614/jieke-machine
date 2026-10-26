@@ -370,6 +370,7 @@ turso db import restore.db
 ## 九、部署注意事项
 
 - Vercel 项目：Node.js 选 24.x，区域 `dub1`，构建命令 `npm run build:vercel`（已写在 `vercel.json`）。
+- 域名 `jetcomachinery.com` 在 Vercel 上配置，代码里不写死：项目的 Domains 里同时添加 `www.jetcomachinery.com` 和 `jetcomachinery.com`，按提示在域名解析里加记录；环境变量 `NEXT_PUBLIC_SITE_URL` 在 Production 环境填 `https://www.jetcomachinery.com`，改完要重新部署才生效。不带 www 的地址会自动 308 跳转到 www（`next.config.ts` 的 `hostRedirects`）。Preview 环境另填测试站的固定地址（如分支地址），不填时会回落到 `http://localhost:3000`，测试站后台的保存、上传等请求会被当成未登录。
 - 按 Vercel 免费版（Hobby）配置：定时任务都是每天一次（改成更频繁的写法部署会报错）；防火墙每个项目只能建 1 条限流规则，询盘接口 `/api/inquiries` 和表单令牌接口 `/api/form-token` 共用这一条；没有密码保护，测试站用 Vercel 账号授权或共享链接限制访问。免费版条款限非商用，见技术方案 10.4 节。
 - 测试环境（Vercel 预览地址）全站 noindex；正式环境在后台“全站设置 › 统计、收录与安全”勾选“允许搜索引擎收录”后才开放收录，主要页面内容录入完成前保持关闭。
 - Resend 发件域名要先完成认证，否则只能发给 Resend 账号本人。
