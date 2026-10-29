@@ -118,6 +118,9 @@ export default buildConfig({
       authToken: process.env.DATABASE_AUTH_TOKEN || undefined,
     },
     migrationDir: path.resolve(dirname, 'migrations'),
+    // 只有本地 file: 数据库才在开发模式下自动同步表结构。连 Turso 远程库时（如本地运行 seed、import:legal 加 --allow-remote）
+    // 若自动同步，会在库里留下开发模式标记，之后 Vercel 部署执行 payload migrate 时会停下询问并直接退出，迁移不再生效
+    push: (process.env.DATABASE_URI || 'file:./dev.db').startsWith('file:'),
   }),
   email: resendEmailAdapter,
   sharp,

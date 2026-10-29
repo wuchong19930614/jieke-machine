@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>独立站上线手册</title>
+<style>
+:root {
+  --bg: #f6f6f3;
+  --surface: #ffffff;
+  --text: #1d1f23;
+  --muted: #5d636c;
+  --line: #e2e3de;
+  --accent: #0f6f66;
+  --accent-soft: #e3f1ef;
+  --code-bg: #f1f2ee;
+  --warn-bg: #fff6e0;
+  --warn-line: #e3a72f;
+  --danger-bg: #fdeceb;
+  --danger-line: #d24b45;
+  --ok-bg: #e8f5ec;
+  --ok-line: #2f8a52;
+  --shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141619;
+    --surface: #1c1f23;
+    --text: #e6e7e9;
+    --muted: #a1a7b0;
+    --line: #30343a;
+    --accent: #4fc0b3;
+    --accent-soft: #17302d;
+    --code-bg: #24282d;
+    --warn-bg: #2d2513;
+    --warn-line: #c9952c;
+    --danger-bg: #301b1a;
+    --danger-line: #d8635d;
+    --ok-bg: #172a1e;
+    --ok-line: #4caf72;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141619;
+  --surface: #1c1f23;
+  --text: #e6e7e9;
+  --muted: #a1a7b0;
+  --line: #30343a;
+  --accent: #4fc0b3;
+  --accent-soft: #17302d;
+  --code-bg: #24282d;
+  --warn-bg: #2d2513;
+  --warn-line: #c9952c;
+  --danger-bg: #301b1a;
+  --danger-line: #d8635d;
+  --ok-bg: #172a1e;
+  --ok-line: #4caf72;
+  --shadow: none;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.75 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: anywhere;
+}
+a { color: var(--accent); }
+code, pre, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; }
+code { background: var(--code-bg); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+pre { margin: 0; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+header.top { padding: 40px 0 28px; border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top h1 { margin: 0 0 6px; font-size: 30px; line-height: 1.3; letter-spacing: .01em; }
+header.top .sub { margin: 0; color: var(--muted); }
+.summary { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 18px; font-size: 14px; color: var(--muted); }
+.summary b { color: var(--text); font-weight: 600; }
+
+.progress { margin-top: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.bar { flex: 1 1 240px; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+.progress-text { font-size: 14px; color: var(--muted); min-width: 120px; }
+button.ghost {
+  font: inherit; font-size: 13px; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer;
+}
+button.ghost:hover { color: var(--text); border-color: var(--muted); }
+
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; padding: 32px 0 80px; }
+nav.toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow: auto; font-size: 14px; }
+nav.toc .group { margin: 0 0 14px; }
+nav.toc .group-title { font-size: 12px; color: var(--muted); letter-spacing: .06em; margin: 0 0 4px; }
+nav.toc a { display: flex; gap: 8px; align-items: baseline; padding: 3px 8px; margin-left: -8px; border-radius: 6px; color: var(--text); text-decoration: none; }
+nav.toc a:hover { background: var(--accent-soft); }
+nav.toc a .n { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 1.6em; }
+nav.toc a.done { color: var(--muted); }
+nav.toc a.done .n::before { content: "✓"; color: var(--ok-line); }
+nav.toc a.done .n span { display: none; }
+details.toc-mobile { display: none; }
+
+main { min-width: 0; }
+.phase { margin: 48px 0 8px; font-size: 13px; color: var(--accent); letter-spacing: .08em; font-weight: 600; }
+.phase:first-child { margin-top: 0; }
+section.step {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 22px 26px 24px; margin: 0 0 18px; box-shadow: var(--shadow);
+}
+section.step h2 { margin: 0; font-size: 21px; line-height: 1.4; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+section.step h2 .num {
+  font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft);
+  padding: 2px 9px; border-radius: 99px; white-space: nowrap;
+}
+.meta { margin: 6px 0 14px; font-size: 14px; color: var(--muted); }
+section.step h3 { font-size: 16px; margin: 20px 0 6px; }
+section.step p { margin: 8px 0; }
+section.step ul { margin: 6px 0; padding-left: 1.3em; }
+
+ol.tasks { list-style: none; margin: 8px 0; padding: 0; counter-reset: t; }
+ol.tasks > li { counter-increment: t; position: relative; padding: 8px 0 8px 64px; border-top: 1px dashed var(--line); }
+ol.tasks > li:first-child { border-top: 0; }
+ol.tasks > li::before {
+  content: counter(t); position: absolute; left: 32px; top: 8px; width: 22px; text-align: right;
+  color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums;
+}
+ol.tasks > li > input[type=checkbox] {
+  position: absolute; left: 2px; top: 11px; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer;
+}
+ol.tasks > li.checked > .t { color: var(--muted); }
+ol.tasks > li.checked > .t > b:first-child { text-decoration: line-through; text-decoration-color: var(--muted); }
+ol.tasks .t { display: block; }
+ol.tasks .t ul { margin-top: 4px; }
+
+.callout { border-left: 3px solid; border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 12px 0; font-size: 15px; }
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+.callout .label { font-weight: 600; margin-right: 6px; }
+.callout.ok { background: var(--ok-bg); border-color: var(--ok-line); }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger-line); }
+.callout.info { background: var(--accent-soft); border-color: var(--accent); }
+
+.code { position: relative; margin: 8px 0; }
+.code pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; padding-right: 64px; overflow-x: auto; line-height: 1.6; }
+.code button.copy {
+  position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; padding: 2px 8px;
+  border-radius: 5px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer;
+}
+.code button.copy:hover { color: var(--text); }
+
+.table-wrap { overflow-x: auto; margin: 10px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { background: var(--code-bg); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td code { white-space: nowrap; }
+td.name code { font-weight: 600; }
+
+.tag { display: inline-block; font-size: 12px; padding: 0 7px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+.tag.unconfirmed { border-color: var(--warn-line); color: var(--warn-line); }
+
+footer { color: var(--muted); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding-top: 20px; }
+  nav.toc { display: none; }
+  details.toc-mobile { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; margin-bottom: 20px; }
+  details.toc-mobile summary { cursor: pointer; font-weight: 600; }
+  details.toc-mobile nav.toc { display: block; position: static; max-height: none; margin-top: 10px; }
+  section.step { padding: 18px 16px 20px; }
+  ol.tasks > li { padding-left: 54px; }
+  ol.tasks > li::before { left: 26px; }
+  header.top h1 { font-size: 24px; }
+}
+@media print {
+  nav.toc, details.toc-mobile, .progress, button.copy { display: none !important; }
+  .layout { display: block; }
+  section.step { break-inside: avoid-page; box-shadow: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>捷科机械独立站 · 上线操作手册</h1>
+    <p class="sub">从开通账号到正式开放收录，按顺序做完下面的步骤，网站就能上线。每做完一项就勾上，进度会保存在这个浏览器里。</p>
+    <div class="summary">
+      <span>正式网址：<b>https://www.jetcomachinery.com</b></span>
+      <span>代码仓库：<b>github.com/wuchong19930614/jieke-machine</b>（main 分支）</span>
+      <span>依据：项目代码、README、技术方案、后台操作教程（2026-10-29 整理）</span>
+    </div>
+    <div class="progress">
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+      <span class="progress-text" id="progressText">已完成 0 / 0</span>
+      <button class="ghost" id="resetBtn" type="button">清空勾选</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="步骤目录"></nav>
+
+    <main>
+      <details class="toc-mobile" id="tocMobileWrap"><summary>步骤目录</summary></details>
+
+      <div class="callout info">
+        <p><span class="label">开始前准备</span>一台装好 Node.js 24、Git，并且已拉取项目代码的电脑；域名注册商的管理后台（要加解析记录）；一个公司邮箱（所有第三方账号都用它注册）；一部装了验证器 App（Google Authenticator 或 Microsoft Authenticator）的手机；一个密码管理工具，用来保存下面生成的各种密钥。</p>
+        <p>第三方网站（Vercel、Turso、Resend、Google 等）的按钮名称可能随改版变化，以页面实际显示为准。标了 <span class="tag unconfirmed">未确认</span> 的地方是官方文档没写清楚、还没实测的。</p>
+      </div>
+
+      <!-- 阶段一 -->
+      <div class="phase" data-group="阶段一 · 准备">阶段一 · 准备</div>
+
+      <section class="step" id="s0" data-title="先拍板两件事">
+        <h2><span class="num">第 0 步</span>先拍板两件事</h2>
+        <p class="meta">谁来做：业务方 ｜ 影响：选错了以后要迁移账号</p>
+        <ol class="tasks">
+          <li><b>决定 Vercel 用免费版还是 Pro。</b>
+            <span class="t">按 Vercel 的定义，本站展示产品、收集询盘，开发也是付费的，属于商用；免费版（Hobby）条款只允许个人非商用，Vercel 可以不经通知停掉免费版项目（技术方案 10.4 节）。<b>建议直接用 Pro</b>：每月 20 美元起，含 20 美元用量额度，每个团队成员席位 20 美元/月（技术方案 10.3 节）。代码不用改。决定用 Pro 的话，先在 Vercel 升级或新建 Pro 团队，再做第 5 步导入项目，省得以后迁移。</span>
+          </li>
+          <li><b>给 Turso 发邮件要书面确认可以商用。</b>
+            <span class="t">Turso 的条款没有写明允许商用（技术方案 10.4 节）。发邮件给 Turso 支持，说明是公司官网、用免费版，请对方书面确认，回信存档。不影响后面的步骤，可以同时进行。</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="step" id="s1" data-title="开通账号">
+        <h2><span class="num">第 1 步</span>开通账号</h2>
+        <p class="meta">谁来做：业务方 ｜ 全部用公司邮箱注册，账号归公司所有（技术方案第七章）</p>
+        <ol class="tasks">
+          <li><b>GitHub：</b><span class="t">代码已经在 <code>wuchong19930614/jieke-machine</code>。确认仓库是私有（Private）。Vercel 账号最好和这个 GitHub 账号是同一个人，自动部署最省事；开发者不是 Vercel 账号成员时，推代码能否自动部署 <span class="tag unconfirmed">未确认</span>（技术方案 10.3 节）。</span></li>
+          <li><b>Vercel</b>（vercel.com）：<span class="t">用上面那个 GitHub 账号登录注册。</span></li>
+          <li><b>Turso</b>（turso.tech）：<span class="t">数据库，免费版。</span></li>
+          <li><b>Resend</b>（resend.com）：<span class="t">发邮件，免费版每月 3,000 封、每天 100 封。</span></li>
+          <li><b>tawk.to</b>：<span class="t">在线客服，免费版。</span></li>
+          <li><b>Google 账号</b>：<span class="t">用于 Google Analytics（GA4）、Google Tag Manager（GTM）、Search Console，都免费。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s2" data-title="建正式数据库（Turso）">
+        <h2><span class="num">第 2 步</span>建正式数据库（Turso）</h2>
+        <p class="meta">在哪做：Turso 控制台 ｜ 得到：数据库地址、数据库令牌</p>
+        <ol class="tasks">
+          <li><b>新建数据库</b>，<span class="t">名字建议 <code>jieke-prod</code>。区域选欧洲爱尔兰（<code>aws-eu-west-1</code>，以控制台可选项为准），和网站服务器（都柏林）同城，速度最快。</span></li>
+          <li><b>复制数据库地址</b>，<span class="t">以 <code>libsql://</code> 开头，填到第 7 步的 <code>DATABASE_URI</code>。</span></li>
+          <li><b>生成令牌</b>（Create Token），<span class="t">权限选可读写、不过期，复制保存，填到第 7 步的 <code>DATABASE_AUTH_TOKEN</code>。令牌只显示一次，立刻存进密码管理工具。</span></li>
+        </ol>
+        <p>装了 Turso 命令行工具的话，也可以用命令查地址和生成令牌：</p>
+        <div class="code"><pre><code>turso db show jieke-prod --url</code></pre></div>
+        <div class="code"><pre><code>turso db tokens create jieke-prod</code></pre></div>
+        <div class="callout warn"><span class="label">注意</span>Turso 免费版任一额度超限会直接封库；数据库闲置 10 天会被归档（网站上线后每天的备份会读库，可以避免归档）。所以建好库后尽量在 10 天内完成部署。</div>
+      </section>
+
+      <section class="step" id="s3" data-title="生成密钥">
+        <h2><span class="num">第 3 步</span>生成 5 个密钥</h2>
+        <p class="meta">在哪做：自己电脑的终端 ｜ 得到：5 串随机字符</p>
+        <p>下面这条命令每运行一次，生成一串 64 位的随机字符。<b>运行 5 次</b>，分别用作 5 个密钥，每个都不一样：</p>
+        <div class="code"><pre><code>openssl rand -hex 32</code></pre></div>
+        <ol class="tasks">
+          <li><b><code>PAYLOAD_SECRET</code></b><span class="t">：后台登录加密。以后换掉会让所有人重新登录。</span></li>
+          <li><b><code>BACKUP_ENCRYPTION_KEY</code></b><span class="t">：备份加密。<b>除了存进密码管理工具，还要在线下另存一份</b>（打印或存 U 盘）。丢了这个密钥，所有备份都解不开。</span></li>
+          <li><b><code>CRON_SECRET</code></b><span class="t">：定时任务调用密钥，Vercel 调用定时任务时会自动带上。</span></li>
+          <li><b><code>PREVIEW_SECRET</code></b><span class="t">：后台草稿预览用。</span></li>
+          <li><b><code>IP_HASH_SECRET</code></b><span class="t">：询盘里访客 IP 的加密。不填也能用（会由 <code>PAYLOAD_SECRET</code> 派生），建议单独填。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s4" data-title="配置发信域名（Resend）">
+        <h2><span class="num">第 4 步</span>配置发信域名（Resend）</h2>
+        <p class="meta">在哪做：Resend 控制台 + 域名注册商 ｜ 得到：发信 API Key</p>
+        <div class="callout warn"><span class="label">为什么要先做</span>Resend 没认证域名时，只能发信给 Resend 账号本人，客户收不到自动回复，公司也收不到询盘通知。解析记录生效要时间，所以先做。</div>
+        <ol class="tasks">
+          <li><b>添加域名：</b><span class="t">Resend 控制台 › Domains › Add Domain，填 <code>jetcomachinery.com</code>。如果让选发信区域，选欧洲（Ireland）即可。</span></li>
+          <li><b>去域名注册商加解析记录：</b><span class="t">Resend 会列出几条记录（SPF 和 DKIM，类型是 TXT 和 MX），照着一条一条加到域名的解析设置里。</span></li>
+          <li><b>再加一条 DMARC 记录</b><span class="t">（减少进垃圾箱，技术方案 7.1 节）：类型 TXT，主机名 <code>_dmarc</code>，值先填下面这行：</span>
+            <div class="code"><pre><code>v=DMARC1; p=none;</code></pre></div>
+          </li>
+          <li><b>回 Resend 点 Verify</b>，<span class="t">等域名状态变成 Verified（已验证）。</span></li>
+          <li><b>生成 API Key：</b><span class="t">API Keys › Create API Key，权限选 Sending access（只能发信），域名选 <code>jetcomachinery.com</code>。只显示一次，复制保存，填到第 7 步的 <code>RESEND_API_KEY</code>。</span></li>
+        </ol>
+        <div class="callout ok"><span class="label">完成标志</span>Resend 里 <code>jetcomachinery.com</code> 显示已验证，手里有一个 API Key。</div>
+      </section>
+
+      <!-- 阶段二 -->
+      <div class="phase" data-group="阶段二 · 部署">阶段二 · 部署</div>
+
+      <section class="step" id="s5" data-title="创建 Vercel 项目">
+        <h2><span class="num">第 5 步</span>创建 Vercel 项目</h2>
+        <p class="meta">在哪做：Vercel 控制台</p>
+        <ol class="tasks">
+          <li><b>导入仓库：</b><span class="t">Add New › Project，选 GitHub 上的 <code>jieke-machine</code>。框架会自动识别为 Next.js；构建命令、区域和定时任务已经写在仓库的 <code>vercel.json</code> 里，不用改。</span></li>
+          <li><b>导入页面上不要填环境变量</b>，<span class="t">直接点 Deploy。那里填的变量会同时用到正式和测试环境，容易让测试环境连上正式库。</span></li>
+          <li><b>第一次部署失败或网站打不开都是正常的</b>，<span class="t">因为还没配数据库。配好后在第 10 步重新部署。</span></li>
+          <li><b>确认 Node.js 版本：</b><span class="t">Settings › Build and Deployment › Node.js Version 应为 24.x（代码里已声明 24.x，一般会自动选上）。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s6" data-title="创建文件存储（Vercel Blob）">
+        <h2><span class="num">第 6 步</span>创建两个文件存储（Vercel Blob）</h2>
+        <p class="meta">在哪做：Vercel 项目 › Storage ｜ 得到：两个存储令牌</p>
+        <ol class="tasks">
+          <li><b>图片存储（公开）：</b><span class="t">Storage › Create › Blob，名字建议 <code>jieke-media-prod</code>，访问方式选 <b>Public（公开）</b>。网站上的图片、PDF 手册都放这里。</span></li>
+          <li><b>备份存储（私有）：</b><span class="t">再建一个 Blob，名字建议 <code>jieke-backup-prod</code>，访问方式选 <b>Private（私有）</b>。备份里有后台账号的密码哈希，必须私有。</span></li>
+          <li><b>把令牌对上变量名</b>，<span class="t">最后要做到：正式环境（Production）里有且只有这两个变量——</span>
+            <ul>
+              <li><code>BLOB_READ_WRITE_TOKEN</code> = 公开图片存储的令牌</li>
+              <li><code>BACKUP_BLOB_READ_WRITE_TOKEN</code> = 私有备份存储的令牌</li>
+            </ul>
+            <span class="t">连接存储时 Vercel 会自动建一个变量，名字不一定对得上 <span class="tag unconfirmed">未确认</span>。对不上就删掉自动建的，到存储页面复制令牌（以 <code>vercel_blob_rw_</code> 开头），在第 7 步手动添加。连接时只勾 Production 环境。</span>
+          </li>
+        </ol>
+        <div class="callout danger"><span class="label">别搞反</span>两个令牌填反的话，图片会传到私有存储（前台显示不出来），备份会传到公开存储（任何人拿到地址都能下载）。</div>
+      </section>
+
+      <section class="step" id="s7" data-title="填写正式环境变量">
+        <h2><span class="num">第 7 步</span>填写正式环境变量</h2>
+        <p class="meta">在哪做：Vercel 项目 › Settings › Environment Variables</p>
+        <p>每个变量添加时，<b>环境只勾 Production</b>，不要勾 Preview 和 Development。建议打开 Sensitive（敏感），打开后就看不到原值了，所以先确认已存进密码管理工具。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>变量名</th><th>填什么</th><th>从哪来</th></tr></thead>
+            <tbody>
+              <tr><td class="name"><code>DATABASE_URI</code></td><td>正式库地址，<code>libsql://</code> 开头</td><td>第 2 步</td></tr>
+              <tr><td class="name"><code>DATABASE_AUTH_TOKEN</code></td><td>正式库令牌</td><td>第 2 步</td></tr>
+              <tr><td class="name"><code>NEXT_PUBLIC_SITE_URL</code></td><td><code>https://www.jetcomachinery.com</code>（不带结尾斜杠）</td><td>固定值</td></tr>
+              <tr><td class="name"><code>PAYLOAD_SECRET</code></td><td>随机字符</td><td>第 3 步</td></tr>
+              <tr><td class="name"><code>BACKUP_ENCRYPTION_KEY</code></td><td>随机字符（必须正好 64 位）</td><td>第 3 步</td></tr>
+              <tr><td class="name"><code>CRON_SECRET</code></td><td>随机字符</td><td>第 3 步</td></tr>
+              <tr><td class="name"><code>PREVIEW_SECRET</code></td><td>随机字符</td><td>第 3 步</td></tr>
+              <tr><td class="name"><code>IP_HASH_SECRET</code></td><td>随机字符</td><td>第 3 步</td></tr>
+              <tr><td class="name"><code>BLOB_READ_WRITE_TOKEN</code></td><td>公开图片存储的令牌</td><td>第 6 步</td></tr>
+              <tr><td class="name"><code>BACKUP_BLOB_READ_WRITE_TOKEN</code></td><td>私有备份存储的令牌</td><td>第 6 步</td></tr>
+              <tr><td class="name"><code>RESEND_API_KEY</code></td><td>Resend 的 API Key</td><td>第 4 步</td></tr>
+              <tr><td class="name"><code>MAIL_FROM</code></td><td>发件人，例如 <code>Jieke Machinery &lt;noreply@jetcomachinery.com&gt;</code>，尖括号前换成公司英文名</td><td>自己定</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li><code>TURNSTILE_SECRET_KEY</code> 先不填，以后垃圾询盘多、要开人机验证时再填。</li>
+        </ul>
+        <div class="callout danger"><span class="label">千万不要加</span><code>TOTP_DISABLED</code>。它是本地调试时关掉后台双重验证用的。</div>
+        <ol class="tasks">
+          <li><b>按表格逐个添加 12 个变量</b>，<span class="t">每个都只勾 Production。</span></li>
+          <li><b>核对一遍：</b><span class="t">Production 环境里正好是表格中的 12 个变量，名字一个字母都不能错，没有 <code>TOTP_DISABLED</code>。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s8" data-title="绑定域名">
+        <h2><span class="num">第 8 步</span>绑定域名</h2>
+        <p class="meta">在哪做：Vercel 项目 › Settings › Domains + 域名注册商</p>
+        <ol class="tasks">
+          <li><b>添加 <code>www.jetcomachinery.com</code></b><span class="t">（这是正式地址）。</span></li>
+          <li><b>再添加 <code>jetcomachinery.com</code></b>。<span class="t">如果 Vercel 问要不要把它跳转到 www，选跳转（永久 308）；不选也行，网站代码会自动把不带 www 的地址 308 跳到 www。</span></li>
+          <li><b>去域名注册商加解析记录：</b><span class="t">按 Vercel 页面显示的记录类型和值添加（一般不带 www 的是 A 记录，www 是 CNAME）。注册商默认带的 @ 和 www 停放记录要先删掉。可以和第 4 步的 Resend 记录一起加。</span></li>
+          <li><b>等 Vercel 显示配置有效</b>，<span class="t">证书由 Vercel 自动申请。解析生效可能要几分钟到几小时，取决于注册商。</span></li>
+        </ol>
+        <div class="callout warn"><span class="label">为什么要在建管理员之前做</span>后台只认 <code>NEXT_PUBLIC_SITE_URL</code> 这个地址。域名没生效时，用 Vercel 自带的 <code>.vercel.app</code> 地址打开后台，保存等操作会被当成没登录。</div>
+      </section>
+
+      <section class="step" id="s9" data-title="设置防火墙限流">
+        <h2><span class="num">第 9 步</span>设置防火墙限流</h2>
+        <p class="meta">在哪做：Vercel 项目 › Firewall ｜ 作用：挡住机器人刷询盘，保护 Turso 免费额度</p>
+        <p>新建一条规则（免费版每个项目只能建 1 条，就用这一条），按技术方案 4.5 节：</p>
+        <ol class="tasks">
+          <li><b>条件：</b><span class="t">请求路径（Request Path）等于 <code>/api/inquiries</code>，<b>或者</b>请求路径等于 <code>/api/form-token</code>。</span></li>
+          <li><b>动作：</b><span class="t">限流（Rate Limit），固定窗口 60 秒，每个 IP 最多 10 次；超出时返回 429（Too Many Requests）。</span></li>
+          <li><b>保存并发布</b><span class="t">（Vercel 防火墙规则保存后还要点发布才生效）。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s10" data-title="重新部署并确认成功">
+        <h2><span class="num">第 10 步</span>重新部署并确认成功</h2>
+        <p class="meta">在哪做：Vercel 项目 › Deployments</p>
+        <ol class="tasks">
+          <li><b>重新部署：</b><span class="t">找到最新一次部署，点右侧 ⋯ › Redeploy。环境变量改了必须重新部署才生效。</span></li>
+          <li><b>看构建日志：</b><span class="t">先执行 <code>payload migrate</code>（自动建表），再执行 <code>next build</code>，最后显示部署成功。</span></li>
+          <li><b>打开网站：</b><span class="t">访问 <code>https://www.jetcomachinery.com</code> 能看到首页（没录内容的模块会自动隐藏）；访问 <code>https://jetcomachinery.com</code> 会自动跳到带 www 的地址。</span></li>
+        </ol>
+        <div class="callout danger"><span class="label">部署成功后马上做第 11 步</span>中间不要停。</div>
+      </section>
+
+      <!-- 阶段三 -->
+      <div class="phase" data-group="阶段三 · 后台初始化">阶段三 · 后台初始化</div>
+
+      <section class="step" id="s11" data-title="立刻注册第一个管理员">
+        <h2><span class="num">第 11 步</span>立刻注册第一个管理员</h2>
+        <p class="meta">在哪做：<code>https://www.jetcomachinery.com/admin</code></p>
+        <div class="callout danger"><span class="label">最容易踩的坑</span>数据库里还没有账号时，<b>第一个打开后台注册的人自动成为管理员</b>（代码 <code>src/collections/Users.ts</code> 第 39–44 行）。所以部署成功后要立刻自己注册，不能拖。</div>
+        <ol class="tasks">
+          <li><b>打开后台，填写第一个账号：</b><span class="t">用公司邮箱，密码至少 12 位。这个账号自动是管理员。</span></li>
+          <li><b>设置双重验证：</b><span class="t">第一次登录会强制进入设置页，用手机验证器 App 扫码，再输入 6 位验证码（后台操作教程 1.1 节）。</span></li>
+          <li><b>给同事开账号：</b><span class="t">系统 › 用户 › 新建，选角色：管理员、内容编辑、业务人员或开发协作（后台操作教程 1.2 节）。把后台地址和初始密码告诉对方，对方第一次登录时自己设置双重验证。</span></li>
+        </ol>
+        <div class="callout warn"><span class="label">如果打开后台看到的是登录页而不是注册页</span>说明已经有人先注册了。马上停下来联系开发人员处理，不要继续往下做。</div>
+      </section>
+
+      <section class="step" id="s12" data-title="填写全站设置">
+        <h2><span class="num">第 12 步</span>填写全站设置</h2>
+        <p class="meta">在哪做：后台 › 全站设置（详见后台操作教程 9.1 节）</p>
+        <ol class="tasks">
+          <li><b>品牌：</b><span class="t">公司英文名、Logo、页脚简介。</span></li>
+          <li><b>联系方式：</b><span class="t">业务邮箱、电话、WhatsApp（都带国际区号，如 +86 138 0000 0000）、地址、办公时间。</span></li>
+          <li><b>询盘邮件：</b><span class="t">填<b>询盘通知邮箱</b>（不填就收不到新询盘通知）和发给客户的自动回复内容。</span></li>
+          <li><b>社交媒体：</b><span class="t">各平台账号链接，显示在页脚。</span></li>
+          <li><b>默认 SEO 与网站图标：</b><span class="t">默认标题和描述、默认分享图（1200×630）、网站图标、苹果触屏图标。</span></li>
+          <li><b>“统计、收录与安全”里的“允许搜索引擎收录”先不要勾</b>，<span class="t">等内容录完再开（第 18 步）。</span></li>
+          <li><b>保存，然后点发布。</b><span class="t">tawk.to 和 GTM 编号在第 13、14 步拿到后再回来填。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s13" data-title="接入在线客服（tawk.to）">
+        <h2><span class="num">第 13 步</span>接入在线客服（tawk.to）</h2>
+        <p class="meta">在哪做：tawk.to 后台 + 网站后台 › 全站设置 › 在线客服</p>
+        <ol class="tasks">
+          <li><b>新建站点（Property）</b>，<span class="t">网址填 <code>https://www.jetcomachinery.com</code>。</span></li>
+          <li><b>找到两个编号：</b><span class="t">Administration › Chat Widget 里能看到 Property ID 和 Widget ID（直接聊天链接 <code>https://tawk.to/chat/Property ID/Widget ID</code> 里也有）。</span></li>
+          <li><b>给每位客服开独立账号</b>，<span class="t">客服可以用电脑或 tawk.to 手机 App 接待。可以在对话窗口外观里设置品牌色和 Logo。</span></li>
+          <li><b>回网站后台填编号：</b><span class="t">全站设置 › 在线客服（tawk.to），填 Property ID 和 Widget ID，保存并发布。</span></li>
+        </ol>
+        <p>不用在 tawk.to 里设置离线留言：客服离线时，网站会显示自己的留言表单，留言进后台“询盘”（技术方案 7.2 节）。</p>
+      </section>
+
+      <section class="step" id="s14" data-title="接入统计（GA4 + GTM）">
+        <h2><span class="num">第 14 步</span>接入统计（GA4 + GTM）</h2>
+        <p class="meta">在哪做：Google Analytics、Google Tag Manager + 网站后台 ｜ 网站只往 GTM 推事件，GA4 在 GTM 里配置（技术方案 7.3 节）</p>
+
+        <h3>A. 建 GA4</h3>
+        <ol class="tasks">
+          <li><b>新建媒体资源和网站数据流</b>，<span class="t">网址填 <code>https://www.jetcomachinery.com</code>，复制“衡量 ID”（<code>G-</code> 开头）。</span></li>
+          <li><b>关闭 Google 信号：</b><span class="t">管理 › 数据收集和修改 › 数据收集，关闭 Google 信号数据收集。</span></li>
+          <li><b>关闭广告个性化：</b><span class="t">同一页的高级设置里，关闭所有地区的广告个性化；也不要关联 Google Ads。</span></li>
+          <li><b>数据保留期设为 14 个月：</b><span class="t">管理 › 数据收集和修改 › 数据保留。</span></li>
+        </ol>
+        <p>上面这 3 项设置是首期不弹 Cookie 同意横幅的前提（技术方案 7.3 节），必须做。菜单名以实际页面为准。</p>
+
+        <h3>B. 建 GTM 并配置</h3>
+        <ol class="tasks">
+          <li><b>新建账号和容器</b>（类型选“网站”），<span class="t">复制容器编号（<code>GTM-</code> 开头）。</span></li>
+          <li><b>加 Google 代码：</b><span class="t">新建代码（Tag），类型选 Google 代码，代码 ID 填 GA4 的 <code>G-</code> 编号；触发器选 Initialization - All Pages。</span></li>
+          <li><b>建 9 个数据层变量：</b><span class="t">变量 › 新建 › 类型选“数据层变量”，数据层变量名分别填：</span>
+            <div class="code"><pre><code>form_source
+product_name
+inquiry_ref
+location
+entry
+metric_name
+metric_value
+metric_rating
+metric_id</code></pre></div>
+          </li>
+          <li><b>建一个触发器：</b><span class="t">类型选“自定义事件”，勾选“使用正则表达式匹配”，事件名称填：</span>
+            <div class="code"><pre><code>^(generate_lead|click_email|click_phone|click_whatsapp|open_chat|start_chat|download_brochure|web_vitals)$</code></pre></div>
+          </li>
+          <li><b>建一个 GA4 事件代码：</b><span class="t">类型选 Google Analytics: GA4 Event，衡量 ID 填 <code>G-</code> 编号，事件名称填 <code>{{Event}}</code>；事件参数逐个添加上面 9 个，参数名和变量一一对应（如参数 <code>form_source</code> 的值选 <code>form_source</code> 那个数据层变量）；触发器选上一步那个。</span></li>
+          <li><b>提交并发布容器。</b></li>
+          <li><b>回网站后台填编号：</b><span class="t">全站设置 › 统计、收录与安全 › GTM 容器编号，填 <code>GTM-</code> 编号，保存并发布。</span></li>
+          <li><b>把询盘设为关键事件：</b><span class="t">GA4 › 管理 › 数据显示 › 事件（或“关键事件”），把 <code>generate_lead</code> 标为关键事件。事件要先收到一次才会出现在列表里，也可以直接新建同名的关键事件。</span></li>
+        </ol>
+        <div class="callout warn"><span class="label">注意</span>GTM 里先只放 GA4。以后要加广告或其他第三方代码，要先让开发把对应域名加进网站的安全策略（<code>next.config.ts</code>），否则会被浏览器拦截。</div>
+      </section>
+
+      <section class="step" id="s15" data-title="导入隐私政策和 Cookie 说明">
+        <h2><span class="num">第 15 步</span>导入隐私政策和 Cookie 说明</h2>
+        <p class="meta">在哪做：自己电脑的终端（项目目录）+ 网站后台 ｜ 前提：第 12 步的全站设置已发布（公司名和地址会自动填进去）</p>
+        <ol class="tasks">
+          <li><b>在项目目录下运行导入命令</b>，<span class="t">把引号里的两处换成第 2 步的正式库地址和令牌：</span>
+            <div class="code"><pre><code>DATABASE_URI="libsql://换成正式库地址" DATABASE_AUTH_TOKEN="换成正式库令牌" NEXT_PUBLIC_SITE_URL="https://www.jetcomachinery.com" npm run import:legal -- --allow-remote</code></pre></div>
+            <span class="t">成功时会显示 Privacy Policy 和 Cookie Notice 都已新建、存为草稿，并列出还要补齐的占位符。</span>
+          </li>
+          <li><b>在后台补齐占位符：</b><span class="t">页面管理 › 辅助页面，分别打开隐私政策和 Cookie 说明，把方括号里的待填内容和法务确认后替换（后台操作教程 4.4 节）。导入时剩下的有：</span>
+            <ul>
+              <li>隐私政策：<code>[privacy@example.com]</code>（隐私联系邮箱）、<code>[DPO name]</code>（数据保护负责人）、<code>[Inbox retention]</code>、<code>[Chat retention]</code>（邮箱和聊天记录的保存期限）、<code>[Country]</code>、<code>[Confirm the transfer mechanism for each provider before publishing.]</code>（跨境传输依据）</li>
+              <li>Cookie 说明：<code>[As set by tawk.to]</code>、<code>[As set by YouTube]</code>（两家 Cookie 的保存期限）、<code>[privacy@example.com]</code></li>
+            </ul>
+          </li>
+          <li><b>两页都替换完后点“发布修改”。</b></li>
+        </ol>
+        <div class="callout info"><span class="label">不会改正式库的表结构</span>连 Turso 远程库时，系统已设为不自动同步表结构（<code>src/payload.config.ts</code> 里的 <code>push</code> 设置），脚本只写入这两页内容，表结构只由 Vercel 部署时的数据库升级来改。</div>
+        <div class="callout danger"><span class="label">另外</span>永远不要对正式库运行 <code>npm run seed</code>。它会写入示例数据和三个本地测试账号，测试账号的密码就写在代码里。</div>
+      </section>
+
+      <!-- 阶段四 -->
+      <div class="phase" data-group="阶段四 · 测试与上线">阶段四 · 测试与上线</div>
+
+      <section class="step" id="s16" data-title="全面测试">
+        <h2><span class="num">第 16 步</span>全面测试</h2>
+        <p class="meta">在哪做：正式网站 ｜ 这时搜索引擎还不会收录，可以放心测试。这些功能目前都只在本地验证过，还没连真实账号测过（README 第十章）</p>
+        <ol class="tasks">
+          <li><b>4 种询盘表单各提交一次：</b><span class="t">联系页表单、产品页表单、联系弹窗、客服离线留言。每次检查：后台“询盘”里有记录，来源和产品正确；询盘通知邮箱收到通知；客户邮箱收到自动回复。</span></li>
+          <li><b>邮件进不进收件箱：</b><span class="t">客户邮箱分别用 Gmail、Outlook 和公司邮箱测，确认进的是收件箱，不是垃圾箱（技术方案 7.1 节）。</span></li>
+          <li><b>测完把测试询盘改成“无效”</b><span class="t">（后台操作教程第十二章）。</span></li>
+          <li><b>图片：</b><span class="t">在媒体库上传一张图，用到某个页面上发布，前台能正常显示。</span></li>
+          <li><b>在线客服：</b><span class="t">客服在线时，从网站发起对话，tawk.to 后台能收到消息和附件；客服离线时留言，留言进后台“询盘”。</span></li>
+          <li><b>统计：</b><span class="t">打开 GA4 实时报告，提交一条询盘，<code>generate_lead</code> 只出现 1 次；刷新感谢页不会重复计数。</span></li>
+          <li><b>草稿预览：</b><span class="t">改一处内容只保存草稿，点预览能看到修改，前台正式页面不变。</span></li>
+          <li><b>业务人员账号：</b><span class="t">用业务人员账号登录，从前台点“定位”到一条没有编辑权限的内容，应该被拦下或提示无权限（README 第十章：这一项还没在浏览器里实测过）。</span></li>
+          <li><b>后台操作教程：</b><span class="t">打开 <code>https://www.jetcomachinery.com/admin/guide</code>，能看到教程内容。</span></li>
+          <li><b>手机端：</b><span class="t">用手机打开网站看一遍。右侧悬浮栏现在默认收起成一个按钮，这个改动<b>待业务方确认</b>，不接受就告诉开发改回常驻一列。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s17" data-title="检查定时任务和备份">
+        <h2><span class="num">第 17 步</span>检查定时任务和备份（部署后第二天）</h2>
+        <p class="meta">在哪做：Vercel 项目 › Settings › Cron Jobs + 网站后台 › 系统 › 备份记录</p>
+        <ol class="tasks">
+          <li><b>确认有两个定时任务：</b><span class="t"><code>/api/cron/backup</code>（每天 UTC 02:00 这一小时内，即北京时间 10:00–10:59）和 <code>/api/cron/maintenance</code>（UTC 03:00 这一小时内，即北京时间 11:00–11:59）。</span></li>
+          <li><b>第二天中午以后看备份记录：</b><span class="t">后台 › 系统 › 备份记录里有当天的数据库备份和媒体备份，状态成功。失败时管理员也会收到提醒邮件。</span></li>
+          <li><b>请开发人员演示一次恢复：</b><span class="t">从备份记录下载一份备份，解密后导入一个新数据库，确认数据完整（README 第七章、技术方案 9.2 节）。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="s18" data-title="上线当天：开放收录">
+        <h2><span class="num">第 18 步</span>上线当天：开放收录</h2>
+        <p class="meta">前提：首页、关于我们、产品、案例、联系我们的英文内容都已录入并发布</p>
+        <ol class="tasks">
+          <li><b>验证 Search Console：</b><span class="t">添加资源，类型选“网域”，填 <code>jetcomachinery.com</code>，按提示在域名解析里加一条 TXT 记录，然后验证。</span></li>
+          <li><b>对照上线检查：</b><span class="t">后台操作教程第十二章的 5 项：内容已发布、隐私政策和 Cookie 说明已补齐并发布、联系方式和询盘邮件已填并测过、分享图和网站图标已上传。</span></li>
+          <li><b>开放收录：</b><span class="t">后台 › 全站设置 › 统计、收录与安全，勾选“允许搜索引擎收录”，保存并发布。</span></li>
+          <li><b>检查两个文件：</b><span class="t">打开 <code>https://www.jetcomachinery.com/robots.txt</code>，应该允许抓取；打开 <code>https://www.jetcomachinery.com/sitemap.xml</code>，应该列出已发布的页面。</span></li>
+          <li><b>提交网站地图：</b><span class="t">Search Console › 站点地图，填 <code>sitemap.xml</code> 提交。</span></li>
+        </ol>
+        <div class="callout ok"><span class="label">到这里网站就正式上线了</span></div>
+      </section>
+
+      <section class="step" id="s19" data-title="上线后的日常">
+        <h2><span class="num">第 19 步</span>上线后的日常</h2>
+        <p class="meta">技术方案 9.3 节、10.4 节</p>
+        <ol class="tasks">
+          <li><b>每月看一次 Turso 用量：</b><span class="t">存储、读取、写入任一项超过免费额度的 50%，就考虑升级 Developer 版（约 4.99 美元/月）。</span></li>
+          <li><b>每月看一次 Vercel 用量</b><span class="t">（尤其是图片优化每月 5,000 次）和后台备份记录。</span></li>
+          <li><b>域名开启自动续费。</b></li>
+          <li><b>同事离职时及时删除账号</b><span class="t">（后台 › 系统 › 用户）。</span></li>
+        </ol>
+      </section>
+
+      <!-- 附录 -->
+      <div class="phase" data-group="附录">附录</div>
+
+      <section class="step" id="a1" data-title="附录 A：测试环境">
+        <h2><span class="num">附录 A</span>测试环境（建议做，不影响上线）</h2>
+        <p class="meta">用途：以后改功能先在测试站验收，不碰正式数据（技术方案 2.2 节）</p>
+        <ol class="tasks">
+          <li><b>准备测试资源：</b><span class="t">Turso 再建一个库 <code>jieke-test</code>；Vercel Blob 再建一个公开、一个私有存储，用于测试；第 3 步的 5 个密钥为测试环境另外生成一套。</span></li>
+          <li><b>建一个测试分支并推送：</b><span class="t">推送后 Vercel 会为它生成预览部署和一个固定的分支地址（地址里带 <code>-git-test-</code>）。</span>
+            <div class="code"><pre><code>git checkout -b test</code></pre></div>
+            <div class="code"><pre><code>git push -u origin test</code></pre></div>
+          </li>
+          <li><b>填 Preview 环境变量：</b><span class="t">变量名和第 7 步一样，值换成测试用的，环境只勾 Preview。<code>NEXT_PUBLIC_SITE_URL</code> 填上面那个分支地址；不填的话测试站后台的保存、上传都会被当成没登录。</span></li>
+          <li><b>开启部署保护：</b><span class="t">Settings › Deployment Protection › Vercel Authentication。测试站只有登录了 Vercel 并获批的人能看；也可以生成共享链接给业务方审核。</span></li>
+          <li><b>测试库同样要马上注册第一个管理员</b><span class="t">（同第 11 步）。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="a2" data-title="附录 B：常见问题">
+        <h2><span class="num">附录 B</span>常见问题</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>现象</th><th>多半是因为</th><th>怎么办</th></tr></thead>
+            <tbody>
+              <tr><td>后台能打开，但一保存就提示没登录</td><td><code>NEXT_PUBLIC_SITE_URL</code> 和当前打开的地址不一致，或者改了变量没重新部署</td><td>用 <code>https://www.jetcomachinery.com/admin</code> 打开；确认变量值没有结尾斜杠；重新部署</td></tr>
+              <tr><td>客户收不到自动回复、公司收不到通知</td><td>Resend 域名没验证；<code>MAIL_FROM</code> 用的不是 <code>jetcomachinery.com</code> 的地址；没填询盘通知邮箱</td><td>回看第 4、7、12 步；后台询盘详情里可以重新发送邮件</td></tr>
+              <tr><td>邮件进了垃圾箱</td><td>DMARC 记录没加，或解析还没生效</td><td>回看第 4 步第 3 项</td></tr>
+              <tr><td>上传图片失败或前台不显示图片</td><td><code>BLOB_READ_WRITE_TOKEN</code> 没填、填成了私有存储的令牌</td><td>回看第 6 步</td></tr>
+              <tr><td>备份记录里一直没有记录</td><td><code>CRON_SECRET</code> 没填；备份存储令牌或加密密钥不对（密钥必须正好 64 位）</td><td>回看第 3、7 步；Vercel 函数日志里能看到具体报错</td></tr>
+              <tr><td>询盘提交提示失败、过于频繁</td><td>同一 IP 每分钟超过 10 次被防火墙拦下，或每小时超过 5 次被网站拦下</td><td>正常的防刷机制，换个网络或稍后再试</td></tr>
+              <tr><td>部署日志里出现 “It looks like you've run Payload in dev mode”</td><td>正式库被开发模式改过表结构（现在的代码连远程库时已不会这样，出现说明用了旧代码或改过配置）</td><td>停止操作，联系开发人员处理</td></tr>
+              <tr><td>手机丢了，拿不到双重验证码</td><td>后台界面里不能自己重置</td><td>联系开发人员处理（后台操作教程 1.1 节）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="step" id="a3" data-title="附录 C：要妥善保存的东西">
+        <h2><span class="num">附录 C</span>要妥善保存的东西</h2>
+        <p class="meta">全部放进公司的密码管理工具，不要写在聊天记录、邮件或代码仓库里（技术方案 9.1 节）</p>
+        <ul>
+          <li>各服务的登录账号：GitHub、Vercel、Turso、Resend、tawk.to、Google。</li>
+          <li>Turso 正式库（和测试库）的地址和令牌。</li>
+          <li>第 3 步生成的 5 个密钥（正式、测试各一套）。</li>
+          <li>两个 Blob 存储令牌、Resend API Key。</li>
+          <li><b><code>BACKUP_ENCRYPTION_KEY</code> 额外在线下存一份</b>，没有它备份就恢复不了。</li>
+          <li>第一个管理员账号的验证器 App：换手机前先把账号转移到新手机。</li>
+        </ul>
+        <p>开发交接时，所有密钥要全部更换一次（技术方案 9.1 节）。</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">整理依据：项目代码（<code>vercel.json</code>、<code>.env.example</code>、<code>src/payload.config.ts</code>、<code>src/collections/Users.ts</code>、<code>scripts/import-legal-pages.ts</code> 等）、README、《机械设备独立站技术方案》、《网站后台操作教程》。勾选进度只保存在当前浏览器里。</div>
+</footer>
+
+<script>
+(function () {
+  var KEY = 'jieke-launch-checklist-v1';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  // 给每个待办项加上勾选框
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.step'));
+  sections.forEach(function (sec) {
+    var items = sec.querySelectorAll('ol.tasks > li');
+    Array.prototype.forEach.call(items, function (li, i) {
+      var id = sec.id + '-' + (i + 1);
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.setAttribute('aria-label', '标记完成');
+      box.checked = Boolean(state[id]);
+      li.insertBefore(box, li.firstChild);
+      if (box.checked) li.classList.add('checked');
+      box.addEventListener('change', function () {
+        if (box.checked) state[id] = 1; else delete state[id];
+        li.classList.toggle('checked', box.checked);
+        save();
+        refresh();
+      });
+    });
+  });
+
+  // 目录：按阶段分组
+  function buildToc() {
+    var nav = document.createElement('div');
+    var group = null;
+    Array.prototype.forEach.call(document.querySelectorAll('main > .phase, main > section.step'), function (el) {
+      if (el.classList.contains('phase')) {
+        group = document.createElement('div');
+        group.className = 'group';
+        var t = document.createElement('p');
+        t.className = 'group-title';
+        t.textContent = el.getAttribute('data-group');
+        group.appendChild(t);
+        nav.appendChild(group);
+        return;
+      }
+      var a = document.createElement('a');
+      a.href = '#' + el.id;
+      a.setAttribute('data-for', el.id);
+      var num = el.querySelector('h2 .num').textContent.replace('第 ', '').replace(' 步', '').replace('附录 ', '');
+      a.innerHTML = '<span class="n"><span></span></span><span class="l"></span>';
+      a.querySelector('.n span').textContent = num;
+      a.querySelector('.l').textContent = el.getAttribute('data-title');
+      (group || nav).appendChild(a);
+    });
+    return nav;
+  }
+  document.getElementById('toc').appendChild(buildToc());
+  var mobileNav = document.createElement('nav');
+  mobileNav.className = 'toc';
+  mobileNav.setAttribute('aria-label', '步骤目录');
+  mobileNav.appendChild(buildToc());
+  document.getElementById('tocMobileWrap').appendChild(mobileNav);
+
+  function refresh() {
+    var all = document.querySelectorAll('ol.tasks > li > input[type=checkbox]');
+    var done = 0;
+    Array.prototype.forEach.call(all, function (b) { if (b.checked) done++; });
+    document.getElementById('progressText').textContent = '已完成 ' + done + ' / ' + all.length;
+    document.getElementById('bar').style.width = (all.length ? done / all.length * 100 : 0) + '%';
+    sections.forEach(function (sec) {
+      var boxes = sec.querySelectorAll('ol.tasks > li > input[type=checkbox]');
+      var complete = boxes.length > 0 && Array.prototype.every.call(boxes, function (b) { return b.checked; });
+      Array.prototype.forEach.call(document.querySelectorAll('a[data-for="' + sec.id + '"]'), function (a) {
+        a.classList.toggle('done', complete);
+      });
+    });
+  }
+  refresh();
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!confirm('确定清空所有勾选吗？')) return;
+    state = {};
+    save();
+    Array.prototype.forEach.call(document.querySelectorAll('ol.tasks > li'), function (li) {
+      li.classList.remove('checked');
+      var b = li.querySelector('input[type=checkbox]');
+      if (b) b.checked = false;
+    });
+    refresh();
+  });
+
+  // 代码块复制按钮
+  Array.prototype.forEach.call(document.querySelectorAll('.code'), function (wrap) {
+    var btn = document.createElement('button');
+    btn.className = 'copy';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.addEventListener('click', function () {
+      var text = wrap.querySelector('code').textContent;
+      var done = function () { btn.textContent = '已复制'; setTimeout(function () { btn.textContent = '复制'; }, 1500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+      } else { fallback(text); done(); }
+    });
+    wrap.appendChild(btn);
+  });
+  function fallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+</body>
+</html>
