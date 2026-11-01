@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>业务方待办清单</title>
+<style>
+:root {
+  --bg: #f6f6f3;
+  --surface: #ffffff;
+  --text: #1d1f23;
+  --muted: #5d636c;
+  --line: #e2e3de;
+  --accent: #0f6f66;
+  --accent-soft: #e3f1ef;
+  --code-bg: #f1f2ee;
+  --warn-bg: #fff6e0;
+  --warn-line: #e3a72f;
+  --danger-bg: #fdeceb;
+  --danger-line: #d24b45;
+  --ok-bg: #e8f5ec;
+  --ok-line: #2f8a52;
+  --shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141619; --surface: #1c1f23; --text: #e6e7e9; --muted: #a1a7b0; --line: #30343a;
+    --accent: #4fc0b3; --accent-soft: #17302d; --code-bg: #24282d;
+    --warn-bg: #2d2513; --warn-line: #c9952c; --danger-bg: #301b1a; --danger-line: #d8635d;
+    --ok-bg: #172a1e; --ok-line: #4caf72; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141619; --surface: #1c1f23; --text: #e6e7e9; --muted: #a1a7b0; --line: #30343a;
+  --accent: #4fc0b3; --accent-soft: #17302d; --code-bg: #24282d;
+  --warn-bg: #2d2513; --warn-line: #c9952c; --danger-bg: #301b1a; --danger-line: #d8635d;
+  --ok-bg: #172a1e; --ok-line: #4caf72; --shadow: none;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.75 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  -webkit-font-smoothing: antialiased; overflow-wrap: anywhere;
+}
+a { color: var(--accent); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+header.top { padding: 40px 0 28px; border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top h1 { margin: 0 0 6px; font-size: 30px; line-height: 1.3; }
+header.top .sub { margin: 0; color: var(--muted); }
+.summary { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 18px; font-size: 14px; color: var(--muted); }
+.summary b { color: var(--text); font-weight: 600; }
+.progress { margin-top: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.bar { flex: 1 1 240px; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+.progress-text { font-size: 14px; color: var(--muted); min-width: 120px; }
+button.ghost { font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+button.ghost:hover { color: var(--text); border-color: var(--muted); }
+
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; padding: 32px 0 80px; }
+nav.toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow: auto; font-size: 14px; }
+nav.toc a { display: flex; gap: 8px; align-items: baseline; padding: 3px 8px; margin-left: -8px; border-radius: 6px; color: var(--text); text-decoration: none; }
+nav.toc a:hover { background: var(--accent-soft); }
+nav.toc a .n { color: var(--muted); min-width: 1.8em; }
+nav.toc a.done { color: var(--muted); }
+nav.toc a.done .n::before { content: "✓"; color: var(--ok-line); }
+nav.toc a.done .n span { display: none; }
+details.toc-mobile { display: none; }
+
+main { min-width: 0; }
+section.step { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 26px 24px; margin: 0 0 18px; box-shadow: var(--shadow); }
+section.step h2 { margin: 0; font-size: 21px; line-height: 1.4; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+section.step h2 .num { font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+.meta { margin: 6px 0 14px; font-size: 14px; color: var(--muted); }
+section.step h3 { font-size: 16px; margin: 20px 0 6px; }
+section.step p { margin: 8px 0; }
+section.step ul { margin: 6px 0; padding-left: 1.3em; }
+
+ol.tasks { list-style: none; margin: 8px 0; padding: 0; counter-reset: t; }
+ol.tasks > li { counter-increment: t; position: relative; padding: 8px 0 8px 64px; border-top: 1px dashed var(--line); }
+ol.tasks > li:first-child { border-top: 0; }
+ol.tasks > li::before { content: counter(t); position: absolute; left: 32px; top: 8px; width: 22px; text-align: right; color: var(--muted); font-size: 14px; }
+ol.tasks > li > input[type=checkbox] { position: absolute; left: 2px; top: 11px; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+ol.tasks > li.checked > .t { color: var(--muted); }
+ol.tasks > li.checked > b:first-of-type { text-decoration: line-through; text-decoration-color: var(--muted); }
+ol.tasks .t { display: block; }
+.give { display: block; margin-top: 4px; font-size: 14px; color: var(--accent); }
+.give::before { content: "交给开发方："; font-weight: 600; }
+
+.callout { border-left: 3px solid; border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 12px 0; font-size: 15px; }
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+.callout .label { font-weight: 600; margin-right: 6px; }
+.callout.ok { background: var(--ok-bg); border-color: var(--ok-line); }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger-line); }
+.callout.info { background: var(--accent-soft); border-color: var(--accent); }
+
+.table-wrap { overflow-x: auto; margin: 10px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { background: var(--code-bg); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.tag { display: inline-block; font-size: 12px; padding: 0 7px; border-radius: 4px; border: 1px solid var(--warn-line); color: var(--warn-line); margin-left: 4px; white-space: nowrap; }
+
+footer { color: var(--muted); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding-top: 20px; }
+  nav.toc { display: none; }
+  details.toc-mobile { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; margin-bottom: 20px; }
+  details.toc-mobile summary { cursor: pointer; font-weight: 600; }
+  details.toc-mobile nav.toc { display: block; position: static; max-height: none; margin-top: 10px; }
+  section.step { padding: 18px 16px 20px; }
+  ol.tasks > li { padding-left: 54px; }
+  ol.tasks > li::before { left: 26px; }
+  header.top h1 { font-size: 24px; }
+}
+@media print {
+  nav.toc, details.toc-mobile, .progress { display: none !important; }
+  .layout { display: block; }
+  section.step { break-inside: avoid-page; box-shadow: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>捷科机械独立站 · 业务方待办清单</h1>
+    <p class="sub">网站已经部署上线（还没开放搜索引擎收录），后台可以登录使用。下面是需要业务方来做的事：要拍板的决定、要申请的账号、要准备的资料。每做完一项可以勾上，进度保存在这个浏览器里。</p>
+    <div class="summary">
+      <span>网站：<b>https://www.jetcomachinery.com</b></span>
+      <span>后台：<b>https://www.jetcomachinery.com/admin</b></span>
+      <span>整理日期：<b>2026-10-29</b></span>
+    </div>
+    <div class="progress">
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+      <span class="progress-text" id="progressText">已完成 0 / 0</span>
+      <button class="ghost" id="resetBtn" type="button">清空勾选</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="目录"></nav>
+
+    <main>
+      <details class="toc-mobile" id="tocMobileWrap"><summary>目录</summary></details>
+
+      <div class="callout info">
+        <p><span class="label">先看这里</span>标了“交给开发方”的，是做完后要提供给开发方的东西。<b>密码、API Key、令牌这类敏感信息，请通过密码管理工具共享，不要发在微信、邮件或聊天群里</b>（做法见最后一节）。</p>
+        <p>第三方网站的按钮名称可能随改版变化，以页面实际显示为准；拿不准的地方直接截图问开发方（截图前先遮住密钥、验证码这类信息）。</p>
+      </div>
+
+      <section class="step" id="b1" data-title="先拍板的三件事">
+        <h2><span class="num">一</span>先拍板的三件事</h2>
+        <p class="meta">这三件事会影响网站能不能长期稳定运行，建议尽早决定，并留下书面记录（邮件或聊天记录都可以）。</p>
+        <ol class="tasks">
+          <li><b>确认是否接受 Vercel 免费版的风险。</b>
+            <span class="t">网站托管在 Vercel 免费版（Hobby）上。按 Vercel 官方定义，展示产品、收集询盘的公司网站属于商用，而免费版条款只允许个人非商用，Vercel 可以不经通知停掉免费版项目。另外，免费版的用量额度（如图片优化每月 5,000 次）超出后要等 30 天才能恢复。</span>
+            <span class="t"><b>两个选择：</b>① 接受风险，继续用免费版；② 升级 Pro，每月 20 美元起，代码不用改。</span>
+            <span class="give">书面确认选哪一种。</span>
+          </li>
+          <li><b>向 Turso 索取商用书面确认。</b>
+            <span class="t">网站数据库用的是 Turso 免费版，它的服务条款没有写明是否允许商用。请发邮件给 Turso 客服，说明这是公司官网、用的是免费版，请对方书面确认可以商用，把回信存档。</span>
+            <span class="give">Turso 回信的截图或转发。</span>
+          </li>
+          <li><b>决定各服务账号归谁。</b>
+            <span class="t">目前 GitHub（代码）、Vercel（托管）、Turso（数据库）都在开发方的个人账号下，网站能先跑起来。正式交接时，建议这些账号归公司所有，或者至少把业务方加为管理成员。请决定是否需要转移、什么时候转移。</span>
+            <span class="give">交接方式的决定。</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="step" id="b2" data-title="准备一个网站专用邮箱">
+        <h2><span class="num">二</span>准备一个网站专用邮箱</h2>
+        <p class="meta">目前还没有公司邮箱。下面所有账号建议都用同一个“网站专用邮箱”注册，方便以后交接。</p>
+        <ol class="tasks">
+          <li><b>新注册一个专用邮箱</b>，<span class="t">比如新开一个 Gmail，只用于网站相关的账号，不要用个人私人邮箱。<b>一定开启两步验证</b>，密码存进密码管理工具。各服务找回密码都靠它，丢了就全丢了。</span></li>
+          <li><b>决定网站上显示的“业务邮箱”。</b><span class="t">它显示在网站上，客户回复自动回复邮件时也会发到这里。用 Gmail 能正常收发，只是 B2B 客户看到会觉得不够正式。</span>
+            <span class="give">业务邮箱地址。</span>
+          </li>
+          <li><b>决定“询盘通知邮箱”。</b><span class="t">每条新询盘的通知发到这里（只填 1 个），只有自己人看得到，用什么邮箱都行。</span>
+            <span class="give">询盘通知邮箱地址。</span>
+          </li>
+          <li><b>（可选）开通公司域名邮箱</b>，<span class="t">比如 <code>sales@jetcomachinery.com</code>。可以用 Zoho Mail、Google Workspace、Microsoft 365 等，额度和价格以各家官网为准 <span class="tag">未确认</span>。开通后在后台把业务邮箱换掉就行，代码不用改，也不会和下面的发信服务冲突。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b3" data-title="开通发信服务（Resend）">
+        <h2><span class="num">三</span>开通发信服务（Resend）</h2>
+        <p class="meta">作用：网站自动发“新询盘通知”和“给客户的自动回复”。免费版每月 3,000 封、每天 100 封，首期够用。</p>
+        <div class="callout warn"><span class="label">这一项完成前</span>客户提交的询盘照常保存在后台，不会丢，但公司收不到通知邮件，客户也收不到自动回复。这期间请每天登录后台“询盘管理”查看。配好后，之前失败的邮件会自动补发。</div>
+        <ol class="tasks">
+          <li><b>注册 Resend</b>（resend.com），<span class="t">用网站专用邮箱。</span></li>
+          <li><b>添加发信域名：</b><span class="t">左侧 Domains › Add Domain，填 <code>jetcomachinery.com</code>（不带 www）。如果让选区域，选欧洲 Ireland 即可。</span></li>
+          <li><b>在域名后台加解析记录。</b><span class="t">域名是在 <b>Namecheap</b> 买的。Resend 会列出几条记录（TXT 和 MX），要逐条加到 Namecheap › Domain List › Manage › Advanced DNS › Host Records 里。另外再加一条：类型 TXT、主机 <code>_dmarc</code>、值 <code>v=DMARC1; p=none;</code>（减少邮件进垃圾箱）。</span>
+            <span class="t">没有 Namecheap 账号权限的话，把 Resend 页面上的记录截图给开发方，由开发方来加。<b>Namecheap 里已有的 A、CNAME 记录和 Mail Settings 不要动</b>，那是网站在用的。</span>
+          </li>
+          <li><b>回 Resend 点 Verify</b>，<span class="t">等状态变成 Verified（已验证）。几分钟到几小时不等。</span></li>
+          <li><b>生成 API Key：</b><span class="t">API Keys › Create API Key，权限选 Sending access，域名选 <code>jetcomachinery.com</code>。Key 只显示一次，马上存进密码管理工具。</span>
+            <span class="give">API Key（通过密码管理工具共享）。</span>
+          </li>
+          <li><b>定好发件人名称</b>，<span class="t">也就是客户收到邮件时看到的名字，一般用公司英文名。发件地址固定是 <code>noreply@jetcomachinery.com</code>，这个地址不需要真的开邮箱。</span>
+            <span class="give">发件人名称，例如 Jieke Machinery。</span>
+          </li>
+          <li><b>开发方配好后，参与一次邮件测试：</b><span class="t">在网站上提交几条测试询盘，客户邮箱分别用 Gmail、Outlook 和公司邮箱，确认通知和自动回复都能收到，而且进的是收件箱不是垃圾箱。测完在后台把测试询盘改成“无效”。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b4" data-title="开通在线客服（tawk.to）">
+        <h2><span class="num">四</span>开通在线客服（tawk.to）</h2>
+        <p class="meta">作用：网站右侧红色、蓝色客服按钮接入真人客服。免费版即可，对话窗口会带 tawk.to 标识。</p>
+        <ol class="tasks">
+          <li><b>注册 tawk.to 并新建站点（Property）</b>，<span class="t">网址填 <code>https://www.jetcomachinery.com</code>。</span></li>
+          <li><b>找到两个编号：</b><span class="t">Administration › Chat Widget 里的 Property ID 和 Widget ID。</span>
+            <span class="give">Property ID 和 Widget ID（不是密钥，可以直接发）。</span>
+          </li>
+          <li><b>给每位客服开独立账号</b>，<span class="t">客服可以用电脑或 tawk.to 手机 App 接待；可以在对话窗口外观里设置品牌色和 Logo。</span></li>
+          <li><b>不用在 tawk.to 里设置离线留言。</b><span class="t">客服离线时，网站会显示自己的留言表单，留言统一进后台“询盘管理”。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b5" data-title="开通统计和收录（Google）">
+        <h2><span class="num">五</span>开通统计和收录（Google）</h2>
+        <p class="meta">作用：统计网站访问和询盘数量（GA4 + GTM），提交网站给 Google 收录（Search Console）。都是免费的。</p>
+        <ol class="tasks">
+          <li><b>用网站专用邮箱注册 Google 账号</b><span class="t">（专用邮箱本身是 Gmail 的话直接用）。</span></li>
+          <li><b>建 GA4 媒体资源：</b><span class="t">在 analytics.google.com 新建账号和媒体资源，再建网站数据流，网址填 <code>https://www.jetcomachinery.com</code>。然后把开发方加为成员，角色选“编辑者”，由开发方完成后续设置。</span>
+            <span class="give">把开发方的 Google 邮箱加为 GA4 编辑者。</span>
+          </li>
+          <li><b>建 GTM 容器：</b><span class="t">在 tagmanager.google.com 新建账号和容器（类型选“网站”），把开发方加为用户，权限给到“发布”。</span>
+            <span class="give">把开发方加为 GTM 用户。</span>
+          </li>
+          <li><b>上线当天验证 Search Console：</b><span class="t">添加资源，类型选“网域”，填 <code>jetcomachinery.com</code>，需要在 Namecheap 加一条 TXT 记录（可交给开发方加）。验证后把开发方加为用户。</span></li>
+          <li><b>不要关联 Google Ads，也不要在 GTM 里自己加广告代码。</b><span class="t">首期按“只做统计”的方式设置，所以不用弹 Cookie 同意横幅。以后要投广告，先找开发方调整网站设置和隐私说明。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b6" data-title="准备公司信息和素材">
+        <h2><span class="num">六</span>准备公司信息和素材</h2>
+        <p class="meta">这些内容由业务方在后台“全站设置”里填写，也可以整理好交给开发方代填。前台显示的文字都要用英文，后台会检查，出现中文就发布不了。</p>
+        <ol class="tasks">
+          <li><b>公司基本信息：</b><span class="t">公司英文名、公司法定名称（隐私政策要用，可能和对外英文名不同）、注册地址、办公时间。</span></li>
+          <li><b>联系方式：</b><span class="t">电话、WhatsApp 号码（都带国际区号，如 +86 138 0000 0000）、地址。</span></li>
+          <li><b>社交媒体链接：</b><span class="t">Facebook、Instagram、TikTok、YouTube、LinkedIn，有哪个填哪个。</span></li>
+          <li><b>品牌素材：</b><span class="t">Logo、网站图标（浏览器标签上的小图标）、苹果设备主屏幕图标、默认分享图（1200×630，分享到社交媒体时显示）。</span></li>
+          <li><b>产品和案例内容（英文）：</b><span class="t">产品介绍、参数、图片、PDF 手册，案例图文。视频先上传到公司自己的 YouTube 频道，再把链接填进后台。</span></li>
+          <li><b>图片和 PDF 尽量压小。</b><span class="t">免费版图片存储空间是 1 GB，备份还会再复制一份，所以图片和 PDF 总量最好控制在 400 MB 左右以内。单张图片建议压缩到几百 KB；后台上限是单张图片 20 MB、PDF 30 MB。上传图片时要填写英文替代文字。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b7" data-title="需要确认的事">
+        <h2><span class="num">七</span>需要确认的事</h2>
+        <ol class="tasks">
+          <li><b>隐私政策和 Cookie 说明里的待填内容，和法务确认。</b><span class="t">导入后还剩这些方括号要替换：</span>
+            <ul>
+              <li>隐私联系邮箱 <code>[privacy@example.com]</code></li>
+              <li>数据保护负责人 <code>[DPO name]</code></li>
+              <li>邮箱记录、聊天记录的保存期限 <code>[Inbox retention]</code>、<code>[Chat retention]</code></li>
+              <li>国家 <code>[Country]</code></li>
+              <li>数据跨境传输的依据 <code>[Confirm the transfer mechanism…]</code></li>
+              <li>tawk.to、YouTube 两家 Cookie 的保存期限 <code>[As set by tawk.to]</code>、<code>[As set by YouTube]</code></li>
+            </ul>
+            <span class="give">以上各项的确认内容。</span>
+          </li>
+          <li><b>是否需要葡萄牙语版的隐私政策和 Cookie 说明。</b><span class="t">巴西数据保护机构（ANPD）不建议 Cookie 政策只提供外语版本。如果有巴西客户，建议另做葡萄牙语版，作为辅助页面发布。</span></li>
+          <li><b>手机端右侧悬浮栏的样式。</b><span class="t">现在手机上默认收起成一个按钮，点开才展开，避免压住正文。用手机打开网站看一下，确认是否接受；不接受的话可以改回常驻显示一列。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b8" data-title="后台账号和人员">
+        <h2><span class="num">八</span>后台账号和人员</h2>
+        <p class="meta">后台地址：https://www.jetcomachinery.com/admin。所有账号都强制开启双重验证。</p>
+        <ol class="tasks">
+          <li><b>列出需要后台账号的人和角色。</b><span class="t">角色有：<b>管理员</b>（全部权限，包括管理用户、删除询盘、下载备份）、<b>内容编辑</b>（编辑页面、产品、案例、图片，看不到询盘）、<b>业务人员</b>（查看和跟进询盘）。一人一个账号，不要共用。</span>
+            <span class="give">每个人的邮箱、姓名、角色。</span>
+          </li>
+          <li><b>指定一位备用管理员。</b><span class="t">现在只有一个管理员账号，双重验证没法在后台自己解除。万一手机丢了就登不进去，所以需要再有一个管理员，用他自己的手机设置双重验证。</span>
+            <span class="give">备用管理员的邮箱和姓名。</span>
+          </li>
+          <li><b>每个人的手机都装好验证器 App。</b><span class="t">免费的 Google Authenticator（开发者 Google LLC）或 Microsoft Authenticator（开发者 Microsoft Corporation）；iPhone 也可以直接用系统自带的“密码”App。小心要求付费订阅的山寨 App。换手机前，先把验证器里的账号转移到新手机。</span></li>
+          <li><b>保管备份密钥的线下副本。</b><span class="t">网站每天自动加密备份，解密要用一串备份密钥。开发方会交给业务方一份线下副本（打印或 U 盘），请和其他重要文件放在一起锁好。丢了这串密钥，备份就恢复不了。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b9" data-title="上线和上线后">
+        <h2><span class="num">九</span>上线和上线后</h2>
+        <ol class="tasks">
+          <li><b>录入内容并发布：</b><span class="t">首页、关于我们、产品、案例、联系我们的英文内容。操作方法见后台左侧菜单里的“操作教程”。</span></li>
+          <li><b>内容录完后，开放搜索引擎收录：</b><span class="t">后台 › 全站设置 › 统计、收录与安全，勾选“允许搜索引擎收录”，保存并发布；然后在 Search Console 提交网站地图 <code>sitemap.xml</code>。内容没录完之前先不要开。</span></li>
+          <li><b>Namecheap 里开启域名自动续费。</b><span class="t">域名过期，网站和邮件都会停。</span></li>
+          <li><b>同事离职时及时删除后台账号</b><span class="t">（后台 › 系统 › 用户）。</span></li>
+          <li><b>每月看一眼用量：</b><span class="t">Vercel 和 Turso 的免费额度、后台“备份记录”。可以由开发方代看，发现快用完时再决定是否升级。</span></li>
+        </ol>
+      </section>
+
+      <section class="step" id="b10" data-title="怎么把敏感信息交给开发方">
+        <h2><span class="num">附</span>怎么把敏感信息交给开发方</h2>
+        <ul>
+          <li><b>密码、API Key、令牌</b>：用密码管理工具（如 1Password、Bitwarden）的共享功能发，或者当面口述后由对方直接录入。不要发在微信、邮件、聊天群里，也不要截图。</li>
+          <li><b>可以直接发的</b>：tawk.to 的 Property ID / Widget ID、GTM 容器编号、GA4 衡量 ID、邮箱地址、公司信息和素材。</li>
+          <li><b>截图提问时</b>：先遮住密钥、二维码、6 位验证码这类信息。</li>
+        </ul>
+        <h3>交给开发方的东西汇总</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>内容</th><th>来自</th><th>是否敏感</th></tr></thead>
+            <tbody>
+              <tr><td>免费版 / Pro 的决定、Turso 商用回信、账号归属决定</td><td>第一节</td><td>否</td></tr>
+              <tr><td>业务邮箱、询盘通知邮箱</td><td>第二节</td><td>否</td></tr>
+              <tr><td>Resend API Key</td><td>第三节</td><td><b>是</b>，用密码管理工具共享</td></tr>
+              <tr><td>发件人名称</td><td>第三节</td><td>否</td></tr>
+              <tr><td>tawk.to Property ID、Widget ID</td><td>第四节</td><td>否</td></tr>
+              <tr><td>GA4、GTM 成员权限</td><td>第五节</td><td>否（在 Google 后台添加开发方邮箱即可）</td></tr>
+              <tr><td>公司信息、联系方式、品牌素材、产品和案例内容</td><td>第六节</td><td>否</td></tr>
+              <tr><td>隐私政策待填内容的确认</td><td>第七节</td><td>否</td></tr>
+              <tr><td>后台账号人员名单、备用管理员</td><td>第八节</td><td>否</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">依据：项目代码、《机械设备独立站技术方案》、《网站后台操作教程》、《上线操作手册》（2026-10-29 整理）。勾选进度只保存在当前浏览器里。</div>
+</footer>
+
+<script>
+(function () {
+  var KEY = 'jieke-owner-checklist-v1';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.step'));
+  sections.forEach(function (sec) {
+    Array.prototype.forEach.call(sec.querySelectorAll('ol.tasks > li'), function (li, i) {
+      var id = sec.id + '-' + (i + 1);
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.setAttribute('aria-label', '标记完成');
+      box.checked = Boolean(state[id]);
+      li.insertBefore(box, li.firstChild);
+      if (box.checked) li.classList.add('checked');
+      box.addEventListener('change', function () {
+        if (box.checked) state[id] = 1; else delete state[id];
+        li.classList.toggle('checked', box.checked);
+        save();
+        refresh();
+      });
+    });
+  });
+
+  function buildToc() {
+    var nav = document.createElement('div');
+    sections.forEach(function (sec) {
+      var a = document.createElement('a');
+      a.href = '#' + sec.id;
+      a.setAttribute('data-for', sec.id);
+      a.innerHTML = '<span class="n"><span></span></span><span class="l"></span>';
+      a.querySelector('.n span').textContent = sec.querySelector('h2 .num').textContent;
+      a.querySelector('.l').textContent = sec.getAttribute('data-title');
+      nav.appendChild(a);
+    });
+    return nav;
+  }
+  document.getElementById('toc').appendChild(buildToc());
+  var mobileNav = document.createElement('nav');
+  mobileNav.className = 'toc';
+  mobileNav.appendChild(buildToc());
+  document.getElementById('tocMobileWrap').appendChild(mobileNav);
+
+  function refresh() {
+    var all = document.querySelectorAll('ol.tasks > li > input[type=checkbox]');
+    var done = 0;
+    Array.prototype.forEach.call(all, function (b) { if (b.checked) done++; });
+    document.getElementById('progressText').textContent = '已完成 ' + done + ' / ' + all.length;
+    document.getElementById('bar').style.width = (all.length ? done / all.length * 100 : 0) + '%';
+    sections.forEach(function (sec) {
+      var boxes = sec.querySelectorAll('ol.tasks > li > input[type=checkbox]');
+      var complete = boxes.length > 0 && Array.prototype.every.call(boxes, function (b) { return b.checked; });
+      Array.prototype.forEach.call(document.querySelectorAll('a[data-for="' + sec.id + '"]'), function (a) {
+        a.classList.toggle('done', complete);
+      });
+    });
+  }
+  refresh();
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!confirm('确定清空所有勾选吗？')) return;
+    state = {};
+    save();
+    Array.prototype.forEach.call(document.querySelectorAll('ol.tasks > li'), function (li) {
+      li.classList.remove('checked');
+      var b = li.querySelector('input[type=checkbox]');
+      if (b) b.checked = false;
+    });
+    refresh();
+  });
+})();
+</script>
+</body>
+</html>
