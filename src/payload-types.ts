@@ -241,6 +241,8 @@ export interface Media {
    * 前台位置：不在前台显示。记录图片来源和使用授权
    */
   licenseNote?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -2170,6 +2172,8 @@ export interface MediaSelect<T extends boolean = true> {
   usage?: T;
   caption?: T;
   licenseNote?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

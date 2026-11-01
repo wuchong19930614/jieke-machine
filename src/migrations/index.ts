@@ -3,6 +3,7 @@ import * as migration_20261022_003835_hidden_text_flags from './20261022_003835_
 import * as migration_20261022_064852_redirect_type_308 from './20261022_064852_redirect_type_308';
 import * as migration_20261022_083615_floating_toggle_copy_failed from './20261022_083615_floating_toggle_copy_failed';
 import * as migration_20261022_085408_server_error_copy from './20261022_085408_server_error_copy';
+import * as migration_20261101_144924_media_storage_prefix from './20261101_144924_media_storage_prefix';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261022_085408_server_error_copy.up,
     down: migration_20261022_085408_server_error_copy.down,
-    name: '20261022_085408_server_error_copy'
+    name: '20261022_085408_server_error_copy',
+  },
+  {
+    up: migration_20261101_144924_media_storage_prefix.up,
+    down: migration_20261101_144924_media_storage_prefix.down,
+    name: '20261101_144924_media_storage_prefix'
   },
 ];

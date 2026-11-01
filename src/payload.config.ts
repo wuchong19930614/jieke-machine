@@ -155,6 +155,9 @@ export default buildConfig({
     }),
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      // 没配令牌（本地）时也给媒体库加上插件的 prefix、_objectKey 字段，本地和线上表结构一致，
+      // 否则本地生成的迁移缺这两列，线上一查媒体库就报 no such column
+      alwaysInsertFields: true,
       token: process.env.BLOB_READ_WRITE_TOKEN,
       clientUploads: true,
       addRandomSuffix: true,
