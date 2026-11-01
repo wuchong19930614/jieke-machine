@@ -4,6 +4,14 @@ import { useRef, useState } from 'react'
 
 import { exportGlobals, importGlobals, type TransferResult } from './contentTransferActions'
 
+// 服务端操作抛出的是英文原文（网络断开、请求过大、线上隐藏细节的报错），换成中文说明后附原文
+function explainActionError(error: unknown): string {
+  const raw = String((error as Error)?.message ?? error)
+  if (error instanceof TypeError || /failed to fetch|network/i.test(raw)) return '网络连接失败，请检查网络后重试'
+  if (/body exceeded|too large/i.test(raw)) return '文件太大，超过了服务器单次能接收的大小，请联系开发人员'
+  return `服务器处理出错，请稍后重试；仍然失败请联系开发人员（原始信息：${raw.slice(0, 200)}）`
+}
+
 export function ContentTransferClient() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -15,7 +23,7 @@ export function ContentTransferClient() {
     try {
       return await action()
     } catch (error) {
-      return { ok: false, message: `操作失败：${String((error as Error)?.message ?? error)}` }
+      return { ok: false, message: `操作失败：${explainActionError(error)}` }
     } finally {
       setBusy(false)
     }

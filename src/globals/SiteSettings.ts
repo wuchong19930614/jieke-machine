@@ -152,7 +152,7 @@ export const SiteSettings = editableGlobal({
           name: 'gtmId',
           type: 'text',
           label: 'GTM 容器编号',
-          validate: (value: string | null | undefined) => (!value || /^GTM-[A-Z0-9]+$/.test(value) ? true : '格式应为 GTM-XXXXXXX'),
+          validate: (value: string | null | undefined) => (!value || /^GTM-[A-Z0-9]+$/.test(value) ? true : '格式应为 GTM-XXXXXXX（大写字母和数字），在 Google 跟踪代码管理器后台右上角可以看到'),
           admin: { description: at('不在页面上显示，用于加载统计代码', 'GA4 和以后的广告转化都在 GTM 里配置') },
         },
         {

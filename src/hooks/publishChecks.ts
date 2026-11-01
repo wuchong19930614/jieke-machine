@@ -2,17 +2,30 @@
 import { ValidationError } from 'payload'
 import type { CollectionBeforeChangeHook, Field, GlobalBeforeChangeHook, PayloadRequest } from 'payload'
 
-const CJK = /[㐀-鿿豈-﫿　-〿！-｠]/
+// 汉字和全角标点（如“，”“（）”、全角空格）都算中文，英文网站上会显示成中文排版
+const CJK = /[㐀-鿿豈-﫿　-〿！-｠]/g
 
-type Problem = { path: string; label: string }
+type Problem = { path: string; label: string; chars: string[] }
 
-// 富文本：递归找出所有文字节点
-function lexicalHasChinese(node: unknown): boolean {
-  if (!node || typeof node !== 'object') return false
+// 文字里的中文字符，去重后按出现顺序返回
+export function chineseChars(text: string): string[] {
+  return [...new Set(text.match(CJK) ?? [])]
+}
+
+// 提示里列出被拦的字符：最多 3 个，全角空格看不见，写成文字
+export function describeChars(chars: string[]): string {
+  const shown = chars.slice(0, 3).map((char) => (char === '\u3000' ? '全角空格' : `“${char}”`))
+  return `${shown.join('、')}${chars.length > 3 ? ' 等' : ''}`
+}
+
+// 富文本：递归收集所有文字节点里的中文字符
+function lexicalChars(node: unknown, out: string[] = []): string[] {
+  if (!node || typeof node !== 'object') return out
   const n = node as { text?: unknown; children?: unknown[]; root?: unknown }
-  if (typeof n.text === 'string' && CJK.test(n.text)) return true
-  if (n.root) return lexicalHasChinese(n.root)
-  return Array.isArray(n.children) && n.children.some(lexicalHasChinese)
+  if (typeof n.text === 'string') out.push(...chineseChars(n.text))
+  if (n.root) lexicalChars(n.root, out)
+  if (Array.isArray(n.children)) n.children.forEach((child) => lexicalChars(child, out))
+  return [...new Set(out)]
 }
 
 function labelOf(field: Field): string {
@@ -43,13 +56,16 @@ export function findChinese(fields: Field[], data: unknown, prefix = ''): Proble
     const value = record[field.name]
     const path = `${prefix}${field.name}`
     if (value === null || value === undefined) continue
+    const report = (chars: string[]) => {
+      if (chars.length) problems.push({ path, label: labelOf(field), chars })
+    }
     switch (field.type) {
       case 'text':
       case 'textarea':
-        if (typeof value === 'string' && CJK.test(value)) problems.push({ path, label: labelOf(field) })
+        if (typeof value === 'string') report(chineseChars(value))
         break
       case 'richText':
-        if (lexicalHasChinese(value)) problems.push({ path, label: labelOf(field) })
+        report(lexicalChars(value))
         break
       case 'group':
         problems.push(...findChinese(field.fields, value, `${path}.`))
@@ -59,7 +75,7 @@ export function findChinese(fields: Field[], data: unknown, prefix = ''): Proble
           value.forEach((row, index) => problems.push(...findChinese(field.fields, row, `${path}.${index}.`)))
         break
       case 'json':
-        if (JSON.stringify(value).match(CJK)) problems.push({ path, label: labelOf(field) })
+        report(chineseChars(JSON.stringify(value)))
         break
       default:
         break
@@ -68,17 +84,21 @@ export function findChinese(fields: Field[], data: unknown, prefix = ''): Proble
   return problems
 }
 
-// 传入 req.t 和字段名：右下角的汇总提示才会按后台语言显示“下面的字段是无效的：简介”，不显示英文和字段键名
+// 传入 req.t 和字段名：右下角的汇总提示按后台语言显示。字段名后面带上被拦的字符，
+// 富文本字段下方不一定显示字段说明，只看右下角也能知道要改什么
 function toError(problems: Problem[], target: { collection?: string; global?: string }, req: PayloadRequest) {
   return new ValidationError(
     {
       ...target,
       req,
-      errors: problems.slice(0, 20).map((p) => ({
-        path: p.path,
-        label: p.label,
-        message: `“${p.label}”含有中文，前台只能使用英文。请修改后再发布。`,
-      })),
+      errors: problems.slice(0, 20).map((p) => {
+        const chars = describeChars(p.chars)
+        return {
+          path: p.path,
+          label: `${p.label}（含中文字符 ${chars}）`,
+          message: `“${p.label}”含有中文字符 ${chars}，前台只能使用英文。请切换到英文输入法重新输入后再发布。`,
+        }
+      }),
     },
     req.t,
   )

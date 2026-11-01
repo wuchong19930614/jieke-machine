@@ -5,6 +5,7 @@ import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, CollectionC
 import { isContentRole, isLoggedIn } from '@/access'
 import { at } from '@/fields'
 import { blockReferencedMediaDelete } from '@/hooks/mediaGuard'
+import { chineseChars, describeChars } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { MEDIA_USAGES } from '@/lib/constants'
 
@@ -15,8 +16,10 @@ const PDF_MAX = 30 * MB
 const MAX_DIMENSION = 8192
 
 const checkFile: CollectionBeforeChangeHook = ({ data }) => {
-  if (typeof data?.alt === 'string' && /[㐀-鿿]/.test(data.alt)) {
-    throw new APIError('替代文字会显示给海外访客和搜索引擎，请用英文填写', 400, null, true)
+  // 和发布前检查同一套规则：全角标点也算中文
+  const altChars = typeof data?.alt === 'string' ? chineseChars(data.alt) : []
+  if (altChars.length) {
+    throw new APIError(`替代文字含有中文字符 ${describeChars(altChars)}。替代文字会显示给海外访客和搜索引擎，请切换到英文输入法用英文填写`, 400, null, true)
   }
   const mime = typeof data?.mimeType === 'string' ? data.mimeType : ''
   const size = typeof data?.filesize === 'number' ? data.filesize : 0

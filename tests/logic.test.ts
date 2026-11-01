@@ -4,14 +4,14 @@ import { describe, expect, it, vi } from 'vitest'
 import { defaultsOf, fill, textFields, withDefaults } from '@/content/defineTexts'
 import { AUTO_REPLY_TEXTS } from '@/content/texts'
 import { toSlug } from '@/fields'
-import { findChinese } from '@/hooks/publishChecks'
+import { chineseChars, describeChars, findChinese } from '@/hooks/publishChecks'
 import { findUploadRefs } from '@/hooks/mediaGuard'
 import { normalizePath } from '@/hooks/slugRedirect'
 import { COUNTRY_CODES, getCountries } from '@/lib/countries'
 import { labelForPath, walkFields } from '@/lib/fieldWalk'
 import { buildAutoReply } from '@/lib/server/inquiryMail'
 import { maskEmail, safeError } from '@/lib/server/logSafe'
-import { sendMail } from '@/lib/server/mail'
+import { explainResendError, sendMail } from '@/lib/server/mail'
 import { uniqueConflictField } from '@/lib/server/inquiryRef'
 import { activeStepIndex } from '@/components/client/ProcessSteps'
 import { Inquiries } from '@/collections/Inquiries'
@@ -207,6 +207,20 @@ describe('按字段定义遍历', () => {
     expect(problems.map((p) => p.path)).toEqual(['name', 'faqs.1.question', 'body'])
   })
 
+  it('全角标点也算中文，并列出被拦的字符', () => {
+    const problems = findChinese(fields, {
+      name: 'Jetco Machinery Co., Ltd.',
+      body: { root: { children: [{ children: [{ text: 'jetco machinery co，ted' }, { text: 'Size（mm）' }] }] } },
+    })
+    expect(problems).toEqual([{ path: 'body', label: '正文', chars: ['，', '（', '）'] }])
+  })
+
+  it('提示里的字符最多列 3 个，全角空格写成文字', () => {
+    expect(describeChars(chineseChars('a，b'))).toBe('“，”')
+    expect(describeChars(chineseChars('A\u3000B'))).toBe('全角空格')
+    expect(describeChars(chineseChars('中文，（）'))).toBe('“中”、“文”、“，” 等')
+  })
+
   it('找出引用某个媒体的字段', () => {
     const refs = findUploadRefs(fields, { faqs: [{ image: 7 }, { image: { id: 8 } }], body: { root: { children: [{ type: 'upload', relationTo: 'media', value: { id: 8 } }] } } }, '8')
     expect(refs).toEqual(['faqs.2.image', 'body'])
@@ -369,5 +383,15 @@ describe('日志不带客户资料', () => {
   it('邮箱打码只留首字母和域名', () => {
     expect(maskEmail('john.smith@example.com')).toBe('j***@example.com')
     expect(maskEmail('not-an-email')).toBe('not-an-email')
+  })
+})
+
+describe('Resend 报错说明', () => {
+  it('常见原因换成中文，并附原始信息', () => {
+    expect(explainResendError(401, 'missing_api_key', 'Missing API key')).toContain('RESEND_API_KEY')
+    expect(explainResendError(403, 'validation_error', 'You can only send testing emails to your own email address')).toContain('还没在 Resend 完成认证')
+    expect(explainResendError(429, 'rate_limit_exceeded', 'Too many requests')).toContain('发送额度')
+    expect(explainResendError(422, 'invalid_from_address', 'Invalid from field')).toContain('MAIL_FROM')
+    expect(explainResendError(418, 'teapot', 'odd')).toBe('发信失败（原始信息：418 teapot odd）')
   })
 })

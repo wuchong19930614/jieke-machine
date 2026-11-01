@@ -8,6 +8,13 @@ type Target = 'notify' | 'autoReply'
 
 const STATUS_TEXT: Record<string, string> = { pending: '待发送', sent: '已发送', failed: '失败', skipped: '不发送' }
 
+// 接口只返回错误代码时，换成业务人员看得懂的说明
+const CODE_TEXT: Record<string, string> = {
+  UNAUTHORIZED: '登录已过期，请刷新页面重新登录',
+  FORBIDDEN: '当前账号没有重新发送邮件的权限',
+  NOT_FOUND: '找不到这条询盘，可能已被删除',
+}
+
 export function ResendButton() {
   const { id } = useDocumentInfo()
   const router = useRouter()
@@ -26,12 +33,12 @@ export function ResendButton() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target }),
       })
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string | null; message?: string }
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; code?: string; error?: string | null; message?: string }
       if (res.ok && data.ok) toast.success('已重新发送')
-      else toast.error(`发送失败：${data.error || data.message || res.statusText}`)
+      else toast.error(`发送失败：${data.error || CODE_TEXT[data.code ?? ''] || data.message || `服务器返回 ${res.status}，请稍后重试`}`)
       router.refresh()
     } catch {
-      toast.error('网络错误，请稍后重试')
+      toast.error('网络连接失败，请检查网络后重试')
     } finally {
       setBusy(null)
     }

@@ -99,6 +99,13 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { zh },
     fallbackLanguage: 'zh',
+    // 自带的“下面的字段是无效的”读起来像程序报错，改成告诉业务人员该做什么
+    translations: {
+      zh: {
+        error: { followingFieldsInvalid_one: '无法保存，请修改以下字段：', followingFieldsInvalid_other: '无法保存，请修改以下字段：' },
+        validation: { required: '这一项必须填写' },
+      },
+    },
   },
   collections: [Pages, Products, Cases, Media, Inquiries, Users, Backups],
   globals: [SiteSettings, Theme, UiTexts, HomePage, AboutPage, ProductsPage, CasesPage, ContactPage],

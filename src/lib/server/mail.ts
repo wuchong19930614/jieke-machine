@@ -43,7 +43,7 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
       signal: controller.signal,
     })
     const data = (await res.json().catch(() => ({}))) as { id?: string; message?: string; name?: string }
-    if (!res.ok) return { ok: false, error: `${res.status} ${data.name ?? ''} ${data.message ?? ''}`.trim().slice(0, 300) }
+    if (!res.ok) return { ok: false, error: explainResendError(res.status, data.name, data.message) }
     return { ok: true, id: data.id }
   } catch (error) {
     const aborted = error instanceof Error && error.name === 'AbortError'
@@ -51,6 +51,19 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
   } finally {
     clearTimeout(timer)
   }
+}
+
+// Resend 的报错是英文，询盘详情和“重新发送”按钮直接显示给业务人员：常见原因换成中文说明，后面附原文方便排查
+export function explainResendError(status: number, name?: string, message?: string): string {
+  const raw = `${status} ${name ?? ''} ${message ?? ''}`.trim()
+  const text = `${name ?? ''} ${message ?? ''}`.toLowerCase()
+  let hint = ''
+  if (status === 401 || text.includes('api_key') || text.includes('api key')) hint = '发信密钥无效，请检查 Vercel 环境变量 RESEND_API_KEY'
+  else if (text.includes('testing emails') || text.includes('verify a domain') || text.includes('not verified')) hint = '发信域名还没在 Resend 完成认证，现在只能发给 Resend 账号本人'
+  else if (status === 429) hint = '超过 Resend 发送额度（免费版每天 100 封），系统会稍后自动重试'
+  else if (status === 422 || status === 400) hint = '发件地址或收件地址不正确，请检查 MAIL_FROM 和收件邮箱'
+  else if (status >= 500) hint = 'Resend 服务暂时出错，系统会稍后自动重试'
+  return (hint ? `${hint}（原始信息：${raw}）` : `发信失败（原始信息：${raw}）`).slice(0, 300)
 }
 
 export const escapeHtml = (value: string): string =>
