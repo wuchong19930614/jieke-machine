@@ -26,6 +26,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { Theme } from './globals/Theme'
 import { UiTexts } from './globals/UiTexts'
 import { PATHS, revalidate } from './hooks/revalidate'
+import { explainUnexpectedError, labelValidationFields } from './hooks/serverErrors'
 import { siteUrl } from './lib/previewPath'
 import { resendEmailAdapter } from './lib/server/payloadEmail'
 import { keepSessionInPlugin } from './lib/server/pluginSession'
@@ -55,6 +56,8 @@ export default buildConfig({
   csrf: [SITE_URL],
   cors: [SITE_URL],
   telemetry: false,
+  // 意外错误不再只显示英文 “Something went wrong.”，换成中文原因和错误编号；字段报错显示中文字段名（见 hooks/serverErrors.ts）
+  hooks: { afterError: [explainUnexpectedError, labelValidationFields] },
   // Payload 自带接口放到 /api/cms，/api 下其他路径留给网站自己的接口（询盘、预览、定时任务）
   routes: { api: '/api/cms', admin: '/admin' },
   graphQL: { disable: true },
@@ -102,7 +105,12 @@ export default buildConfig({
     // 自带的“下面的字段是无效的”读起来像程序报错，改成告诉业务人员该做什么
     translations: {
       zh: {
-        error: { followingFieldsInvalid_one: '无法保存，请修改以下字段：', followingFieldsInvalid_other: '无法保存，请修改以下字段：' },
+        error: {
+          followingFieldsInvalid_one: '无法保存，请修改以下字段：',
+          followingFieldsInvalid_other: '无法保存，请修改以下字段：',
+          // 例如网址短名和别的产品重复
+          valueMustBeUnique: '这个值已被其他记录使用，请换一个',
+        },
         validation: { required: '这一项必须填写' },
       },
     },

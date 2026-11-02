@@ -23,14 +23,15 @@ const checkFile: CollectionBeforeChangeHook = ({ data }) => {
   }
   const mime = typeof data?.mimeType === 'string' ? data.mimeType : ''
   const size = typeof data?.filesize === 'number' ? data.filesize : 0
-  if (mime.startsWith('image/') && size > IMAGE_MAX) throw new APIError('图片不能超过 20MB', 400, null, true)
-  if (mime === 'application/pdf' && size > PDF_MAX) throw new APIError('PDF 不能超过 30MB', 400, null, true)
-  if (
-    mime.startsWith('image/') &&
-    ((typeof data?.width === 'number' && data.width > MAX_DIMENSION) ||
-      (typeof data?.height === 'number' && data.height > MAX_DIMENSION))
-  ) {
-    throw new APIError(`图片宽或高不能超过 ${MAX_DIMENSION} 像素，请缩小后再上传`, 400, null, true)
+  // 提示带上这个文件的实际大小，业务人员知道要压缩到多少
+  const actual = `这个文件约 ${(size / MB).toFixed(1)}MB`
+  if (mime.startsWith('image/') && size > IMAGE_MAX) throw new APIError(`图片不能超过 20MB（${actual}），请压缩后再上传`, 400, null, true)
+  if (mime === 'application/pdf' && size > PDF_MAX) throw new APIError(`PDF 不能超过 30MB（${actual}），请压缩后再上传`, 400, null, true)
+  const width = typeof data?.width === 'number' ? data.width : undefined
+  const height = typeof data?.height === 'number' ? data.height : undefined
+  if (mime.startsWith('image/') && ((width !== undefined && width > MAX_DIMENSION) || (height !== undefined && height > MAX_DIMENSION))) {
+    const dims = width !== undefined && height !== undefined ? `${width}×${height}` : `${width ?? height} 像素`
+    throw new APIError(`图片宽或高不能超过 ${MAX_DIMENSION} 像素（这张是 ${dims}），请缩小后再上传`, 400, null, true)
   }
   return data
 }

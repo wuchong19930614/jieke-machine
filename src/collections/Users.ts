@@ -46,14 +46,17 @@ export const Users: CollectionConfig = {
     ],
     // 密码长度在操作开始前检查：“忘记密码”重置时 Payload 不把新密码传给 beforeValidate，只按内置的 3 位下限校验
     beforeOperation: [
-      ({ args, operation }) => {
+      ({ args, operation, req }) => {
         if (operation !== 'create' && operation !== 'update' && operation !== 'resetPassword') return args
         const password = (args as { data?: { password?: unknown } }).data?.password
         if (typeof password === 'string' && password.length > 0 && password.length < MIN_PASSWORD) {
-          throw new ValidationError({
-            collection: 'users',
-            errors: [{ path: 'password', message: `密码至少 ${MIN_PASSWORD} 位` }],
-          })
+          throw new ValidationError(
+            {
+              collection: 'users',
+              errors: [{ label: '密码', path: 'password', message: `密码至少 ${MIN_PASSWORD} 位` }],
+            },
+            req?.t,
+          )
         }
         return args
       },

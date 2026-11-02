@@ -1,0 +1,43 @@
+diff --git a/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js b/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
+index c5dabfa..975d67c 100644
+--- a/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
++++ b/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
+@@ -23,10 +23,14 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+             method: 'POST'
+         });
+         if (!issued.ok) {
+-            throw new Error('Failed to initialize Vercel Blob client upload');
++            // 本项目补丁：显示服务器返回的具体原因（原版只有英文通用提示，要看日志才知道原因）
++            const body = await issued.json().catch(()=>null);
++            const reason = body?.errors?.[0]?.message || body?.message;
++            throw new Error(reason ? `上传失败：${reason}` : `上传失败：服务器返回 ${issued.status}，请稍后重试`);
+         }
+         const { clientUploadContext, filename, pathname } = await issued.json();
+         updateFilename(filename);
++        // 本项目补丁：文件传到图片存储这一步失败时，用中文说明并附原文
+         await upload(pathname, file, {
+             access: 'public',
+             clientPayload: JSON.stringify({
+@@ -36,6 +40,8 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+             }),
+             contentType: file.type,
+             handleUploadUrl: endpointRoute
++        }).catch((error)=>{
++            throw new Error(`上传到图片存储失败，请检查网络后重试（原始信息：${error?.message ?? error}）`);
+         });
+         return {
+             prefix: clientUploadContext.prefix,
+diff --git a/node_modules/@payloadcms/storage-vercel-blob/dist/getClientUploadRoute.js b/node_modules/@payloadcms/storage-vercel-blob/dist/getClientUploadRoute.js
+index 9b9fb76..c5425ca 100644
+--- a/node_modules/@payloadcms/storage-vercel-blob/dist/getClientUploadRoute.js
++++ b/node_modules/@payloadcms/storage-vercel-blob/dist/getClientUploadRoute.js
+@@ -142,7 +142,8 @@ export const getClientUploadRoute = ({ access = defaultAccess, cacheControlMaxAg
+                 throw error;
+             }
+             req.payload.logger.error(error);
+-            throw new APIError('storage-vercel-blob client upload route error');
++            // 本项目补丁：保留原始错误为 cause，供 afterError（hooks/serverErrors.ts）识别原因
++            throw Object.assign(new APIError('storage-vercel-blob client upload route error'), { cause: error });
+         }
+     };
+ 

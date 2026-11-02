@@ -14,20 +14,39 @@ const allowed = (value: unknown): boolean => {
 
 // 当前账号能否编辑这条内容：按具体记录查询。受限编辑的权限是按记录 ID 的条件，
 // 集合级权限会显示为“可编辑”，只看集合级会让他们跳到范围外的记录
-async function fetchCanEdit(doc: DocKey): Promise<boolean> {
+// 查询失败时要和“没有权限”分开：登录过期、断网都提示“没有编辑权限”会让人以为是账号问题
+type EditCheck = 'yes' | 'no' | 'expired' | 'offline'
+
+async function fetchJson(url: string, init?: RequestInit): Promise<{ data?: Record<string, unknown>; status: 'ok' | 'expired' | 'offline' }> {
+  try {
+    const res = await fetch(url, { credentials: 'include', ...init })
+    if (res.status === 401) return { status: 'expired' }
+    if (!res.ok) return { status: 'offline' }
+    return { data: (await res.json()) as Record<string, unknown>, status: 'ok' }
+  } catch {
+    return { status: 'offline' }
+  }
+}
+
+async function fetchCanEdit(doc: DocKey): Promise<EditCheck> {
   const [kind, ref] = doc.split(':')
   // 还没有记录的内容：看能否在这个集合里新建
   if (ref === NEW_DOC_REF) {
-    const access = (await fetch('/api/cms/access', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null)) as { collections?: Record<string, { create?: unknown }> } | null
-    return allowed(access?.collections?.[kind]?.create)
+    const { data, status } = await fetchJson('/api/cms/access')
+    if (status !== 'ok') return status
+    const collections = data?.collections as Record<string, { create?: unknown }> | undefined
+    return allowed(collections?.[kind]?.create) ? 'yes' : 'no'
   }
   const url = kind === 'global' ? `/api/cms/globals/${ref}/access` : `/api/cms/${kind}/access/${encodeURIComponent(ref)}`
-  const result = (await fetch(url, { method: 'POST', credentials: 'include' })
-    .then((r) => (r.ok ? r.json() : null))
-    .catch(() => null)) as { update?: unknown } | null
-  return allowed(result?.update)
+  const { data, status } = await fetchJson(url, { method: 'POST' })
+  if (status !== 'ok') return status
+  return allowed(data?.update) ? 'yes' : 'no'
+}
+
+const EDIT_CHECK_TEXT: Record<Exclude<EditCheck, 'yes'>, string> = {
+  no: '没有编辑权限：当前账号不能修改这个内容',
+  expired: '登录已过期：请回到后台刷新页面、重新登录后再试',
+  offline: '暂时无法确认编辑权限：网络连接失败或服务器出错，请稍后再试',
 }
 
 function findLocateElement(doc: string, path: string): HTMLElement | null {
@@ -74,7 +93,7 @@ export function PreviewTools({ serverURL }: { serverURL: string }) {
   const [locating, setLocating] = useState(false)
   const [tip, setTip] = useState<{ x: number; y: number; text: string } | null>(null)
   const hovered = useRef<HTMLElement | null>(null)
-  const editable = useRef(new Map<DocKey, boolean>())
+  const editable = useRef(new Map<DocKey, EditCheck>())
   const inFrame = typeof window !== 'undefined' && window.parent !== window
 
   // 后台→前台：接收“在前台定位”消息
@@ -111,9 +130,11 @@ export function PreviewTools({ serverURL }: { serverURL: string }) {
       e.stopPropagation()
       const [doc, path] = (el.dataset.locate as string).split('#') as [DocKey, string]
       // 没有编辑权限的账号不能从前台跳到后台（业务方 2026-10-20 确认）
-      if (!editable.current.has(doc)) editable.current.set(doc, await fetchCanEdit(doc))
-      if (!editable.current.get(doc)) {
-        window.alert('没有编辑权限：当前账号不能修改这个内容')
+      // 只记住明确的结果；登录过期、断网下次点击时重新查询
+      const check = editable.current.get(doc) ?? (await fetchCanEdit(doc))
+      if (check === 'yes' || check === 'no') editable.current.set(doc, check)
+      if (check !== 'yes') {
+        window.alert(EDIT_CHECK_TEXT[check])
         return
       }
       if (inFrame) window.parent.postMessage({ source: LOCATE_SOURCE, action: 'focus-field', doc, path }, window.location.origin)

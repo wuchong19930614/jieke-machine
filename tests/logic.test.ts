@@ -1,4 +1,4 @@
-import type { Field } from 'payload'
+import { type Field, ValidationError } from 'payload'
 import { describe, expect, it, vi } from 'vitest'
 
 import { defaultsOf, fill, textFields, withDefaults } from '@/content/defineTexts'
@@ -6,6 +6,7 @@ import { AUTO_REPLY_TEXTS } from '@/content/texts'
 import { toSlug } from '@/fields'
 import { chineseChars, describeChars, findChinese } from '@/hooks/publishChecks'
 import { findUploadRefs } from '@/hooks/mediaGuard'
+import { explainServerError, explainUnexpectedError, labelValidationFields } from '@/hooks/serverErrors'
 import { normalizePath } from '@/hooks/slugRedirect'
 import { COUNTRY_CODES, getCountries } from '@/lib/countries'
 import { labelForPath, walkFields } from '@/lib/fieldWalk'
@@ -15,6 +16,7 @@ import { explainResendError, sendMail } from '@/lib/server/mail'
 import { uniqueConflictField } from '@/lib/server/inquiryRef'
 import { activeStepIndex } from '@/components/client/ProcessSteps'
 import { Inquiries } from '@/collections/Inquiries'
+import { Products } from '@/collections/Products'
 import { Users } from '@/collections/Users'
 import { countLinks, validateInquiry } from '@/lib/inquirySchema'
 import { defaultSpecTable, normalizeSpecTable, publicRows, validateSpecTable } from '@/lib/specTable'
@@ -261,12 +263,16 @@ describe('询盘自动回复', () => {
 })
 
 describe('询盘写入冲突', () => {
-  it('从 Payload 的 ValidationError 里取出冲突字段，其他错误返回 null', () => {
+  it('从 Payload 的 ValidationError 或底层唯一约束报错里取出冲突字段，其他错误返回 null', () => {
     const conflict = Object.assign(new Error('下面的字段是无效的： submissionId'), {
       name: 'ValidationError',
       data: { collection: 'inquiries', errors: [{ message: '值必须是唯一的', path: 'submissionId' }] },
     })
     expect(uniqueConflictField(conflict)).toBe('submissionId')
+    const rawCause = Object.assign(new Error('Failed query: insert into "inquiries" ...'), {
+      cause: new Error('SQLITE_CONSTRAINT: UNIQUE constraint failed: inquiries.inquiry_ref'),
+    })
+    expect(uniqueConflictField(rawCause)).toBe('inquiryRef')
     expect(uniqueConflictField(new Error('SQLITE_BUSY'))).toBeNull()
     expect(uniqueConflictField(null)).toBeNull()
   })
@@ -393,5 +399,44 @@ describe('Resend 报错说明', () => {
     expect(explainResendError(429, 'rate_limit_exceeded', 'Too many requests')).toContain('发送额度')
     expect(explainResendError(422, 'invalid_from_address', 'Invalid from field')).toContain('MAIL_FROM')
     expect(explainResendError(418, 'teapot', 'odd')).toBe('发信失败（原始信息：418 teapot odd）')
+  })
+})
+
+describe('意外错误的中文说明', () => {
+  const wrap = (message: string, code?: string) => Object.assign(new Error('Failed query: select ...'), { cause: Object.assign(new Error(message), { code }) })
+
+  it('认出常见原因，并附错误编号', () => {
+    expect(explainServerError(wrap('SQLITE_ERROR: no such column: prefix', 'SQLITE_ERROR'), 'id-1')).toBe('数据库结构和当前程序版本不一致，需要开发人员执行数据库迁移后才能继续操作。（错误编号 id-1）')
+    expect(explainServerError(wrap('SQLITE_CONSTRAINT: UNIQUE constraint failed: products.slug'), 'id-u')).toContain('已被其他记录使用')
+    expect(explainServerError(wrap('SQLITE_BUSY: database is locked'), 'id-2')).toContain('数据库正忙')
+    expect(explainServerError(wrap('Operation was blocked: database quota exceeded', 'BLOCKED'), 'id-3')).toContain('Turso 免费额度')
+    expect(explainServerError(new Error('Vercel Blob: Access denied, please provide a valid token'), 'id-4')).toContain('图片存储连接失败')
+    expect(explainServerError(Object.assign(new Error('fetch failed'), { cause: { code: 'ETIMEDOUT' } }), 'id-5')).toContain('连接外部服务失败或超时')
+  })
+
+  it('认不出的给错误编号', () => {
+    expect(explainServerError(new Error('something odd'), 'hkg1::abc')).toBe('服务器出错，请稍后重试。如果一直出现，请把错误编号 hkg1::abc 发给开发人员。')
+  })
+
+  it('只替换被隐藏成通用英文的错误', () => {
+    const req = { headers: new Headers({ 'x-vercel-id': 'hkg1::dub1::req-9' }) } as never
+    const hidden = explainUnexpectedError({ error: new Error('x'), req, context: {}, result: { errors: [{ message: 'Something went wrong.' }] } } as never)
+    expect(hidden).toEqual({ response: { errors: [{ message: '服务器出错，请稍后重试。如果一直出现，请把错误编号 hkg1::dub1::req-9 发给开发人员。' }] } })
+    const shown = explainUnexpectedError({ error: new Error('x'), req, context: {}, result: { errors: [{ message: '您无权执行此操作。' }] } } as never)
+    expect(shown).toBeUndefined()
+  })
+
+  it('把校验失败里的英文字段路径（含内置字段）换成后台中文字段名', () => {
+    const req = {
+      t: () => '无法保存，请修改以下字段：',
+      payload: { config: { collections: [Products, Users], globals: [] } },
+    } as never
+    const slugErr = new ValidationError({ collection: 'products', errors: [{ path: 'slug', message: '重复' }] })
+    const slugRes = labelValidationFields({ error: slugErr, req, context: {}, result: { errors: [{ message: slugErr.message }] } } as never)
+    expect(slugRes).toEqual({ response: { errors: [{ message: '无法保存，请修改以下字段： 网址短名' }] } })
+
+    const emailErr = new ValidationError({ collection: 'users', errors: [{ path: 'email', message: '重复' }] })
+    const emailRes = labelValidationFields({ error: emailErr, req, context: {}, result: { errors: [{ message: emailErr.message }] } } as never)
+    expect(emailRes).toEqual({ response: { errors: [{ message: '无法保存，请修改以下字段： 邮箱' }] } })
   })
 })

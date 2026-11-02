@@ -1,0 +1,20 @@
+diff --git a/node_modules/@payloadcms/ui/dist/elements/BulkUpload/FormsManager/index.js b/node_modules/@payloadcms/ui/dist/elements/BulkUpload/FormsManager/index.js
+index 6a323f8..625c5e2 100644
+--- a/node_modules/@payloadcms/ui/dist/elements/BulkUpload/FormsManager/index.js
++++ b/node_modules/@payloadcms/ui/dist/elements/BulkUpload/FormsManager/index.js
+@@ -426,8 +426,13 @@ export function FormsManagerProvider({
+             });
+           }
+         }
+-      } catch (_) {
+-        // swallow
++      } catch (err) {
++        // 本项目补丁：直传图片存储失败时记入错误数并弹出原因（原版吞掉错误，会误报保存成功并关闭弹窗）
++        currentForms[i_0] = {
++          ...currentForms[i_0],
++          errorCount: 1
++        };
++        toast.error(err instanceof Error ? err.message : t('error:unknown'));
+       }
+     }
+     setHasSubmitted(true);
