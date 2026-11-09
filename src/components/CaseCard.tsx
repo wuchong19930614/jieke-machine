@@ -8,7 +8,7 @@ import { youtubeId } from '@/lib/youtube'
 import type { Case, Product } from '@/payload-types'
 
 import { VideoEmbed } from './client/VideoEmbed'
-import { Img, mediaOf } from './Img'
+import { Img, mediaOf, pickRatio } from './Img'
 
 type Props = {
   item: Case
@@ -47,7 +47,7 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, lab
         <Link href={href} tabIndex={-1} aria-hidden="true">
           <Img
             media={item.coverImage}
-            ratio={item.coverImageRatio}
+            ratio={pickRatio(item, 'coverImage')}
             fit={item.coverImageFit}
             defaultRatio={ratio}
             defaultFit="cover"

@@ -1,8 +1,32 @@
 diff --git a/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js b/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
-index c5dabfa..975d67c 100644
+index c5dabfa..d421e7a 100644
 --- a/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
 +++ b/node_modules/@payloadcms/storage-vercel-blob/dist/client/VercelBlobClientUploadHandler.js
-@@ -23,10 +23,14 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+@@ -4,6 +4,23 @@ import { upload } from '@vercel/blob/client';
+ import { formatAdminURL } from 'payload/shared';
+ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+     handler: async ({ apiRoute, collectionSlug, docPrefix, file, serverHandlerPath, serverURL, updateFilename })=>{
++        // 本项目补丁：上传前在浏览器里先检查类型和大小（与 src/collections/Media.ts 的限制保持一致），
++        // 选错文件立刻提示，不会先把几百 MB 的视频传上去再失败
++        const MB = 1024 * 1024;
++        const isImage = [
++            'image/jpeg',
++            'image/png',
++            'image/webp',
++            'image/avif'
++        ].includes(file.type);
++        const isPdf = file.type === 'application/pdf';
++        if (!isImage && !isPdf) {
++            throw new Error(file.type.startsWith('video/') ? '这里只能上传图片（JPG、PNG、WebP、AVIF）或 PDF。运行视频请先上传到 YouTube，再把链接粘贴到“YouTube 视频链接”。' : `这里只能上传图片（JPG、PNG、WebP、AVIF）或 PDF，“${file.name}”不是支持的格式。`);
++        }
++        const limit = isImage ? 20 : 30;
++        if (file.size > limit * MB) {
++            throw new Error(`${isImage ? '图片' : 'PDF'}不能超过 ${limit}MB（这个文件约 ${(file.size / MB).toFixed(1)}MB），请压缩后再上传。`);
++        }
+         const endpointRoute = formatAdminURL({
+             apiRoute,
+             path: serverHandlerPath,
+@@ -23,10 +40,14 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
              method: 'POST'
          });
          if (!issued.ok) {
@@ -18,7 +42,7 @@ index c5dabfa..975d67c 100644
          await upload(pathname, file, {
              access: 'public',
              clientPayload: JSON.stringify({
-@@ -36,6 +40,8 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+@@ -36,6 +57,8 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
              }),
              contentType: file.type,
              handleUploadUrl: endpointRoute

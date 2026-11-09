@@ -42,7 +42,7 @@ export const UiTexts = editableGlobal({
     section('mobileBar', '手机底部按钮条', '手机底部按钮条（宽度小于 768px 时显示）', UI_MOBILE),
     section('banner', '首页 Banner', '首页 Banner 轮播的按钮和控件', UI_BANNER),
     section('productList', '产品列表', '产品列表页', UI_PRODUCT_LIST),
-    section('product', '产品详情模板', '所有产品详情页（单个产品可在“模块文案覆盖”里改）', UI_PRODUCT),
+    section('product', '产品详情模板', '所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改）', UI_PRODUCT),
     section('caseList', '案例列表', '案例列表页', UI_CASE_LIST),
     section('caseDetail', '案例详情', '所有案例详情页（单个案例可在“模块文案覆盖”里改）', UI_CASE_DETAIL),
     section('cookie', 'Cookie Settings 弹窗', '页脚 Cookie Settings 打开的弹窗', UI_COOKIE),

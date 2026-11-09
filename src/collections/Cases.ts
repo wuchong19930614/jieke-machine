@@ -4,7 +4,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionCo
 import { isLoggedIn, recordCreateDeleteAccess, recordEditAccess } from '@/access'
 import { overrideGroup } from '@/content/overrideFields'
 import { UI_CASE_DETAIL } from '@/content/texts'
-import { at, imageField, seoGroup, slugField } from '@/fields'
+import { at, imageField, ratioFitFields, seoGroup, slugField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
@@ -13,15 +13,16 @@ import { validateYoutubeUrl } from '@/lib/youtube'
 
 const D = '案例详情'
 
+// 关于我们的图片、产品列表图都可以设“跳到某个案例”，案例撤下或改名时这两页也要刷新
 const refresh: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
   if (doc?._status === 'published' || previousDoc?._status === 'published') {
-    revalidate(req, [PATHS.home, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.productDetails, PATHS.sitemap])
+    revalidate(req, [PATHS.home, PATHS.about, PATHS.productList, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.productDetails, PATHS.sitemap])
   }
   return doc
 }
 
 const refreshAfterDelete: CollectionAfterDeleteHook = ({ doc, req }) => {
-  revalidate(req, [PATHS.home, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.productDetails, PATHS.sitemap])
+  revalidate(req, [PATHS.home, PATHS.about, PATHS.productList, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.productDetails, PATHS.sitemap])
   return doc
 }
 
@@ -124,16 +125,22 @@ export const Cases: CollectionConfig = {
       fields: [
         imageField({ name: 'heroImage', label: '详情页主图', location: `${D}顶部`, hint: '不填时用封面图' }),
         {
-          name: 'gallery',
-          type: 'upload',
-          relationTo: 'media',
-          hasMany: true,
-          label: '现场图片',
-          filterOptions: { mimeType: { contains: 'image' } },
-          admin: { description: at(`${D} › Project Photos`, '可点击放大') },
+          type: 'row',
+          fields: [
+            {
+              name: 'gallery',
+              type: 'upload',
+              relationTo: 'media',
+              hasMany: true,
+              label: '现场图片',
+              filterOptions: { mimeType: { contains: 'image' } },
+              admin: { width: '50%', description: at(`${D} › Project Photos`, '可点击放大；右边的比例和适配方式对这一组图片都生效') },
+            },
+            ...ratioFitFields('gallery', `${D} › Project Photos`),
+          ],
         },
-        { name: 'videoUrl', type: 'text', label: 'YouTube 链接', validate: validateYoutubeUrl, admin: { description: at(`${D} › Project Video；首页精选案例`, '为空时首页和详情显示封面图') } },
-        imageField({ name: 'videoCover', label: '视频封面', location: '首页精选案例、案例视频', hint: '16:9；不填时用 YouTube 缩略图' }),
+        { name: 'videoUrl', type: 'text', label: 'YouTube 视频链接', validate: validateYoutubeUrl, admin: { description: at(`${D} › Project Video；首页精选案例`, '为空时首页和详情显示封面图'), components: { afterInput: ['@/admin/components/YouTubePreview#YouTubePreview'] } } },
+        imageField({ name: 'videoCover', label: '视频封面图片（选填）', location: '首页精选案例、案例视频', hint: '只能放图片，16:9；不填时用 YouTube 缩略图' }),
       ],
     },
     {
@@ -141,7 +148,15 @@ export const Cases: CollectionConfig = {
       label: '模块文案覆盖',
       admin: { initCollapsed: true },
       fields: [
-        overrideGroup('sectionTexts', '本案例的标签和按钮', UI_CASE_DETAIL, '只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字', `本案例的${D}页`),
+        overrideGroup(
+          'sectionTexts',
+          '本案例的标签和按钮',
+          UI_CASE_DETAIL,
+          '只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字',
+          `本案例的${D}页`,
+          // 标题和按钮可以单独设文字样式（第 4 点）
+          ['back', 'overviewTitle', 'requirements', 'solution', 'delivery', 'photos', 'video', 'linesUsed', 'linesButton', 'primaryButton', 'secondaryButton'],
+        ),
       ],
     },
     seoGroup('本案例'),

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { notFoundMetadata } from '@/components/AuxPage'
 import { ZoomButton } from '@/components/client/Lightbox'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
-import { Img, mediaOf } from '@/components/Img'
+import { Img, mediaOf, pickRatio } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
 import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
 import { fill } from '@/content/defineTexts'
@@ -13,7 +13,7 @@ import { overrideTexts } from '@/content/overrideFields'
 import { countryName } from '@/lib/countries'
 import { getCase, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc, publishedSlugs } from '@/lib/data'
 import { collectionDoc } from '@/lib/locate'
-import { getLocator } from '@/lib/locator'
+import { getLocator, textStyleSheet } from '@/lib/locator'
 import { redirectOr404 } from '@/lib/redirectOr404'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
@@ -54,6 +54,8 @@ export default async function CaseDetailPage({ params }: Params) {
   if (!item) return redirectOr404(`/case-studies/${slug}/`)
 
   const C = collectionDoc('cases', item.id)
+  // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
+  const textStyles = textStyleSheet(C, item)
   const t = { ...ui.caseDetail, ...overrideTexts(item.sectionTexts) }
   const lines = (item.products ?? []).filter((p): p is Product => isVisibleDoc<Product>(p, draft))
   const gallery = (item.gallery ?? []).map(mediaOf).filter((m): m is Media => Boolean(m?.url))
@@ -77,6 +79,7 @@ export default async function CaseDetailPage({ params }: Params) {
 
   return (
     <>
+      {textStyles}
       <PageBanner
         breadcrumb={
           <Breadcrumbs
@@ -97,7 +100,7 @@ export default async function CaseDetailPage({ params }: Params) {
           <div className="lp-wide-image">
             <Img
               media={item[heroField]}
-              ratio={item[`${heroField}Ratio`]}
+              ratio={pickRatio(item, heroField)}
               fit={item[`${heroField}Fit`]}
               defaultRatio={defaultRatio(theme, 'case')}
               defaultFit="cover"
@@ -144,7 +147,7 @@ export default async function CaseDetailPage({ params }: Params) {
                     label={ui.common.clickToEnlarge}
                     items={gallery.map((g) => ({ src: g.url!, alt: g.alt ?? '', caption: g.caption, width: g.width, height: g.height }))}
                   >
-                    <Img media={m} defaultRatio={defaultRatio(theme, 'case')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 300px" />
+                    <Img media={m} ratio={pickRatio(item, 'gallery')} fit={item.galleryFit} defaultRatio={defaultRatio(theme, 'case')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 300px" />
                   </ZoomButton>
                 ))}
               </div>

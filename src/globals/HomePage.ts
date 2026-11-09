@@ -9,7 +9,7 @@ import {
   HOME_STATS_TEXTS,
   UI_BANNER,
 } from '@/content/texts'
-import { at, hideField, sectionsField, seoGroup, titleRowLabel } from '@/fields'
+import { at, hideField, imageField, linkField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS, SERVICE_ICONS } from '@/lib/constants'
 
@@ -23,7 +23,7 @@ export const HomePage = editableGlobal({
   group: '页面管理',
   refresh: [PATHS.home],
   fields: [
-    sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND),
+    sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),
     {
       name: 'banners',
       type: 'group',
@@ -47,7 +47,7 @@ export const HomePage = editableGlobal({
                   relationTo: 'media',
                   label: '桌面图',
                   filterOptions: { mimeType: { contains: 'image' } },
-                  admin: { width: '50%', description: '建议 1920×800 以上' },
+                  admin: { width: '50%', description: '建议 1920×800 以上。所有横幅共用一个比例，在“主题 › 默认图框比例 › Banner”里设置，切换时高度不会跳' },
                 },
                 {
                   name: 'mobileImage',
@@ -60,11 +60,27 @@ export const HomePage = editableGlobal({
               ],
             },
             {
+              name: 'overlay',
+              type: 'number',
+              label: '图片遮罩深浅（%）',
+              min: 0,
+              max: 90,
+              defaultValue: 50,
+              admin: {
+                step: 5,
+                description: '图片上盖一层深色，让白色标题更清楚；背景图本身带文字或颜色很亮时调深一点',
+                components: { Field: '@/admin/components/RangeField#RangeField' },
+              },
+            },
+            {
               type: 'row',
               fields: [{ name: 'kicker', type: 'text', label: '小标题', admin: { width: '75%', placeholder: UI_BANNER.kickerDefault[1] } }, hideField('kicker', '小标题')],
             },
+            textStyleField('kicker', '小标题'),
             { name: 'title', type: 'text', label: '标题', required: true },
+            textStyleField('title', '标题'),
             { name: 'subtitle', type: 'textarea', label: '副标题' },
+            textStyleField('subtitle', '副标题'),
             {
               type: 'row',
               fields: [
@@ -72,6 +88,7 @@ export const HomePage = editableGlobal({
                 hideField('quoteButtonText', '报价按钮'),
               ],
             },
+            textStyleField('quoteButtonText', '报价按钮', { opacity: false }),
             {
               type: 'row',
               fields: [
@@ -79,7 +96,9 @@ export const HomePage = editableGlobal({
                 hideField('productButtonText', '产品按钮'),
               ],
             },
+            textStyleField('productButtonText', '产品按钮', { opacity: false }),
             { name: 'product', type: 'relationship', relationTo: 'products', label: '关联产品', admin: { description: '“查看产品”链接自动取该产品的网址' } },
+            linkField({ name: 'link', label: '点击横幅图片跳转', location: `${H} › Banner 图片上文字和按钮以外的地方`, defaultLabel: '不跳转' }),
           ],
         },
       ],
@@ -90,7 +109,7 @@ export const HomePage = editableGlobal({
       label: '需求与服务',
       admin: { description: at(`${H} › Solutions for Your Requirements`) },
       fields: [
-        ...textFields(HOME_SERVICES_TEXTS, `${H} › 需求与服务`),
+        ...textFields(HOME_SERVICES_TEXTS, `${H} › 需求与服务`, { styled: true }),
         {
           name: 'items',
           type: 'array',
@@ -123,7 +142,7 @@ export const HomePage = editableGlobal({
       label: '公司数据通栏',
       admin: { description: at(`${H} › 公司数据通栏`, '公司名自动取全站设置') },
       fields: [
-        ...textFields(HOME_STATS_TEXTS, `${H} › 公司数据通栏`),
+        ...textFields(HOME_STATS_TEXTS, `${H} › 公司数据通栏`, { styled: true }),
         {
           name: 'stats',
           type: 'array',
@@ -149,7 +168,7 @@ export const HomePage = editableGlobal({
       label: '公司简介',
       admin: { description: at(`${H} › About Us`) },
       fields: [
-        ...textFields(HOME_ABOUT_TEXTS, `${H} › 公司简介`),
+        ...textFields(HOME_ABOUT_TEXTS, `${H} › 公司简介`, { styled: true }),
         {
           name: 'tags',
           type: 'array',
@@ -173,14 +192,22 @@ export const HomePage = editableGlobal({
       label: '厂房展示',
       admin: { description: at(`${H} › Factory & Workshop`, '初始 6 张，桌面 3 列 2 行') },
       fields: [
-        ...textFields(HOME_FACTORY_TEXTS, `${H} › 厂房展示`),
+        ...textFields(HOME_FACTORY_TEXTS, `${H} › 厂房展示`, { styled: true }),
         {
-          name: 'images',
-          type: 'upload',
-          relationTo: 'media',
-          hasMany: true,
+          type: 'row',
+          fields: ratioFitFields('images', `${H} › 厂房展示（对下面所有图片生效；单张图片另选了比例时以单张为准）`),
+        },
+        {
+          // 第 3 点：原来的多图字段改成列表，每张图可以单独设链接（迁移时已把原有图片按顺序搬过来）
+          name: 'items',
+          type: 'array',
           label: '图片',
-          filterOptions: { mimeType: { contains: 'image' } },
+          labels: { singular: '图片', plural: '图片' },
+          admin: { description: at(`${H} › 厂房展示`, '拖动调整顺序；每张图可以设置点击后跳到哪里'), initCollapsed: true },
+          fields: [
+            imageField({ name: 'image', label: '图片', location: `${H} › 厂房展示`, required: true }),
+            linkField({ location: `${H} › 厂房展示 › 点击图片跳转` }),
+          ],
         },
       ],
     },
@@ -190,7 +217,7 @@ export const HomePage = editableGlobal({
       label: '四类生产线',
       admin: { description: at(`${H} › 生产线`, '选中顺序即显示顺序') },
       fields: [
-        ...textFields(HOME_LINES_TEXTS, `${H} › 生产线`),
+        ...textFields(HOME_LINES_TEXTS, `${H} › 生产线`, { styled: true }),
         { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: '生产线' },
       ],
     },
@@ -200,7 +227,7 @@ export const HomePage = editableGlobal({
       label: '客户案例',
       admin: { description: at(`${H} › Customer Case Studies`, '最多 3 个；有视频时显示 16:9 视频封面，点击后原位播放') },
       fields: [
-        ...textFields(HOME_CASES_TEXTS, `${H} › 客户案例`),
+        ...textFields(HOME_CASES_TEXTS, `${H} › 客户案例`, { styled: true }),
         { name: 'cases', type: 'relationship', relationTo: 'cases', hasMany: true, maxRows: 3, label: '精选案例' },
       ],
     },

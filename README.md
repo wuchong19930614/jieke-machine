@@ -101,7 +101,7 @@ npm run dev
 - `npm run decrypt-backup -- 备份文件 [输出文件]`：解密数据库备份
 - `npm run import:legal`：把 `docs/隐私政策与Cookie说明模板（含巴西LGPD）.md` 里的隐私政策和 Cookie 说明录入“辅助页面”，自动填入公司名称、地址、网址和日期。默认存为草稿，加 `-- --publish` 直接发布；只操作本地 `file:` 数据库，导入线上库要另加 `-- --allow-remote`。运行结束会列出还没替换的方括号占位（如隐私邮箱、DPO、各服务商的保存期限），需与法务确认后在后台填写。脚本在 Next.js 之外运行，不能刷新线上已生成的页面，所以导入线上库时不要加 `--publish`：存为草稿，在后台填完占位后点“发布修改”，前台才会更新
 - `npm run typecheck` / `npm run lint` / `npm test`：类型检查、代码检查、单元测试
-- `patches/`：用 patch-package 给依赖打的补丁，安装依赖时由 `postinstall` 自动打上。目前包含 `@payloadcms/storage-vercel-blob` 3.91.0（图片上传失败时保留并显示服务器返回的具体原因，原版只显示英文通用提示）和 `@payloadcms/ui` 3.91.0（批量上传时直传失败记入错误数并弹出原因，原版吞掉错误会误报成功）。升级这两个包时，补丁对不上会让安装报错，需要重新修改并运行 `npx patch-package <包名>`，或者确认新版已修复后删掉补丁
+- `patches/`：用 patch-package 给依赖打的补丁，安装依赖时由 `postinstall` 自动打上。目前包含 `@payloadcms/storage-vercel-blob` 3.91.0（上传前在浏览器里检查文件类型和大小，选了视频等不支持的文件立刻提示；上传失败时显示服务器返回的具体原因，原版只显示英文通用提示。类型和大小限制要和 `src/collections/Media.ts` 保持一致）、`@payloadcms/ui` 3.91.0（批量上传时直传失败记入错误数并弹出原因，原版吞掉错误会误报成功）和 `@payloadcms/next` 3.91.0（判断页面配置是否发布过时补上 `_status`，原版只要最新一版是草稿就误报“还没有发布过”）。升级这三个包时，补丁对不上会让安装报错，需要重新修改并运行 `npx patch-package <包名>`，或者确认新版已修复后删掉补丁
 
 <a id="s3"></a>
 

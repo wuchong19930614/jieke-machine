@@ -20,16 +20,18 @@ import React from 'react'
 
 import { CaseCard } from '@/components/CaseCard'
 import { BannerCarousel } from '@/components/client/BannerCarousel'
-import { imageSrc, Img, mediaOf } from '@/components/Img'
+import { ImageModule, type ImageModuleRow } from '@/components/ImageModule'
+import { imageSrc, Img, mediaOf, ownOrGroupFit, ownOrGroupRatio, pickRatio } from '@/components/Img'
+import { linkHref, LinkTo } from '@/components/LinkTo'
 import { ProductLineCard } from '@/components/ProductLineCard'
 import { hasRichText, RichText } from '@/components/RichText'
-import { orderedSections, Section, SectionTitle } from '@/components/Section'
+import { backgroundProps, type BackgroundSpec, deviceClass, orderedSections, Section, SectionTitle } from '@/components/Section'
 import { fill, withDefaults } from '@/content/defineTexts'
 import * as T from '@/content/texts'
-import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS } from '@/lib/constants'
+import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS, IMAGE_SECTION_MODULES, isImageSectionModule } from '@/lib/constants'
 import { getHomePage, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
-import { getLocator, locateGroup, type Locator } from '@/lib/locator'
+import { getLocator, locateGroup, type Locator, textStyleSheet } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import type { Case, HomePage, Product } from '@/payload-types'
@@ -73,10 +75,13 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
   // 桌面和手机分别使用各自的图片（技术方案 4.3 第 4 条）
   const desk = desktop?.url ? getImageProps({ ...common, src: imageSrc(desktop.url), sizes: '100vw', quality: 80 }).props : null
   const mob = mobile?.url ? getImageProps({ ...common, src: imageSrc(mobile.url), sizes: '100vw', quality: 75 }).props : null
+  // 第 3 点：整张图可以设链接；第 4 点：遮罩深浅（0–90%，默认 50%）
+  const link = linkHref(slide.link, draft)
+  const overlay = typeof slide.overlay === 'number' ? Math.min(90, Math.max(0, slide.overlay)) / 100 : 0.5
   return (
     <>
       {desk ? (
-        <div className="lp-banner-slide" {...L(H, `${path}.desktopImage`)}>
+        <div className="lp-banner-slide" style={{ '--overlay': overlay } as React.CSSProperties} {...L(H, `${path}.desktopImage`)}>
           <picture>
             {mob ? <source media="(max-width: 767px)" srcSet={mob.srcSet} /> : null}
             {/* 焦点交给样式按屏幕宽度选用：桌面用桌面图的焦点，手机用手机图的焦点 */}
@@ -95,6 +100,8 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
           </picture>
         </div>
       ) : null}
+      {link ? <LinkTo link={link} className="lp-banner-link" label={slide.title} /> : null}
+      {/* 整图链接铺在文字下面：点文字以外的图片区域跳转，标题和副标题仍可以选中复制 */}
       <div className="lp-banner-copy">
         {kicker ? (
           <div className="lp-kicker" {...L(H, `${path}.kicker`)}>
@@ -125,6 +132,8 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
 export default async function HomePageView() {
   const draft = await isDraft()
   const [home, settings, ui, theme, L] = await Promise.all([getHomePage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
+  // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
+  const textStyles = textStyleSheet(H, home)
 
   const services = withDefaults(T.HOME_SERVICES_TEXTS, home.services)
   const stats = withDefaults(T.HOME_STATS_TEXTS, home.companyStats)
@@ -134,18 +143,21 @@ export default async function HomePageView() {
   const cases = withDefaults(T.HOME_CASES_TEXTS, home.featuredCases)
   const videoTexts = { playAria: ui.common.playVideo, videoError: ui.common.videoError, watchOnYouTube: ui.common.watchOnYouTube, contactUs: ui.common.contactUs, opensNewTab: ui.common.opensNewTab }
 
-  const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND)
+  const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND, IMAGE_SECTION_MODULES.map((m) => m.value))
   const bannerSlides = (home.banners?.slides ?? []).map((slide, index) => ({ slide, index })).filter(({ slide }) => slide.enabled !== false && slide.title)
   // 主标题 h1 在第一张 Banner 里；Banner 模块隐藏或没有可播放的 Banner 时另给一个读屏可见的 h1（技术方案 8.1）
-  const bannerShown = bannerSlides.length > 0 && sections.some(({ module }) => module === 'banners')
+  const bannerSection = bannerSlides.length > 0 ? sections.find(({ module }) => module === 'banners') : undefined
+  // Banner 只在某一类设备上显示时，另一类设备也要有 h1
+  const bannerDevice = bannerSection ? deviceClass(bannerSection.background) : ''
 
-  const render = (module: (typeof HOME_SECTIONS)[number]['value'], background: string) => {
+  const render = (module: (typeof HOME_SECTIONS)[number]['value'], background: BackgroundSpec): React.ReactNode => {
     switch (module) {
       case 'banners': {
         if (!bannerSlides.length) return null
         return (
           <BannerCarousel
             key={module}
+            className={deviceClass(background)}
             ratio={defaultRatio(theme, 'banner')}
             texts={ui.banner}
             locate={locateGroup(L, U, 'banner', T.UI_BANNER)}
@@ -178,8 +190,9 @@ export default async function HomePageView() {
       case 'companyStats': {
         const list = (home.companyStats?.stats ?? []).map((s, index) => ({ s, index })).filter(({ s }) => s.value && s.label)
         if (!list.length && !settings.companyName) return null
+        const bg = backgroundProps(background, 'lp-bg-blue')
         return (
-          <div key={module} className={`lp-store-company ${background === 'default' ? 'lp-bg-blue' : `lp-bg-${background}`}`}>
+          <div key={module} className={`lp-store-company ${bg.className}`} style={bg.style}>
             <div className="lp-store-brandline">
               {stats.supplierLabel ? <span {...L(H, 'companyStats.supplierLabel')}>{stats.supplierLabel}</span> : null}
               {settings.companyName ? <strong {...L(S, 'companyName')}>{settings.companyName}</strong> : null}
@@ -234,8 +247,8 @@ export default async function HomePageView() {
         )
       }
       case 'factoryGallery': {
-        const images = (home.factoryGallery?.images ?? []).map(mediaOf).filter(Boolean)
-        if (!images.length) return null
+        const items = (home.factoryGallery?.items ?? []).map((item, index) => ({ item, index, media: mediaOf(item.image) })).filter(({ media }) => media?.url)
+        if (!items.length) return null
         return (
           <Section key={module} background={background}>
             <SectionTitle
@@ -243,10 +256,23 @@ export default async function HomePageView() {
               title={{ text: factory.title, attrs: L(H, 'factoryGallery.title') }}
               subtitle={{ text: factory.subtitle, attrs: L(H, 'factoryGallery.subtitle') }}
             />
-            <div className="lp-store-factory-grid" {...L(H, 'factoryGallery.images')}>
-              {images.map((m, i) => (
-                <Img key={m!.id ?? i} media={m} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 400px" />
-              ))}
+            <div className="lp-store-factory-grid">
+              {items.map(({ item, index, media }) => {
+                // 单张图片另选了比例 / 适配方式时以单张为准，否则用这一组的统一设置
+                return (
+                  <LinkTo key={item.id ?? index} link={linkHref(item.link, draft)} className="lp-image-link" label={media!.alt || undefined}>
+                    <Img
+                      media={media}
+                      ratio={ownOrGroupRatio(item, 'image', pickRatio(home.factoryGallery, 'images'))}
+                      fit={ownOrGroupFit(item, 'image', home.factoryGallery?.imagesFit)}
+                      defaultRatio={defaultRatio(theme, 'factory')}
+                      defaultFit="cover"
+                      sizes="(max-width: 767px) 100vw, 400px"
+                      attrs={L(H, `factoryGallery.items.${index}.image`)}
+                    />
+                  </LinkTo>
+                )
+              })}
             </div>
           </Section>
         )
@@ -268,6 +294,7 @@ export default async function HomePageView() {
                 buttonAttrs={L(H, 'productLines.buttonText')}
                 L={L}
                 ratio={defaultRatio(theme, 'equipment')}
+                draft={draft}
               />
             ))}
           </Section>
@@ -314,10 +341,21 @@ export default async function HomePageView() {
     }
   }
 
-  const content = sections.map(({ module, background }) => render(module, background)).filter(Boolean)
+  const content = sections
+    .map(({ module, background, row, index }) =>
+      isImageSectionModule(module) ? (
+        <ImageModule key={row.id ?? `${module}-${index}`} row={row as ImageModuleRow} index={index} background={background} doc={H} L={L} draft={draft} />
+      ) : (
+        render(module, background)
+      ),
+    )
+    .filter(Boolean)
+  // 没有 Banner 时给读屏一个 h1；Banner 只在电脑（或只在手机）显示时，另一类设备上也补一个
+  const srTitle = !bannerSection ? 'sr-only' : bannerDevice === 'lp-only-desktop' ? 'sr-only lp-only-mobile' : bannerDevice === 'lp-only-mobile' ? 'sr-only lp-only-desktop' : null
   return (
     <>
-      {bannerShown ? null : <h1 className="sr-only">{settings.companyName || 'Home'}</h1>}
+      {textStyles}
+      {srTitle ? <h1 className={srTitle}>{settings.companyName || 'Home'}</h1> : null}
       {content}
     </>
   )

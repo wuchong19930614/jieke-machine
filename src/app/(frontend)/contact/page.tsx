@@ -4,14 +4,14 @@ import { Suspense } from 'react'
 
 import { ContactForm } from '@/components/client/ContactForm'
 import { InquiryForm } from '@/components/client/InquiryForm'
-import { Img } from '@/components/Img'
+import { Img, pickRatio } from '@/components/Img'
 import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
 import { withDefaults } from '@/content/defineTexts'
 import { CONTACT_PAGE_TEXTS, FORM_TEXTS } from '@/content/texts'
 import { getCountries } from '@/lib/countries'
 import { getContactPage, getProducts, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
-import { getLocator, locateGroup } from '@/lib/locator'
+import { getLocator, locateGroup, textStyleSheet } from '@/lib/locator'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import { whatsappLink } from '@/lib/whatsapp'
@@ -37,6 +37,8 @@ export default async function ContactPageView() {
     getLocator(),
   ])
   const t = withDefaults(CONTACT_PAGE_TEXTS, page)
+  // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
+  const textStyles = textStyleSheet(G, page)
   const samePhone = settings.phone && settings.whatsapp && settings.phone.replace(/\D/g, '') === settings.whatsapp.replace(/\D/g, '')
   const formProps = {
     texts: settings.form,
@@ -48,6 +50,7 @@ export default async function ContactPageView() {
 
   return (
     <>
+      {textStyles}
       <PageBanner
         breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/contact/', settings.nav.contact, 'contact', L)]} />}
         title={{ text: t.title, attrs: L(G, 'title') }}
@@ -147,7 +150,7 @@ export default async function ContactPageView() {
                 </div>
               ) : null}
             </dl>
-            <Img media={page.image} ratio={page.imageRatio} fit={page.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(G, 'image')} />
+            <Img media={page.image} ratio={pickRatio(page, 'image')} fit={page.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(G, 'image')} />
           </div>
           <div>
             {t.formTitle ? <h3 {...L(G, 'formTitle')}>{t.formTitle}</h3> : null}

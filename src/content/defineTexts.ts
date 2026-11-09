@@ -1,7 +1,8 @@
 // 文案字段的统一定义：同一份定义既生成后台字段，也提供前台默认值，避免两处写法不一致
 import type { Field, GroupField } from 'payload'
 
-import { at, hideField } from '@/fields'
+import { at, hideField, textStyleField } from '@/fields'
+import { isButtonTextKey } from '@/lib/textStyle'
 
 // hideable：标题、按钮这类带默认文案的字段，旁边加“隐藏”勾选（技术方案 5.2）
 export type TextDef = readonly [label: string, defaultValue: string, options?: { textarea?: boolean; hint?: string; hideable?: boolean }]
@@ -14,8 +15,11 @@ export function defaultsOf<T extends TextDefs>(defs: T): TextsOf<T> {
   return result as TextsOf<T>
 }
 
-export function textFields(defs: TextDefs, location: string): Field[] {
-  return Object.entries(defs).map(([name, [label, defaultValue, options]]) => {
+// 可以单独设“文字样式”的文案：标题、小标题、副标题、按钮（第 4 点：正文由主题统一管理，不单独设）
+export const STYLED_TEXT_KEY = /^(kicker|title|subtitle|heading|companyTitle|formTitle|listTitle|listSubtitle|buttonText|cardButton|allButton)$/
+
+export function textFields(defs: TextDefs, location: string, { styled = false }: { styled?: boolean } = {}): Field[] {
+  return Object.entries(defs).flatMap(([name, [label, defaultValue, options]]) => {
     const field = {
       name,
       type: options?.textarea ? 'textarea' : 'text',
@@ -30,7 +34,8 @@ export function textFields(defs: TextDefs, location: string): Field[] {
       },
     } as Field
     // 可隐藏的字段与“隐藏”勾选放在同一行；行不占数据路径，字段仍是 name 和 nameHidden
-    return options?.hideable ? ({ type: 'row', fields: [field, hideField(name, label)] } as Field) : field
+    const main = options?.hideable ? ({ type: 'row', fields: [field, hideField(name, label)] } as Field) : field
+    return styled && !options?.textarea && STYLED_TEXT_KEY.test(name) ? [main, textStyleField(name, label, { opacity: !isButtonTextKey(name) })] : [main]
   })
 }
 

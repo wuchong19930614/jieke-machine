@@ -71,6 +71,20 @@ function containersFor(fields: ClientField[], segments: string[], parentPath = '
   return null
 }
 
+// 有的字段在后台换了显示位置（产品详情的模块标题输入框放在各模块分组里，见 Products.ts 的 moduleTitles）：
+// 那里的 ui 字段在 admin.custom.locateAliases 里声明了它代为显示的字段路径，按它所在的分组展开
+function aliasTarget(fields: ClientField[], path: string): string | null {
+  for (const field of fields) {
+    const aliases = (field.admin as { custom?: { locateAliases?: string[] } } | undefined)?.custom?.locateAliases
+    if (field.type === 'ui' && aliases?.includes(path)) return field.name
+    if (field.type === 'collapsible' || field.type === 'row') {
+      const found = aliasTarget(field.fields, path)
+      if (found) return found
+    }
+  }
+  return null
+}
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // 在外层容器范围内逐屏往下滚，让懒渲染的内容进入视口。每次都按容器当前的位置计算：
@@ -145,7 +159,8 @@ async function focusField(path: string, fields: ClientField[] | undefined): Prom
   // 最内层已打开的容器（分组、数组行）
   let within: HTMLElement | null = null
   if (!element && fields) {
-    for (const container of containersFor(fields, path.split('.')) ?? []) within = (await openContainer(container, within)) ?? within
+    const target = aliasTarget(fields, path) ?? path
+    for (const container of containersFor(fields, target.split('.')) ?? []) within = (await openContainer(container, within)) ?? within
   }
   // 分组内容靠滚动进视口触发渲染，较慢的电脑上可能要等一会，最多等 6 秒
   for (let i = 0; i < 30 && !element; i++) {
@@ -173,8 +188,8 @@ function pathFromElement(target: Element | null): string | null {
   let node: Element | null = target
   while (node && node !== document.body) {
     const id = node.id
-    // “隐藏”勾选（名称Hidden）本身在前台没有元素，定位到它旁边的文字字段
-    if (id && id.startsWith('field-') && !id.startsWith('field-type')) return pathFromDomKey(id.slice(6)).replace(/Hidden$/, '')
+    // “隐藏”勾选（名称Hidden）和“文字样式”（名称Style）本身在前台没有元素，定位到它对应的文字
+    if (id && id.startsWith('field-') && !id.startsWith('field-type')) return pathFromDomKey(id.slice(6)).replace(/(Hidden|Style)$/, '')
     // 富文本（Lexical）字段：从字段标签的 for 读路径
     if (node.classList.contains('rich-text-lexical')) {
       const target = node.querySelector('label.field-label')?.getAttribute('for')

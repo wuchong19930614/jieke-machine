@@ -22,13 +22,18 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { SeoPreview as SeoPreview_609610b5c852fb7d919e0ee8e138fbe0 } from '@/admin/components/SeoPreview'
+import { ColorField as ColorField_c694b58ecee621392e18234068458600 } from '@/admin/components/ColorField'
+import { RangeField as RangeField_e33f2537908a939be0874a4ed31ac398 } from '@/admin/components/RangeField'
 import { SectionRowLabel as SectionRowLabel_282cf19e49988f43a779580002416b7b } from '@/admin/components/RowLabel'
+import { ModuleTitles as ModuleTitles_0583ba1b55de910160862b9ed88bf6c0 } from '@/admin/components/ModuleTitles'
+import { TextStyleField as TextStyleField_54b291b1e743e51c38fe93e073d9d564 } from '@/admin/components/TextStyleField'
 import { TitleRowLabel as TitleRowLabel_282cf19e49988f43a779580002416b7b } from '@/admin/components/RowLabel'
 import { SpecTableField as SpecTableField_f04e63ec0b7d713082e28210d22d25a0 } from '@/admin/components/SpecTableField'
+import { YouTubePreview as YouTubePreview_998cef8a113491eb803a8ee9903df0aa } from '@/admin/components/YouTubePreview'
 import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { ImportListMenuItem as ImportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { ResendButton as ResendButton_76a5609888ac9bb5949868db4ca385ba } from '@/admin/components/ResendButton'
-import { TOTPField as TOTPField_4eaf6cb33cfb75be01716613e3c9a512 } from 'payload-totp/rsc'
 import { BackupDownloadField as BackupDownloadField_65de0ae5386419a90ce68b1d72e01420 } from '@/admin/components/BackupDownload'
 import { BackupDownloadCell as BackupDownloadCell_65de0ae5386419a90ce68b1d72e01420 } from '@/admin/components/BackupDownload'
 import { FormatField as FormatField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
@@ -48,9 +53,6 @@ import { Nav as Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99 } from '@/admin/components/
 import { BeforeDashboard as BeforeDashboard_0caeb52961e5225418de7a16de968c6d } from '@/admin/components/BeforeDashboard'
 import { LocateProvider as LocateProvider_f723b9312a09cd75ce7de3f082a87b44 } from '@/admin/components/LocateProvider'
 import { ImportExportProvider as ImportExportProvider_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
-import { TOTPProvider as TOTPProvider_4eaf6cb33cfb75be01716613e3c9a512 } from 'payload-totp/rsc'
-import { TOTPSetup as TOTPSetup_4eaf6cb33cfb75be01716613e3c9a512 } from 'payload-totp/rsc'
-import { TOTPVerify as TOTPVerify_4eaf6cb33cfb75be01716613e3c9a512 } from 'payload-totp/rsc'
 import { SearchView as SearchView_45b6c0a0a8869c3b0035203e60b2c3f1 } from '@/admin/views/SearchView'
 import { ContentTransferView as ContentTransferView_05c91a6443fd758d574fa8902a35c739 } from '@/admin/views/ContentTransferView'
 import { GuideView as GuideView_73ccbd6a0968b06dacbe2308f207d275 } from '@/admin/views/GuideView'
@@ -84,13 +86,18 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/admin/components/SeoPreview#SeoPreview": SeoPreview_609610b5c852fb7d919e0ee8e138fbe0,
+  "@/admin/components/ColorField#ColorField": ColorField_c694b58ecee621392e18234068458600,
+  "@/admin/components/RangeField#RangeField": RangeField_e33f2537908a939be0874a4ed31ac398,
   "@/admin/components/RowLabel#SectionRowLabel": SectionRowLabel_282cf19e49988f43a779580002416b7b,
+  "@/admin/components/ModuleTitles#ModuleTitles": ModuleTitles_0583ba1b55de910160862b9ed88bf6c0,
+  "@/admin/components/TextStyleField#TextStyleField": TextStyleField_54b291b1e743e51c38fe93e073d9d564,
   "@/admin/components/RowLabel#TitleRowLabel": TitleRowLabel_282cf19e49988f43a779580002416b7b,
   "@/admin/components/SpecTableField#SpecTableField": SpecTableField_f04e63ec0b7d713082e28210d22d25a0,
+  "@/admin/components/YouTubePreview#YouTubePreview": YouTubePreview_998cef8a113491eb803a8ee9903df0aa,
   "@payloadcms/plugin-import-export/rsc#ExportListMenuItem": ExportListMenuItem_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#ImportListMenuItem": ImportListMenuItem_cdf7e044479f899a31f804427d568b36,
   "@/admin/components/ResendButton#ResendButton": ResendButton_76a5609888ac9bb5949868db4ca385ba,
-  "payload-totp/rsc#TOTPField": TOTPField_4eaf6cb33cfb75be01716613e3c9a512,
   "@/admin/components/BackupDownload#BackupDownloadField": BackupDownloadField_65de0ae5386419a90ce68b1d72e01420,
   "@/admin/components/BackupDownload#BackupDownloadCell": BackupDownloadCell_65de0ae5386419a90ce68b1d72e01420,
   "@payloadcms/plugin-import-export/rsc#FormatField": FormatField_cdf7e044479f899a31f804427d568b36,
@@ -110,9 +117,6 @@ export const importMap = {
   "@/admin/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_0caeb52961e5225418de7a16de968c6d,
   "@/admin/components/LocateProvider#LocateProvider": LocateProvider_f723b9312a09cd75ce7de3f082a87b44,
   "@payloadcms/plugin-import-export/rsc#ImportExportProvider": ImportExportProvider_cdf7e044479f899a31f804427d568b36,
-  "payload-totp/rsc#TOTPProvider": TOTPProvider_4eaf6cb33cfb75be01716613e3c9a512,
-  "payload-totp/rsc#TOTPSetup": TOTPSetup_4eaf6cb33cfb75be01716613e3c9a512,
-  "payload-totp/rsc#TOTPVerify": TOTPVerify_4eaf6cb33cfb75be01716613e3c9a512,
   "@/admin/views/SearchView#SearchView": SearchView_45b6c0a0a8869c3b0035203e60b2c3f1,
   "@/admin/views/ContentTransferView#ContentTransferView": ContentTransferView_05c91a6443fd758d574fa8902a35c739,
   "@/admin/views/GuideView#GuideView": GuideView_73ccbd6a0968b06dacbe2308f207d275,

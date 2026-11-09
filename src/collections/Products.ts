@@ -1,10 +1,10 @@
 // 产品（生产线）：一条生产线一条记录，共用同一个详情模板（技术方案 3.4）
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionConfig } from 'payload'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionConfig, Field, GroupField } from 'payload'
 
 import { isLoggedIn, recordCreateDeleteAccess, recordEditAccess } from '@/access'
 import { overrideGroup } from '@/content/overrideFields'
 import { UI_PRODUCT } from '@/content/texts'
-import { at, hideField, imageField, sectionsField, seoGroup, slugField, titleRowLabel, visibleField } from '@/fields'
+import { at, hideField, imageField, linkField, sectionsField, seoGroup, slugField, textStyleField, titleRowLabel, visibleField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
@@ -18,11 +18,72 @@ const D = '产品详情'
 const OWN_FIELDS = ['heroKicker', 'proposalTitle', 'proposalButton', 'videoTitle', 'inquiryTitle', 'inquiryIntro']
 const PRODUCT_OVERRIDES = Object.fromEntries(Object.entries(UI_PRODUCT).filter(([key]) => !OWN_FIELDS.includes(key)))
 
+// 第 15 点：模块文案覆盖的输入框分别放到对应模块分组的最上面（数据仍存 sectionTexts，前台不用改）
+type ProductTextKey = keyof typeof UI_PRODUCT
+const MODULE_TITLE_KEYS = {
+  hero: ['heroButton'],
+  applications: ['applicationsTitle', 'applicationsSubtitle', 'applicationsAria'],
+  intro: ['introKicker', 'introTitle'],
+  features: ['featuresTitle'],
+  process: ['processTitle'],
+  specs: ['specsTitle', 'specsModel', 'specsSwipe', 'specsEmpty'],
+  audience: ['audienceTitle', 'supportTitle'],
+  faq: ['faqTitle'],
+  advantages: ['advantagesTitle', 'advantagesSubtitle'],
+  steps: ['stepsKicker', 'stepsTitle', 'stepsSubtitle', 'stepsAria', 'stepAria'],
+  related: ['relatedTitle', 'relatedSubtitle', 'relatedButton'],
+  cases: ['casesTitle', 'casesSubtitle', 'casesButton'],
+  inquiry: ['inquiryKicker'],
+  brochure: ['brochureButton', 'brochureMeta'],
+} as const satisfies Record<string, readonly ProductTextKey[]>
+
+// 新增文案键却忘了放进 MODULE_TITLE_KEYS 时：tests/logic.test.ts 会失败提醒；
+// 万一漏到线上，这些键留在下面的覆盖组里照常显示（不会没地方改，也不会让整站启动失败）
+const placedKeys = new Set<string>(Object.values(MODULE_TITLE_KEYS).flat())
+export const UNPLACED_PRODUCT_TEXT_KEYS = Object.keys(PRODUCT_OVERRIDES).filter((key) => !placedKeys.has(key))
+
+// 只隐藏已放进模块分组的字段（含它们的文字样式）；全部放好时整组隐藏
+const hiddenGroup = (group: GroupField): GroupField => {
+  const isPlaced = (name: string) => placedKeys.has(name.replace(/Style$/, ''))
+  const allPlaced = group.fields.every((field) => 'name' in field && isPlaced(field.name))
+  return {
+    ...group,
+    label: allPlaced ? group.label : '其他文字（还没放进对应模块的标题和按钮）',
+    admin: { ...group.admin, hidden: allPlaced },
+    fields: group.fields.map((field) => ('name' in field && isPlaced(field.name) ? ({ ...field, admin: { ...field.admin, hidden: true } } as Field) : field)),
+  }
+}
+
+// 标题、小标题、副标题、按钮可以单独设文字样式；朗读名、参数表格子文字等不设
+const STYLED_PRODUCT_KEYS = Object.keys(PRODUCT_OVERRIDES).filter((key) => /(Title|Subtitle|Kicker|Button)$/.test(key))
+
+const moduleTitles = (module: keyof typeof MODULE_TITLE_KEYS): Field => {
+  const keys: readonly ProductTextKey[] = MODULE_TITLE_KEYS[module]
+  return {
+    name: `${module}Titles`,
+    type: 'ui',
+    admin: {
+      components: {
+        Field: {
+          path: '@/admin/components/ModuleTitles#ModuleTitles',
+          clientProps: {
+            items: keys.map((key) => ({ key, label: UI_PRODUCT[key][0].replace(/^.*：/, ''), placeholder: UI_PRODUCT[key][1], styled: STYLED_PRODUCT_KEYS.includes(key) })),
+          },
+        },
+      },
+      // 前台点选这些标题时，定位到这里（见 admin/components/LocateProvider.tsx）
+      custom: { locateAliases: keys.flatMap((key) => [`sectionTexts.${key}`, `sectionTexts.${key}Style`]) },
+    },
+  }
+}
+
 // 案例列表的卡片也显示所用生产线的名称，产品改名或下架时一起刷新
 const refresh: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
   if (doc?._status === 'published' || previousDoc?._status === 'published') {
     revalidate(req, [
       PATHS.home,
+      // 关于我们的图片可以设“跳到某个产品”，产品撤下或改名时一起刷新
+      PATHS.about,
       PATHS.productList,
       PATHS.productDetails,
       PATHS.caseList,
@@ -36,7 +97,7 @@ const refresh: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
 }
 
 const refreshAfterDelete: CollectionAfterDeleteHook = ({ doc, req }) => {
-  revalidate(req, [PATHS.home, PATHS.productList, PATHS.productDetails, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.contact, PATHS.sitemap])
+  revalidate(req, [PATHS.home, PATHS.about, PATHS.productList, PATHS.productDetails, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.contact, PATHS.sitemap])
   return doc
 }
 
@@ -118,6 +179,7 @@ export const Products: CollectionConfig = {
           ],
         },
         imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片', hint: '默认 4:3' }),
+        linkField({ name: 'listLink', label: '点击列表图跳转', location: '首页生产线、产品列表里点击列表图时打开的页面', defaultLabel: '本产品详情页（默认）' }),
         {
           name: 'listSummary',
           type: 'textarea',
@@ -133,6 +195,7 @@ export const Products: CollectionConfig = {
       label: '1 横幅与简介',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('hero'),
         imageField({ name: 'heroImage', label: '横幅图', location: `${D} › 横幅`, hint: '整条生产线或设备场景图' }),
         {
           type: 'row',
@@ -141,6 +204,7 @@ export const Products: CollectionConfig = {
             hideField('heroKicker', '小标题'),
           ],
         },
+        textStyleField('heroKicker', '小标题'),
         { name: 'heroSummary', type: 'textarea', label: '简介', admin: { description: at(`${D} › 横幅 › 简介`) } },
       ],
     },
@@ -149,6 +213,7 @@ export const Products: CollectionConfig = {
       label: '2 可生产成品',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('applications'),
         {
           name: 'applications',
           type: 'array',
@@ -156,13 +221,8 @@ export const Products: CollectionConfig = {
           labels: { singular: '成品', plural: '成品' },
           admin: { description: at(`${D} › 可生产成品`, '成品图 1:1，只展示图片和名称'), components: { RowLabel: titleRowLabel('name') } },
           fields: [
-            {
-              type: 'row',
-              fields: [
-                { name: 'image', type: 'upload', relationTo: 'media', label: '成品图', filterOptions: { mimeType: { contains: 'image' } }, admin: { width: '50%' } },
-                { name: 'name', type: 'text', label: '成品名称', required: true, admin: { width: '50%' } },
-              ],
-            },
+            imageField({ name: 'image', label: '成品图', location: `${D} › 可生产成品 › 成品图`, hint: '“按用途默认”为 1:1' }),
+            { name: 'name', type: 'text', label: '成品名称', required: true, admin: { width: '50%' } },
             visibleField(),
           ],
         },
@@ -173,6 +233,7 @@ export const Products: CollectionConfig = {
       label: '3 图文介绍',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('intro'),
         { name: 'introduction', type: 'richText', label: '产品介绍正文', admin: { description: at(`${D} › Product Introduction`) } },
         imageField({ name: 'overviewImage', label: '全景图', location: `${D} › Product Introduction › 全景图`, hint: '可点击放大' }),
       ],
@@ -182,6 +243,7 @@ export const Products: CollectionConfig = {
       label: '4 设备特点与报价入口',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('features'),
         { name: 'features', type: 'richText', label: '设备特点', admin: { description: at(`${D} › Equipment Features`) } },
         {
           type: 'row',
@@ -190,6 +252,7 @@ export const Products: CollectionConfig = {
             hideField('proposalTitle', '报价入口标题'),
           ],
         },
+        textStyleField('proposalTitle', '报价入口标题'),
         { name: 'proposalText', type: 'textarea', label: '报价入口说明', admin: { description: at(`${D} › 报价入口 › 说明`) } },
         {
           type: 'row',
@@ -198,6 +261,7 @@ export const Products: CollectionConfig = {
             hideField('proposalButtonText', '报价按钮'),
           ],
         },
+        textStyleField('proposalButtonText', '报价按钮', { opacity: false }),
       ],
     },
     {
@@ -205,6 +269,7 @@ export const Products: CollectionConfig = {
       label: '5 工艺流程',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('process'),
         { name: 'processText', type: 'richText', label: '工艺流程说明', admin: { description: at(`${D} › Production Process`) } },
         imageField({ name: 'flowImage', label: '流程图', location: `${D} › Production Process › 流程图`, hint: '默认保持原图比例，可点击放大' }),
       ],
@@ -214,6 +279,7 @@ export const Products: CollectionConfig = {
       label: '6 参数表',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('specs'),
         {
           name: 'specTable',
           type: 'json',
@@ -232,6 +298,7 @@ export const Products: CollectionConfig = {
       label: '7 适用客户与项目支持',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('audience'),
         { name: 'audience', type: 'richText', label: '适用客户', admin: { description: at(`${D} › Who This Line Is For`) } },
         { name: 'projectSupport', type: 'richText', label: '项目支持', admin: { description: at(`${D} › Project Support`, '安装、培训、保修、备件说明') } },
         imageField({ name: 'detailImage', label: '细节或交付现场图', location: `${D} › 适用客户与项目支持下方` }),
@@ -242,6 +309,7 @@ export const Products: CollectionConfig = {
       label: '8 FAQ',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('faq'),
         {
           name: 'faqs',
           type: 'array',
@@ -261,12 +329,13 @@ export const Products: CollectionConfig = {
       label: '9 运行视频',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'videoUrl', type: 'text', label: 'YouTube 链接', validate: validateYoutubeUrl, admin: { description: at(`${D} › Production Line Video`) } },
+        { name: 'videoUrl', type: 'text', label: 'YouTube 视频链接', validate: validateYoutubeUrl, admin: { description: at(`${D} › Production Line Video`), components: { afterInput: ['@/admin/components/YouTubePreview#YouTubePreview'] } } },
         {
           type: 'row',
           fields: [{ name: 'videoTitle', type: 'text', label: '视频标题', admin: { width: '75%', description: at(`${D} › 视频标题`), placeholder: UI_PRODUCT.videoTitle[1] } }, hideField('videoTitle', '视频标题')],
         },
-        imageField({ name: 'videoCover', label: '视频封面', location: `${D} › 视频封面`, hint: '16:9；不填时用 YouTube 缩略图' }),
+        textStyleField('videoTitle', '视频标题'),
+        imageField({ name: 'videoCover', label: '视频封面图片（选填）', location: `${D} › 视频封面`, hint: '只能放图片，16:9；不填时用 YouTube 缩略图' }),
       ],
     },
     {
@@ -274,6 +343,7 @@ export const Products: CollectionConfig = {
       label: '10 设备优势',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('advantages'),
         {
           name: 'advantages',
           type: 'array',
@@ -293,6 +363,7 @@ export const Products: CollectionConfig = {
       label: '11 工艺步骤切换',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('steps'),
         {
           name: 'processSteps',
           type: 'array',
@@ -301,7 +372,7 @@ export const Products: CollectionConfig = {
           admin: { description: at(`${D} › Step-by-Step Process`, '步骤名称和数量按实际设备设置'), components: { RowLabel: titleRowLabel('title') } },
           fields: [
             { name: 'title', type: 'text', label: '步骤名称', required: true },
-            { name: 'image', type: 'upload', relationTo: 'media', label: '对应设备图', filterOptions: { mimeType: { contains: 'image' } } },
+            imageField({ name: 'image', label: '对应设备图', location: `${D} › Step-by-Step Process › 设备图` }),
             { name: 'description', type: 'textarea', label: '说明' },
             visibleField(),
           ],
@@ -313,6 +384,7 @@ export const Products: CollectionConfig = {
       label: '12 相关生产线',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('related'),
         {
           name: 'relatedProducts',
           type: 'relationship',
@@ -329,6 +401,7 @@ export const Products: CollectionConfig = {
       label: '13 客户案例',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('cases'),
         {
           name: 'relatedCases',
           type: 'relationship',
@@ -344,6 +417,7 @@ export const Products: CollectionConfig = {
       label: '14 询盘表单',
       admin: { initCollapsed: true },
       fields: [
+        moduleTitles('inquiry'),
         {
           type: 'row',
           fields: [
@@ -351,6 +425,7 @@ export const Products: CollectionConfig = {
             hideField('formTitle', '表单标题'),
           ],
         },
+        textStyleField('formTitle', '表单标题'),
         {
           type: 'row',
           fields: [
@@ -366,23 +441,25 @@ export const Products: CollectionConfig = {
       label: '产品手册',
       admin: { initCollapsed: true },
       fields: [
-        imageField({ name: 'brochure', label: '产品手册 PDF', location: `${D} › 横幅 › Download Brochure 按钮`, hint: '上传了 PDF 才显示下载按钮', documents: true }),
+        moduleTitles('brochure'),
+        imageField({
+          name: 'brochure',
+          label: '产品手册 PDF',
+          location: `${D} › 页面顶部横幅里“Get a Quote”旁的 Download Brochure 按钮`,
+          hint: '上传了 PDF 才显示；打开实时预览后点“在前台定位”可直接滚到这个按钮',
+          documents: true,
+        }),
+        {
+          name: 'brochureInSpecs',
+          type: 'checkbox',
+          label: '参数表下方也显示下载入口',
+          defaultValue: true,
+          admin: { description: at(`${D} › Technical Specifications 下方`, '客户看完参数顺手就能下载；没上传 PDF 时不显示') },
+        },
       ],
     },
-    {
-      type: 'collapsible',
-      label: '模块文案覆盖',
-      admin: { initCollapsed: true },
-      fields: [
-        overrideGroup(
-          'sectionTexts',
-          '本产品的模块标题和按钮',
-          PRODUCT_OVERRIDES,
-          '只在本产品与默认文案不同时填写；不填时使用“界面文案 › 产品详情模板”的文字',
-          `本产品的${D}页`,
-        ),
-      ],
-    },
+    // 输入框已放到各模块分组里（moduleTitles），这里只保留数据，后台不再单独显示
+    hiddenGroup(overrideGroup('sectionTexts', '本产品的模块标题和按钮', PRODUCT_OVERRIDES, '', `本产品的${D}页`, STYLED_PRODUCT_KEYS)),
     seoGroup('本产品'),
   ],
 }

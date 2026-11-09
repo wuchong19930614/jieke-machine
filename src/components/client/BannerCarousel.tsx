@@ -33,12 +33,15 @@ export function BannerCarousel({
   texts,
   locate = {},
   ratio = 'original',
+  className,
 }: {
   slides: React.ReactNode[]
   texts: Texts
   locate?: Partial<Record<keyof Texts, LocateAttrs>>
   // 主题设置“默认图框比例 › Banner”：original 保持原设计的高度，其他比例只在桌面生效
   ratio?: string
+  // 模块“显示在”对应的 class（第 2 点）
+  className?: string
 }) {
   const total = slides.length
   const [index, setIndex] = useState(0)
@@ -96,7 +99,7 @@ export function BannerCarousel({
   return (
     <section
       ref={rootRef}
-      className="lp-hero"
+      className={className ? `lp-hero ${className}` : 'lp-hero'}
       {...(ratio && ratio !== 'original'
         ? { 'data-ratio': ratio, style: { '--banner-ratio': ratio.replace('/', ' / ') } as React.CSSProperties }
         : {})}

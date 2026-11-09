@@ -22,8 +22,14 @@
   --space-scale: 1;
   --font-heading: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   --font-body: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  --gutter: max(5%, calc((100% - 1180px) / 2));
+  /* 内容最大宽度和两侧最小留白跟随“主题 › 页面宽度”（lib/theme.ts）；手机和平板两侧固定 5% */
+  --gutter: max(5%, calc((100% - var(--lp-content-width, 1180px)) / 2));
   color-scheme: light;
+}
+@media (min-width: 1180px) {
+  :root {
+    --gutter: max(var(--lp-side-min, 5%), calc((100% - var(--lp-content-width, 1180px)) / 2));
+  }
 }
 
 *,
@@ -275,29 +281,30 @@ p {
 }
 /* 产品详情从“图文介绍”到“运行视频”是同一列文章的几个小节（标题是 h3）。
    相邻两节背景相同时连成一列（同原型）：后一节去掉上方留白和首个标题的上边距，前一节最后一个元素不留下边距，
-   两节之间只剩前一节的下方留白（约 40px），不再是两段内边距叠出来的大空白 */
+   两节之间只剩前一节的下方留白（约 40px），不再是两段内边距叠出来的大空白。
+   预设色、自定义色和背景图（lp-bg-custom）颜色各不相同，不参与连成一列 */
 :is(
-    .lp-section.lp-bg-light:has(.lp-article) + .lp-section.lp-bg-light,
-    .lp-section.lp-bg-dark:has(.lp-article) + .lp-section.lp-bg-dark,
-    .lp-section.lp-bg-blue:has(.lp-article) + .lp-section.lp-bg-blue,
-    .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article) + .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue)
+    .lp-section:not(.lp-bg-custom).lp-bg-light:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-light,
+    .lp-section:not(.lp-bg-custom).lp-bg-dark:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-dark,
+    .lp-section:not(.lp-bg-custom).lp-bg-blue:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-blue,
+    .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article) + .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue)
   ):has(.lp-article) {
   padding-top: 0;
 }
 :is(
-    .lp-section.lp-bg-light:has(.lp-article) + .lp-section.lp-bg-light,
-    .lp-section.lp-bg-dark:has(.lp-article) + .lp-section.lp-bg-dark,
-    .lp-section.lp-bg-blue:has(.lp-article) + .lp-section.lp-bg-blue,
-    .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article) + .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue)
+    .lp-section:not(.lp-bg-custom).lp-bg-light:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-light,
+    .lp-section:not(.lp-bg-custom).lp-bg-dark:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-dark,
+    .lp-section:not(.lp-bg-custom).lp-bg-blue:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-blue,
+    .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article) + .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue)
   )
   :is(.lp-article > :first-child, .lp-article > .lp-split:first-child > * > :first-child) {
   margin-top: 0;
 }
 :is(
-    .lp-section.lp-bg-light:has(.lp-article):has(+ .lp-section.lp-bg-light .lp-article),
-    .lp-section.lp-bg-dark:has(.lp-article):has(+ .lp-section.lp-bg-dark .lp-article),
-    .lp-section.lp-bg-blue:has(.lp-article):has(+ .lp-section.lp-bg-blue .lp-article),
-    .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article):has(+ .lp-section:not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue) .lp-article)
+    .lp-section:not(.lp-bg-custom).lp-bg-light:has(.lp-article):has(+ .lp-section:not(.lp-bg-custom).lp-bg-light .lp-article),
+    .lp-section:not(.lp-bg-custom).lp-bg-dark:has(.lp-article):has(+ .lp-section:not(.lp-bg-custom).lp-bg-dark .lp-article),
+    .lp-section:not(.lp-bg-custom).lp-bg-blue:has(.lp-article):has(+ .lp-section:not(.lp-bg-custom).lp-bg-blue .lp-article),
+    .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article):has(+ .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue) .lp-article)
   )
   .lp-article
   > :last-child {
@@ -347,6 +354,29 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
+}
+/* 关于我们两个模块的“每行几张”（第 6 点）：电脑上生效，平板 2 张、手机 1 张沿用 .lp-grid3 的规则 */
+@media (min-width: 1180px) {
+  .lp-grid3.lp-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lp-grid3.lp-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.lp-image-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+a.lp-image-link:hover {
+  opacity: 0.88;
+}
+.lp-image-caption {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 0.93em;
 }
 .lp-split {
   display: grid;
@@ -492,6 +522,13 @@ p {
     object-position: var(--focal-mobile, var(--focal, 50% 50%));
   }
 }
+/* 主题设置“页面宽度 › 首页横幅宽度”：默认与内容同宽、两侧留白，和下面的模块左右对齐；手机上始终铺满 */
+@media (min-width: 768px) {
+  .lp-hero {
+    margin: var(--lp-hero-top, 24px) var(--lp-hero-inset, var(--gutter)) 0;
+    border-radius: var(--lp-hero-radius, 8px);
+  }
+}
 /* 主题设置“默认图框比例 › Banner”选了具体比例时，桌面按比例定高度；原图比例 = 保持原设计的高度 */
 @media (min-width: 768px) {
   .lp-hero[data-ratio] {
@@ -502,7 +539,8 @@ p {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(10 25 40 / 45%), rgb(10 25 40 / 55%));
+  /* 遮罩深浅可在每张 Banner 里调（--overlay，默认 0.5 = 原来的 45%→55% 渐变） */
+  background: linear-gradient(180deg, rgb(10 25 40 / calc(var(--overlay, 0.5) - 0.05)), rgb(10 25 40 / calc(var(--overlay, 0.5) + 0.05)));
 }
 .lp-banner-copy {
   width: 100%;
@@ -706,7 +744,7 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
-  max-width: 1180px;
+  max-width: var(--lp-content-width, 1180px);
   margin: auto;
 }
 .lp-store-lines {
@@ -722,8 +760,17 @@ p {
   align-items: center;
   padding: 24px;
   width: 100%;
-  max-width: 1180px;
+  max-width: var(--lp-content-width, 1180px);
   margin: auto;
+}
+/* 产品列表页“列表图片设置 › 图片占一行的宽度”（第 9 点）；手机上仍是上图下文 */
+@media (min-width: 768px) {
+  .lp-store-line[data-image-width] {
+    grid-template-columns: minmax(0, var(--line-img)) minmax(0, var(--line-txt));
+  }
+  .lp-store-reverse[data-image-width] {
+    grid-template-columns: minmax(0, var(--line-txt)) minmax(0, var(--line-img));
+  }
 }
 .lp-store-line h2 {
   font-size: 1.57em;
@@ -887,7 +934,7 @@ p {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: 40px;
   align-items: center;
-  max-width: 1180px;
+  max-width: var(--lp-content-width, 1180px);
   margin: auto;
 }
 .lp-process-buttons {
@@ -1855,4 +1902,93 @@ body.lp-locating [data-locate] {
   .lp-mobile-bar a {
     flex: 1;
   }
+}
+
+/* 参数表下方的产品手册下载入口 */
+.lp-brochure-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--lp-line);
+  border-radius: 6px;
+  background: var(--lp-soft);
+  color: var(--lp-ink);
+  text-decoration: none;
+}
+.lp-brochure-card__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.lp-brochure-card__text small {
+  color: var(--lp-muted);
+}
+.lp-brochure-card__button {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 3px;
+  background: var(--lp-accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+.lp-brochure-card:hover .lp-brochure-card__button {
+  filter: brightness(0.95);
+}
+
+/* ---------- 第三批：按设备显示、图片模块、横幅链接 ---------- */
+/* 模块“显示在”（第 2 点）：手机 < 768px */
+@media (max-width: 767px) {
+  .lp-only-desktop {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) {
+  .lp-only-mobile {
+    display: none !important;
+  }
+}
+
+/* 图片模块和图片网格（第 1 点）：没填高度时按原图比例，填了按高度以焦点为中心裁切 */
+.lp-image-module--full {
+  padding-left: 0;
+  padding-right: 0;
+}
+.lp-image-frame img {
+  display: block;
+  width: 100%;
+  height: var(--h, auto);
+  object-fit: cover;
+  object-position: var(--focal, 50% 50%);
+}
+@media (max-width: 767px) {
+  .lp-image-frame img {
+    height: var(--h-m, auto);
+    object-position: var(--focal-mobile, var(--focal, 50% 50%));
+  }
+}
+.lp-image-grid-module {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 767px) {
+  .lp-image-grid-module {
+    grid-template-columns: repeat(var(--cols-m, 2), minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* 横幅整张图可点击（第 3 点）：链接铺在图片上、文字下面，点文字以外的地方跳转；文字仍可选中，按钮照常可点 */
+.lp-banner-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.lp-banner-copy {
+  position: relative;
+  z-index: 1;
 }

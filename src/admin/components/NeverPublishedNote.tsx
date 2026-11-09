@@ -1,5 +1,6 @@
 'use client'
-// 页面配置和设置从没发布过时的提示：后台状态显示“草稿”，但前台其实在用代码里的默认内容，并没有下线
+// 页面配置和设置从没发布过时的提示：后台状态显示“草稿”，但前台其实在用代码里的默认内容，并没有下线。
+// hasPublishedDoc 对全局配置的判断依赖 patches/@payloadcms+next 补丁（原版存过草稿后会误报“没发布过”）
 import { useDocumentInfo } from '@payloadcms/ui'
 
 export function NeverPublishedNote() {

@@ -1,12 +1,17 @@
 // 可复用的字段定义。字段名用稳定的英文业务键，后台显示中文（技术方案 3.1）
-import type { ArrayField, CheckboxField, Field, GroupField, RowField, TextField, Validate } from 'payload'
+import type { ArrayField, CheckboxField, CollapsibleField, Field, GroupField, RowField, TextField, Validate } from 'payload'
 
 import {
+  HEX_COLOR,
   IMAGE_FITS,
   IMAGE_RATIOS,
+  IMAGE_SECTION_MODULES,
+  isImageSectionModule,
   SECTION_BACKGROUNDS,
+  SECTION_DEVICES,
   type SectionBackground,
 } from '@/lib/constants'
+import { validateTextStyle } from '@/lib/textStyle'
 
 // 字段下方的“前台位置”说明（技术方案 3.1 第 3 条）
 export const at = (location: string, extra?: string): string =>
@@ -35,28 +40,53 @@ export function imageField({ name, label, location, required, hint, documents }:
         filterOptions: documents ? { mimeType: { equals: 'application/pdf' } } : { mimeType: { contains: 'image' } },
         admin: { description: at(location, hint), width: '50%' },
       },
-      ...(documents
-        ? []
-        : ([
-            {
-              name: `${name}Ratio`,
-              type: 'select',
-              label: '图框比例',
-              options: [...IMAGE_RATIOS],
-              defaultValue: 'default',
-              admin: { width: '25%', description: at(location, '“按用途默认”取主题里的默认比例') },
-            },
-            {
-              name: `${name}Fit`,
-              type: 'select',
-              label: '适配方式',
-              options: [...IMAGE_FITS],
-              defaultValue: 'default',
-              admin: { width: '25%', description: at(location) },
-            },
-          ] satisfies Field[])),
+      ...(documents ? [] : ratioFitFields(name, location)),
     ],
   }
+}
+
+// 自定义比例“宽:高”，允许中文冒号和小数
+export const CUSTOM_RATIO = /^\d+(\.\d+)?\s*[:：]\s*\d+(\.\d+)?$/
+
+// 图框比例 + 适配方式两个选择框；多图字段（如案例现场图片）整组共用一套设置
+export function ratioFitFields(name: string, location: string): Field[] {
+  return [
+    {
+      name: `${name}Ratio`,
+      type: 'select',
+      label: '图框比例',
+      options: [...IMAGE_RATIOS],
+      defaultValue: 'default',
+      admin: { width: '25%', description: at(location, '“按用途默认”取主题里的默认比例') },
+    },
+    {
+      name: `${name}RatioCustom`,
+      type: 'text',
+      label: '自定义比例（宽:高）',
+      admin: {
+        width: '25%',
+        placeholder: '如 5:4',
+        description: '图框比例选“自定义…”时填写，例如 5:4、21:9',
+        condition: (_data, siblingData) => siblingData?.[`${name}Ratio`] === 'custom',
+      },
+      validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
+        if (siblingData?.[`${name}Ratio`] !== 'custom') return true
+        return typeof value === 'string' && CUSTOM_RATIO.test(value.trim()) ? true : '请填写宽:高，例如 5:4'
+      },
+      // 中文输入法下常打出全角冒号“5：4”：校验前统一换成半角，前台和“发布前不能含中文”的检查都按 5:4 处理
+      hooks: { beforeValidate: [({ value }) => (typeof value === 'string' ? value.replace(/：/g, ':').trim() : value)] },
+      // 内容只可能是数字和冒号（见上面的校验），不参与“前台不能含中文”的检查，旧数据里残留的“：”也不会拦住发布
+      custom: { allowChinese: true },
+    } as Field,
+    {
+      name: `${name}Fit`,
+      type: 'select',
+      label: '适配方式',
+      options: [...IMAGE_FITS],
+      defaultValue: 'default',
+      admin: { width: '25%', description: at(location) },
+    },
+  ]
 }
 
 export const visibleField = (location = '前台是否显示该条目'): CheckboxField => ({
@@ -121,12 +151,24 @@ export function slugField(source: string, location: string): TextField {
   }
 }
 
-export function seoGroup(location: string): GroupField {
+// SEO 设置不显示在页面上，业务人员常以为“前台没体现”：分组标题写明这一点，默认收起，并在后台直接预览效果
+export function seoGroup(location: string): CollapsibleField {
+  return {
+    type: 'collapsible',
+    label: '搜索引擎与分享设置（不在页面上显示）',
+    admin: { initCollapsed: true },
+    fields: [seoFields(location)],
+  }
+}
+
+function seoFields(location: string): GroupField {
   return {
     name: 'seo',
     type: 'group',
-    label: 'SEO',
-    admin: { description: `${location}的搜索标题和分享信息；不填时自动使用标题和简介` },
+    label: 'SEO 设置',
+    admin: {
+      description: `只影响${location}在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。`,
+    },
     fields: [
       { name: 'seoTitle', type: 'text', label: 'SEO 标题', maxLength: 70, admin: { description: at(`${location}的浏览器标签页标题、搜索结果标题`, '建议 60 个字符以内') } },
       {
@@ -142,49 +184,153 @@ export function seoGroup(location: string): GroupField {
         relationTo: 'media',
         label: '分享预览图',
         filterOptions: { mimeType: { contains: 'image' } },
-        admin: { description: at(`${location}分享到社交平台时的预览图`, '尺寸 1200×630；不填时用全站默认分享图') },
+        admin: { description: at(`${location}分享到社交平台时的预览图`, `尺寸 1200×630；不填时用${location === '本产品' ? '本产品的列表图（没有列表图时用横幅图）' : location === '本案例' ? '本案例的封面图' : '全站默认分享图'}（下方预览会显示实际用哪张）`) },
       },
       {
         name: 'noindex',
         type: 'checkbox',
         label: '禁止搜索引擎收录',
         defaultValue: false,
+        admin: { description: '勾选后这一页不会出现在 Google 等搜索结果里' },
       },
+      { name: 'seoPreview', type: 'ui', admin: { components: { Field: '@/admin/components/SeoPreview#SeoPreview' } } },
     ],
   }
 }
 
 type SectionOption = { label: string; value: string }
 
-// 模块顺序：每行一个模块，可拖动排序、勾选显示、选择背景（技术方案 5.2）
+// 图片模块 / 图片网格的内容字段（第 1、3 点），只在这两种模块的行里显示
+function imageModuleFields(location: string): Field[] {
+  const isBanner = (_data: unknown, s: Record<string, unknown>) => s?.module === 'imageBanner'
+  const isGrid = (_data: unknown, s: Record<string, unknown>) => s?.module === 'imageGrid'
+  const isImage = (_data: unknown, s: Record<string, unknown>) => isImageSectionModule(s?.module)
+  const upload = (name: string, label: string, description: string, width = '50%'): Field => ({
+    name,
+    type: 'upload',
+    relationTo: 'media',
+    label,
+    filterOptions: { mimeType: { contains: 'image' } },
+    admin: { width, description },
+  })
+  const height = (name: string, label: string): Field => ({
+    name,
+    type: 'number',
+    label,
+    min: 80,
+    max: 1200,
+    admin: { width: '33%', placeholder: '按原图比例', description: '单位 px；留空按图片原来的比例显示，填了按高度裁切（以焦点为中心）' },
+  })
+  return [
+    {
+      type: 'row',
+      admin: { condition: isBanner },
+      fields: [
+        upload('desktopImage', '电脑图', at(`${location} › 图片模块`, '建议宽 1920 以上；替代文字在媒体库里填写（英文，必填）')),
+        upload('mobileImage', '手机图（选填）', '手机上显示这张；不填时用电脑图，可以放一张竖版海报'),
+      ],
+    },
+    {
+      type: 'row',
+      admin: { condition: isGrid },
+      fields: [
+        {
+          name: 'columns',
+          type: 'select',
+          label: '电脑上每行几张',
+          defaultValue: '3',
+          options: ['2', '3', '4'].map((v) => ({ label: `${v} 张`, value: v })),
+          admin: { width: '50%' },
+        },
+        {
+          name: 'mobileColumns',
+          type: 'select',
+          label: '手机上每行几张',
+          defaultValue: '2',
+          options: ['1', '2'].map((v) => ({ label: `${v} 张`, value: v })),
+          admin: { width: '50%' },
+        },
+      ],
+    },
+    {
+      type: 'row',
+      admin: { condition: isImage },
+      fields: [
+        height('height', '电脑上的高度'),
+        height('mobileHeight', '手机上的高度'),
+        {
+          name: 'imageWidth',
+          type: 'select',
+          label: '宽度',
+          defaultValue: 'content',
+          options: [
+            { label: '与内容同宽', value: 'content' },
+            { label: '铺满整个屏幕', value: 'full' },
+          ],
+          admin: { width: '33%' },
+        },
+      ],
+    },
+    { ...linkField({ location: `${location} › 图片模块 › 点击图片跳转` }), admin: { description: at(`${location} › 图片模块 › 点击图片跳转`), condition: isBanner } } as Field,
+    {
+      name: 'gridItems',
+      type: 'array',
+      label: '网格图片',
+      labels: { singular: '图片', plural: '图片' },
+      admin: { condition: isGrid, description: at(`${location} › 图片网格`, '拖动调整顺序；每张图可以单独设置点击后跳到哪里，适合做产品入口'), initCollapsed: true },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            upload('image', '电脑图', '替代文字在媒体库里填写（英文，必填）'),
+            upload('mobileImage', '手机图（选填）', '不填时用电脑图'),
+          ],
+        },
+        linkField({ location: `${location} › 图片网格 › 点击图片跳转` }),
+      ],
+    },
+  ]
+}
+
+// 模块顺序：每行一个模块，可拖动排序、勾选显示、选择背景（技术方案 5.2）。
+// imageModules：首页可以另外插入任意多个图片模块 / 图片网格（第 1 点）
 export function sectionsField(
   options: readonly SectionOption[],
   location: string,
   defaultBackgrounds: Partial<Record<string, SectionBackground>> = {},
+  { imageModules = false }: { imageModules?: boolean } = {},
 ): ArrayField {
+  const moduleOptions = imageModules ? [...options, ...IMAGE_SECTION_MODULES] : options
   return {
     name: 'sections',
     type: 'array',
     label: '模块顺序',
     labels: { singular: '模块', plural: '模块' },
     minRows: options.length,
-    maxRows: options.length,
+    ...(imageModules ? {} : { maxRows: options.length }),
     defaultValue: options.map((option) => ({
       module: option.value,
       visible: true,
       background: defaultBackgrounds[option.value] ?? 'default',
     })),
     admin: {
-      description: at(location, '拖动调整模块顺序；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏'),
+      description: at(
+        location,
+        imageModules
+          ? '拖动调整模块顺序；点下方“添加模块”可插入图片模块或图片网格（可以插多个）；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏'
+          : '拖动调整模块顺序；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏',
+      ),
       initCollapsed: true,
       components: { RowLabel: '@/admin/components/RowLabel#SectionRowLabel' },
     },
     validate: (value) => {
       const rows = (value ?? []) as { module?: string }[]
-      const modules = rows.map((row) => row.module)
+      // 图片模块可以有多个，其余固定模块各出现一次
+      const modules = rows.map((row) => row.module).filter((m) => !isImageSectionModule(m))
       const missing = options.filter((option) => !modules.includes(option.value))
       if (missing.length) return `缺少模块：${missing.map((m) => m.label).join('、')}`
-      if (new Set(modules).size !== modules.length) return '每个模块只能出现一次'
+      if (new Set(modules).size !== modules.length) return '除图片模块和图片网格外，每个模块只能出现一次'
+      if (rows.some((row) => !row.module)) return '有一行还没选择模块类型，请在“模块”里选择，或删除这一行'
       return true
     },
     fields: [
@@ -196,23 +342,77 @@ export function sectionsField(
             type: 'select',
             label: '模块',
             required: true,
-            options: options.map((option) => ({ ...option })),
-            admin: { width: '40%' },
+            options: moduleOptions.map((option) => ({ ...option })),
+            admin: { width: '30%' },
           },
-          { name: 'visible', type: 'checkbox', label: '显示', defaultValue: true, admin: { width: '20%' } },
+          { name: 'visible', type: 'checkbox', label: '显示', defaultValue: true, admin: { width: '14%' } },
+          {
+            name: 'device',
+            type: 'select',
+            label: '显示在',
+            options: [...SECTION_DEVICES],
+            defaultValue: 'all',
+            admin: { width: '26%', description: '手机指屏幕宽度小于 768px' },
+          },
           {
             name: 'background',
             type: 'select',
             label: '背景',
             options: [...SECTION_BACKGROUNDS],
             defaultValue: 'default',
-            admin: { width: '40%' },
+            admin: { width: '30%', description: '深色背景上文字会自动变成白色' },
           },
         ],
       },
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'backgroundColor',
+            type: 'text',
+            label: '自定义颜色',
+            admin: {
+              width: '40%',
+              placeholder: '#EAF2FB',
+              description: '点左边色块用色盘选，或直接输入色号，例如 #EAF2FB',
+              condition: (_data, siblingData) => siblingData?.background === 'custom',
+              components: { Field: '@/admin/components/ColorField#ColorField' },
+            },
+            validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
+              if (siblingData?.background !== 'custom') return true
+              return typeof value === 'string' && HEX_COLOR.test(value.trim()) ? true : '请填写 # 开头的 6 位色号，例如 #EAF2FB'
+            },
+          } as Field,
+          {
+            name: 'backgroundImage',
+            type: 'upload',
+            relationTo: 'media',
+            label: '背景图片（选填）',
+            filterOptions: { mimeType: { contains: 'image' } },
+            admin: { width: '40%', description: '铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅' },
+          },
+          {
+            name: 'backgroundOverlay',
+            type: 'number',
+            label: '遮罩深浅（%）',
+            min: 0,
+            max: 90,
+            defaultValue: 40,
+            admin: {
+              width: '20%',
+              step: 5,
+              description: '越往右背景图越暗，文字越清楚',
+              condition: (_data, siblingData) => Boolean(siblingData?.backgroundImage),
+              components: { Field: '@/admin/components/RangeField#RangeField' },
+            },
+          },
+        ],
+      },
+      ...(imageModules ? imageModuleFields(location) : []),
     ],
   }
 }
+
 
 // 带“前台位置”说明的普通文本，简化各集合里的大量文案字段
 export function textField(
@@ -234,3 +434,107 @@ export const titleRowLabel = (field = 'title') => ({
   path: '@/admin/components/RowLabel#TitleRowLabel',
   clientProps: { field },
 })
+
+// “点击跳转”设置（第 6、9 点，第三批图片模块也会复用）：选产品 / 案例 / 网站页面 / 自定义网址。
+// 前台用 components/LinkTo.tsx 的 linkHref() 解析；选“默认”时由使用的地方决定（不跳转或进详情页）
+export const LINK_PAGES = [
+  { label: '首页', value: '/' },
+  { label: '产品列表', value: '/products/' },
+  { label: '案例列表', value: '/case-studies/' },
+  { label: '关于我们', value: '/about/' },
+  { label: '联系我们', value: '/contact/' },
+] as const
+
+// 本站路径必须是单个 / 开头；//域名 是外部地址，容易误填，不接受
+const LINK_URL = /^(https?:\/\/\S+|\/(?!\/)\S*|mailto:\S+|tel:\S+)$/
+
+type LinkFieldOptions = { name?: string; label?: string; location: string; defaultLabel?: string }
+
+export function linkField({ name = 'link', label = '点击跳转', location, defaultLabel = '不跳转' }: LinkFieldOptions): GroupField {
+  const when = (type: string) => (_data: unknown, siblingData: Record<string, unknown>) => siblingData?.type === type
+  const requiredWhen =
+    (type: string, message: string) =>
+    (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) =>
+      siblingData?.type !== type || (value !== null && value !== undefined && value !== '') ? true : message
+  return {
+    name,
+    type: 'group',
+    label,
+    admin: { description: at(location) },
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'type',
+            type: 'select',
+            label: '跳到哪里',
+            defaultValue: 'default',
+            options: [
+              { label: defaultLabel, value: 'default' },
+              { label: '某个产品', value: 'product' },
+              { label: '某个案例', value: 'caseStudy' },
+              { label: '网站页面', value: 'page' },
+              { label: '自定义网址', value: 'custom' },
+            ],
+            admin: { width: '30%' },
+          },
+          {
+            name: 'product',
+            type: 'relationship',
+            relationTo: 'products',
+            label: '选择产品',
+            admin: { width: '45%', condition: when('product') },
+            validate: requiredWhen('product', '请选择要跳转的产品'),
+          } as Field,
+          {
+            name: 'caseStudy',
+            type: 'relationship',
+            relationTo: 'cases',
+            label: '选择案例',
+            admin: { width: '45%', condition: when('caseStudy') },
+            validate: requiredWhen('caseStudy', '请选择要跳转的案例'),
+          } as Field,
+          {
+            name: 'page',
+            type: 'select',
+            label: '选择页面',
+            options: [...LINK_PAGES],
+            admin: { width: '45%', condition: when('page') },
+            validate: requiredWhen('page', '请选择要跳转的页面'),
+          } as Field,
+          {
+            name: 'url',
+            type: 'text',
+            label: '网址',
+            admin: { width: '45%', placeholder: 'https://… 或 /products/xxx/', condition: when('custom') },
+            validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
+              if (siblingData?.type !== 'custom') return true
+              return typeof value === 'string' && LINK_URL.test(value.trim()) ? true : '请填写 https:// 开头的完整网址，或 / 开头的本站路径，例如 /contact/'
+            },
+          } as Field,
+          {
+            name: 'newTab',
+            type: 'checkbox',
+            label: '在新窗口打开',
+            admin: { width: '25%', condition: (_data, siblingData) => Boolean(siblingData?.type) && siblingData?.type !== 'default' },
+          },
+        ],
+      },
+    ],
+  }
+}
+
+// “文字样式”（第 4、15 点）：字号（电脑 / 手机）、字体、颜色、透明度，存成一个 JSON。
+// 后台是可展开的小面板（admin/components/TextStyleField.tsx），不填就跟随主题
+export function textStyleField(name: string, label: string, { opacity = true }: { opacity?: boolean } = {}): Field {
+  return {
+    name: `${name}Style`,
+    type: 'json',
+    label: `${label}：文字样式`,
+    validate: (value: unknown) => validateTextStyle(value),
+    admin: {
+      components: { Field: { path: '@/admin/components/TextStyleField#TextStyleField', clientProps: { opacity, target: label } } },
+    },
+  } as Field
+}

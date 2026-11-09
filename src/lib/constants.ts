@@ -9,11 +9,21 @@ export const ROLES = [
 export type Role = (typeof ROLES)[number]['value']
 
 // 模块背景（技术方案 5.2）
+// 前 4 个沿用最初的取值（已有数据不变）；深色背景上文字自动变白（见 components/Section.tsx）
 export const SECTION_BACKGROUNDS = [
-  { label: '默认', value: 'default' },
-  { label: '浅色', value: 'light' },
-  { label: '深色', value: 'dark' },
-  { label: '蓝色', value: 'blue' },
+  { label: '默认（白色）', value: 'default' },
+  { label: '浅灰', value: 'light' },
+  { label: '米白 #FAF6EF', value: 'cream' },
+  { label: '浅蓝 #EAF2FB', value: 'sky' },
+  { label: '浅绿 #EAF5EE', value: 'mint' },
+  { label: '浅橙 #FDF0E8', value: 'peach' },
+  { label: '品牌蓝（跟随主题）', value: 'blue' },
+  { label: '深蓝（跟随主题）', value: 'dark' },
+  { label: '石墨 #22272E', value: 'graphite' },
+  { label: '深绿 #16352C', value: 'forest' },
+  { label: '橙色（跟随询盘按钮颜色）', value: 'orange' },
+  { label: '深红 #7A1F1F', value: 'maroon' },
+  { label: '自定义颜色…', value: 'custom' },
 ] as const
 export type SectionBackground = (typeof SECTION_BACKGROUNDS)[number]['value']
 
@@ -24,6 +34,10 @@ export const IMAGE_RATIOS = [
   { label: '1:1', value: '1/1' },
   { label: '3:2', value: '3/2' },
   { label: '16:9', value: '16/9' },
+  { label: '3:4（竖图）', value: '3/4' },
+  { label: '2:3（竖图）', value: '2/3' },
+  { label: '9:16（手机竖屏）', value: '9/16' },
+  { label: '自定义…', value: 'custom' },
   { label: '原图比例', value: 'original' },
 ] as const
 export const IMAGE_FITS = [
@@ -189,3 +203,32 @@ export const CASES_PER_PAGE_DEFAULT = 9
 export const INQUIRY_RETENTION_DAYS = 365
 export const BACKUP_RETENTION_DAYS = 30
 export const MAX_NOTIFY_ATTEMPTS = 10
+
+// 文字样式（第 4、15 点）可选字体；空值 = 跟随主题。键与 globals/Theme.ts 的 FONTS 一致
+export const TEXT_STYLE_FONTS = [
+  { label: '跟随主题', value: '' },
+  { label: 'Arial', value: 'system' },
+  { label: 'Inter', value: 'inter' },
+  { label: 'Montserrat', value: 'montserrat' },
+  { label: 'Open Sans', value: 'open-sans' },
+] as const
+// 文字样式色板：白、深色字、灰色字、品牌蓝、橙、浅金
+export const TEXT_STYLE_SWATCHES = ['#FFFFFF', '#142B42', '#647587', '#3275DF', '#E7662B', '#F5C26B'] as const
+
+// 首页可以插入多个的图片类模块（第 1 点），和固定模块一起在“模块顺序”里拖动
+export const IMAGE_SECTION_MODULES = [
+  { label: '图片模块（整张图片）', value: 'imageBanner' },
+  { label: '图片网格（一行多张）', value: 'imageGrid' },
+] as const
+export type ImageSectionModule = (typeof IMAGE_SECTION_MODULES)[number]['value']
+export const isImageSectionModule = (value: unknown): value is ImageSectionModule => value === 'imageBanner' || value === 'imageGrid'
+
+// 模块“显示在”（第 2 点）：手机 < 768px，平板和电脑算同一类
+export const SECTION_DEVICES = [
+  { label: '电脑和手机', value: 'all' },
+  { label: '仅电脑和平板', value: 'desktop' },
+  { label: '仅手机', value: 'mobile' },
+] as const
+
+// 6 位色号（# 加 6 位十六进制）：后台校验、前台清洗、背景深浅判断共用
+export const HEX_COLOR = /^#[0-9a-fA-F]{6}$/

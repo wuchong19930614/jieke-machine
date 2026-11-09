@@ -1,0 +1,15 @@
+diff --git a/node_modules/@payloadcms/next/dist/views/Document/getVersions.js b/node_modules/@payloadcms/next/dist/views/Document/getVersions.js
+index 7ea74ce..47b51bf 100644
+--- a/node_modules/@payloadcms/next/dist/views/Document/getVersions.js
++++ b/node_modules/@payloadcms/next/dist/views/Document/getVersions.js
+@@ -163,7 +163,10 @@ export const getVersions = async ({
+           slug: globalConfig.slug,
+           depth: 0,
+           locale,
++          // 本项目补丁：原版只取 updatedAt，下面判断 _status 时永远为空，
++          // 页面配置只要最新一版是草稿就被当成“从没发布过”
+           select: {
++            _status: true,
+             updatedAt: true
+           },
+           user

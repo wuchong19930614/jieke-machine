@@ -56,7 +56,8 @@ describe('参数表', () => {
   })
 
   it('校验型号名不能为空或重复，公开参数前需要型号', () => {
-    expect(validateSpecTable({ models: [{ id: 'm1', name: '' }], rows: [] })).toContain('型号名')
+    expect(validateSpecTable({ models: [{ id: 'm1', name: '' }], rows: [] })).toContain('表头第 1 列的型号名还没填')
+    expect(validateSpecTable({ models: [{ id: 'm1', name: 'LT-300' }], rows: [{ id: 'r1', label: '', public: false, values: {} }] })).toContain('第 1 行的参数名还没填')
     expect(validateSpecTable({ models: [{ id: 'a', name: 'X' }, { id: 'b', name: 'x' }], rows: [] })).toContain('不能重复')
     expect(validateSpecTable({ models: [], rows: [{ id: 'r1', label: 'A', public: true, values: {} }] })).toContain('至少添加一个型号')
     expect(validateSpecTable(defaultSpecTable())).toBe(true)
@@ -438,5 +439,110 @@ describe('意外错误的中文说明', () => {
     const emailErr = new ValidationError({ collection: 'users', errors: [{ path: 'email', message: '重复' }] })
     const emailRes = labelValidationFields({ error: emailErr, req, context: {}, result: { errors: [{ message: emailErr.message }] } } as never)
     expect(emailRes).toEqual({ response: { errors: [{ message: '无法保存，请修改以下字段： 邮箱' }] } })
+  })
+})
+
+describe('第二批：自定义比例、模块背景、点击跳转', async () => {
+  const { pickRatio } = await import('@/components/Img')
+  const { backgroundProps } = await import('@/components/Section')
+  const { linkHref } = await import('@/components/LinkTo')
+
+  it('自定义比例：填写宽:高换成 CSS 比例，没填好时回到按用途默认', () => {
+    expect(pickRatio({ imageRatio: '3/4' }, 'image')).toBe('3/4')
+    expect(pickRatio({ imageRatio: 'custom', imageRatioCustom: '5:4' }, 'image')).toBe('5/4')
+    expect(pickRatio({ imageRatio: 'custom', imageRatioCustom: '21：9' }, 'image')).toBe('21/9')
+    expect(pickRatio({ imageRatio: 'custom', imageRatioCustom: '0:4' }, 'image')).toBeNull()
+    expect(pickRatio({ imageRatio: 'custom', imageRatioCustom: 'abc' }, 'image')).toBeNull()
+    expect(pickRatio(null, 'image')).toBeNull()
+  })
+
+  it('模块背景：原有 4 种不变，预设色和自定义色按深浅决定文字颜色，背景图一律白字', () => {
+    expect(backgroundProps('default')).toEqual({ className: '' })
+    expect(backgroundProps('blue')).toEqual({ className: 'lp-bg-blue' })
+    expect(backgroundProps({ value: 'default' }, 'lp-bg-blue')).toEqual({ className: 'lp-bg-blue' })
+    expect(backgroundProps({ value: 'cream' })).toEqual({ className: 'lp-bg-light lp-bg-custom', style: { background: '#faf6ef' } })
+    expect(backgroundProps({ value: 'maroon' }).className).toBe('lp-bg-dark lp-bg-custom')
+    expect(backgroundProps({ value: 'custom', color: '#111111' }).className).toBe('lp-bg-dark lp-bg-custom')
+    expect(backgroundProps({ value: 'custom', color: '#FDF0E8' }).className).toBe('lp-bg-light lp-bg-custom')
+    // 自定义色没填好时按“默认”处理
+    expect(backgroundProps({ value: 'custom', color: 'red' }, 'lp-bg-blue')).toEqual({ className: 'lp-bg-blue' })
+    const withImage = backgroundProps({ value: 'cream', image: { url: '/api/cms/media/file/a.jpg' }, overlay: 60 })
+    expect(withImage.className).toBe('lp-bg-dark lp-bg-custom')
+    expect(String(withImage.style?.backgroundImage)).toContain('rgb(10 25 40 / 0.6)')
+  })
+
+  it('点击跳转：按类型生成链接，选“默认”或没选完整时交给调用处决定', () => {
+    const pub = { slug: 'tortilla-line', _status: 'published' }
+    expect(linkHref({ type: 'default' }, false)).toBeNull()
+    expect(linkHref({ type: 'product', product: pub }, false)).toEqual({ href: '/products/tortilla-line/', newTab: false })
+    expect(linkHref({ type: 'product', product: 3 }, false)).toBeNull()
+    expect(linkHref({ type: 'caseStudy', caseStudy: { slug: 'kenya', _status: 'published' }, newTab: true }, false)).toEqual({ href: '/case-studies/kenya/', newTab: true })
+    // 目标没发布：公开页面不出链接，预览里照常显示
+    expect(linkHref({ type: 'product', product: { slug: 'draft-line', _status: 'draft' } }, false)).toBeNull()
+    expect(linkHref({ type: 'product', product: { slug: 'draft-line', _status: 'draft' } }, true)).toEqual({ href: '/products/draft-line/', newTab: false })
+    expect(linkHref({ type: 'page', page: '/contact/' }, false)).toEqual({ href: '/contact/', newTab: false })
+    expect(linkHref({ type: 'custom', url: '  https://detail.1688.com/x.html ' }, false)).toEqual({ href: 'https://detail.1688.com/x.html', newTab: false })
+    expect(linkHref({ type: 'custom', url: '' }, false)).toBeNull()
+  })
+})
+
+describe('第三批：产品模块标题', async () => {
+  const { UNPLACED_PRODUCT_TEXT_KEYS } = await import('@/collections/Products')
+  it('产品详情的每个模块文案都放进了对应的模块分组（新增文案键时记得加到 Products.ts 的 MODULE_TITLE_KEYS）', () => {
+    expect(UNPLACED_PRODUCT_TEXT_KEYS).toEqual([])
+  })
+})
+
+describe('第三批：文字样式', async () => {
+  const { cleanTextStyle, collectTextStyles, textStyleCss, textStyleId, validateTextStyle } = await import('@/lib/textStyle')
+  const { themeTextCss } = await import('@/lib/theme')
+
+  it('清洗：只保留范围内的字号、# 色号、内置字体和透明度，什么都没设返回 null', () => {
+    expect(cleanTextStyle({ size: 40, sizeMobile: 28, font: 'inter', color: '#ffffff', opacity: 80 })).toEqual({ size: 40, sizeMobile: 28, font: 'inter', color: '#FFFFFF', opacity: 80 })
+    expect(cleanTextStyle({ size: 4, font: 'comic', color: 'red;}body{display:none', opacity: 100 })).toBeNull()
+    expect(cleanTextStyle(null)).toBeNull()
+  })
+
+  it('校验提示说清楚哪一项不对', () => {
+    expect(validateTextStyle({ size: 300 })).toContain('电脑字号')
+    expect(validateTextStyle({ color: 'white' })).toContain('6 位色号')
+    expect(validateTextStyle({ size: 32, color: '#FFFFFF' })).toBe(true)
+    expect(validateTextStyle(null)).toBe(true)
+  })
+
+  it('生成 CSS：手机字号没填时按电脑字号的 85%；没有不安全内容', () => {
+    const css = textStyleCss('[data-ts="x"]', { size: 40, color: '#FFFFFF', opacity: 60 })
+    expect(css).toBe('[data-ts="x"]{font-size:40px;color:#FFFFFF;opacity:0.6}@media (max-width:767px){[data-ts="x"]{font-size:34px}}')
+    expect(textStyleCss('a', { sizeMobile: 20 })).toBe('@media (max-width:767px){a{font-size:20px}}')
+    expect(textStyleId('global:home-page#banners.slides.0.title')).toBe(textStyleId('global:home-page#banners.slides.0.title'))
+  })
+
+  it('在记录里找出所有 xxxStyle，路径与前台定位路径一致，不进入关联进来的其他记录', () => {
+    const styles = collectTextStyles({
+      titleStyle: { color: '#FFFFFF' },
+      banners: { slides: [{ title: 'A', titleStyle: { size: 50 } }] },
+      productLines: { products: [{ createdAt: 'x', sectionTexts: { introTitleStyle: { size: 30 } } }] },
+      emptyStyle: {},
+    })
+    expect(styles).toEqual({ title: { color: '#FFFFFF' }, 'banners.slides.0.title': { size: 50 } })
+  })
+
+  it('主题文字级别：颜色只作用在浅色背景上，深色背景仍为白字', () => {
+    expect(themeTextCss(null)).toBe('')
+    const css = themeTextCss({ textLevels: { sectionTitleStyle: { size: 32, color: '#123456' } } } as never)
+    expect(css).toContain(':root:root:root main h2:not(.lp-store-line *),:root:root:root main .lp-article h3:not(.lp-rich *),:root:root:root .lp-contact-band h2{font-size:32px}')
+    expect(css).toContain(':root:root:root main h2:not(.lp-store-line *):not(:is(.lp-bg-dark, .lp-bg-blue, .lp-hero, .lp-contact-band) *)')
+    expect(css).toContain('{color:#123456}')
+  })
+})
+
+describe('自定义比例的全角冒号', async () => {
+  const { ratioFitFields } = await import('@/fields')
+  it('保存前把“5：4”换成“5:4”，发布前的中文检查也不会拦它', () => {
+    const custom = ratioFitFields('heroImage', 'x').find((f) => 'name' in f && f.name === 'heroImageRatioCustom') as {
+      hooks: { beforeValidate: ((args: { value: unknown }) => unknown)[] }
+    }
+    expect(custom.hooks.beforeValidate[0]({ value: ' 5：4 ' })).toBe('5:4')
+    expect(findChinese(Products.fields, { heroImageRatio: 'custom', heroImageRatioCustom: '5：4' })).toEqual([])
   })
 })

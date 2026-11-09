@@ -361,7 +361,7 @@ async function seedGlobals(payload: Payload, productIds: number[], caseIds: numb
       tags: [{ label: 'Reliable Supplier' }, { label: 'Extensive Experience' }, { label: 'Wide Range of Models' }, { label: 'Strict Quality Inspection' }],
       body: rich(p('We are a food machinery manufacturer focused on complete processing lines. Our team handles design, manufacturing, testing and installation, so you work with one supplier from the first layout to daily production.')),
     },
-    factoryGallery: { images: factory },
+    factoryGallery: { items: factory.map((image) => ({ image })) },
     productLines: { products: productIds },
     featuredCases: { cases: caseIds },
   })

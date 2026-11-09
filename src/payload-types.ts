@@ -198,7 +198,7 @@ export interface Page {
     [k: string]: unknown;
   } | null;
   /**
-   * 本页的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响本页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -210,9 +210,12 @@ export interface Page {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：本页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   updatedAt: string;
@@ -297,11 +300,26 @@ export interface Product {
   /**
    * 前台位置：首页生产线、产品列表、相关生产线卡片。“按用途默认”取主题里的默认比例
    */
-  listImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  listImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  listImageRatioCustom?: string | null;
   /**
    * 前台位置：首页生产线、产品列表、相关生产线卡片
    */
   listImageFit?: ('default' | 'contain' | 'cover') | null;
+  /**
+   * 前台位置：首页生产线、产品列表里点击列表图时打开的页面
+   */
+  listLink?: {
+    type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+    product?: (number | null) | Product;
+    caseStudy?: (number | null) | Case;
+    page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+    url?: string | null;
+    newTab?: boolean | null;
+  };
   /**
    * 前台位置：首页生产线、产品列表卡片里的简介。建议 160 个字符以内
    */
@@ -331,7 +349,42 @@ export interface Product {
           | 'relatedCases'
           | 'inquiry';
         visible?: boolean | null;
-        background?: ('default' | 'light' | 'dark' | 'blue') | null;
+        /**
+         * 手机指屏幕宽度小于 768px
+         */
+        device?: ('all' | 'desktop' | 'mobile') | null;
+        /**
+         * 深色背景上文字会自动变成白色
+         */
+        background?:
+          | (
+              | 'default'
+              | 'light'
+              | 'cream'
+              | 'sky'
+              | 'mint'
+              | 'peach'
+              | 'blue'
+              | 'dark'
+              | 'graphite'
+              | 'forest'
+              | 'orange'
+              | 'maroon'
+              | 'custom'
+            )
+          | null;
+        /**
+         * 点左边色块用色盘选，或直接输入色号，例如 #EAF2FB
+         */
+        backgroundColor?: string | null;
+        /**
+         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * 越往右背景图越暗，文字越清楚
+         */
+        backgroundOverlay?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -342,7 +395,11 @@ export interface Product {
   /**
    * 前台位置：产品详情 › 横幅。“按用途默认”取主题里的默认比例
    */
-  heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  heroImageRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › 横幅
    */
@@ -352,6 +409,15 @@ export interface Product {
    */
   heroKicker?: string | null;
   heroKickerHidden?: boolean | null;
+  heroKickerStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 横幅 › 简介
    */
@@ -361,7 +427,23 @@ export interface Product {
    */
   applications?:
     | {
+        /**
+         * 前台位置：产品详情 › 可生产成品 › 成品图。“按用途默认”为 1:1
+         */
         image?: (number | null) | Media;
+        /**
+         * 前台位置：产品详情 › 可生产成品 › 成品图。“按用途默认”取主题里的默认比例
+         */
+        imageRatio?:
+          ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+        /**
+         * 图框比例选“自定义…”时填写，例如 5:4、21:9
+         */
+        imageRatioCustom?: string | null;
+        /**
+         * 前台位置：产品详情 › 可生产成品 › 成品图
+         */
+        imageFit?: ('default' | 'contain' | 'cover') | null;
         name: string;
         /**
          * 前台是否显示该条目
@@ -395,7 +477,12 @@ export interface Product {
   /**
    * 前台位置：产品详情 › Product Introduction › 全景图。“按用途默认”取主题里的默认比例
    */
-  overviewImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  overviewImageRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  overviewImageRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › Product Introduction › 全景图
    */
@@ -423,6 +510,15 @@ export interface Product {
    */
   proposalTitle?: string | null;
   proposalTitleHidden?: boolean | null;
+  proposalTitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 报价入口 › 说明
    */
@@ -432,6 +528,15 @@ export interface Product {
    */
   proposalButtonText?: string | null;
   proposalButtonTextHidden?: boolean | null;
+  proposalButtonTextStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › Production Process
    */
@@ -457,7 +562,11 @@ export interface Product {
   /**
    * 前台位置：产品详情 › Production Process › 流程图。“按用途默认”取主题里的默认比例
    */
-  flowImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  flowImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  flowImageRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › Production Process › 流程图
    */
@@ -517,7 +626,12 @@ export interface Product {
   /**
    * 前台位置：产品详情 › 适用客户与项目支持下方。“按用途默认”取主题里的默认比例
    */
-  detailImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  detailImageRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  detailImageRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › 适用客户与项目支持下方
    */
@@ -545,14 +659,28 @@ export interface Product {
    */
   videoTitle?: string | null;
   videoTitleHidden?: boolean | null;
+  videoTitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
-   * 前台位置：产品详情 › 视频封面。16:9；不填时用 YouTube 缩略图
+   * 前台位置：产品详情 › 视频封面。只能放图片，16:9；不填时用 YouTube 缩略图
    */
   videoCover?: (number | null) | Media;
   /**
    * 前台位置：产品详情 › 视频封面。“按用途默认”取主题里的默认比例
    */
-  videoCoverRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  videoCoverRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  videoCoverRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › 视频封面
    */
@@ -577,7 +705,23 @@ export interface Product {
   processSteps?:
     | {
         title: string;
+        /**
+         * 前台位置：产品详情 › Step-by-Step Process › 设备图
+         */
         image?: (number | null) | Media;
+        /**
+         * 前台位置：产品详情 › Step-by-Step Process › 设备图。“按用途默认”取主题里的默认比例
+         */
+        imageRatio?:
+          ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+        /**
+         * 图框比例选“自定义…”时填写，例如 5:4、21:9
+         */
+        imageRatioCustom?: string | null;
+        /**
+         * 前台位置：产品详情 › Step-by-Step Process › 设备图
+         */
+        imageFit?: ('default' | 'contain' | 'cover') | null;
         description?: string | null;
         /**
          * 前台是否显示该条目
@@ -599,6 +743,15 @@ export interface Product {
    */
   formTitle?: string | null;
   formTitleHidden?: boolean | null;
+  formTitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 询盘区 › 说明
    */
@@ -611,27 +764,51 @@ export interface Product {
   /**
    * 前台位置：产品详情 › 询盘区左侧。“按用途默认”取主题里的默认比例
    */
-  contactImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  contactImageRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  contactImageRatioCustom?: string | null;
   /**
    * 前台位置：产品详情 › 询盘区左侧
    */
   contactImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：产品详情 › 横幅 › Download Brochure 按钮。上传了 PDF 才显示下载按钮
+   * 前台位置：产品详情 › 页面顶部横幅里“Get a Quote”旁的 Download Brochure 按钮。上传了 PDF 才显示；打开实时预览后点“在前台定位”可直接滚到这个按钮
    */
   brochure?: (number | null) | Media;
   /**
-   * 只在本产品与默认文案不同时填写；不填时使用“界面文案 › 产品详情模板”的文字
+   * 前台位置：产品详情 › Technical Specifications 下方。客户看完参数顺手就能下载；没上传 PDF 时不显示
    */
+  brochureInSpecs?: boolean | null;
   sectionTexts?: {
     /**
      * 前台位置：本产品的产品详情页 › 横幅按钮
      */
     heroButton?: string | null;
+    heroButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 手册下载按钮
      */
     brochureButton?: string | null;
+    brochureButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 手册文件说明
      */
@@ -640,10 +817,28 @@ export interface Product {
      * 前台位置：本产品的产品详情页 › 可生产成品：标题
      */
     applicationsTitle?: string | null;
+    applicationsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 可生产成品：副标题
      */
     applicationsSubtitle?: string | null;
+    applicationsSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 可生产成品：区域朗读名
      */
@@ -652,22 +847,67 @@ export interface Product {
      * 前台位置：本产品的产品详情页 › 图文介绍：小标题
      */
     introKicker?: string | null;
+    introKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 图文介绍：标题
      */
     introTitle?: string | null;
+    introTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 设备特点：标题
      */
     featuresTitle?: string | null;
+    featuresTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 工艺流程：标题
      */
     processTitle?: string | null;
+    processTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 参数表：标题
      */
     specsTitle?: string | null;
+    specsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 参数表：表头第一格
      */
@@ -684,34 +924,106 @@ export interface Product {
      * 前台位置：本产品的产品详情页 › 适用客户：标题
      */
     audienceTitle?: string | null;
+    audienceTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 项目支持：标题
      */
     supportTitle?: string | null;
+    supportTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › FAQ：标题
      */
     faqTitle?: string | null;
+    faqTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 设备优势：标题
      */
     advantagesTitle?: string | null;
+    advantagesTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 设备优势：副标题
      */
     advantagesSubtitle?: string | null;
+    advantagesSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 工艺步骤：小标题
      */
     stepsKicker?: string | null;
+    stepsKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 工艺步骤：标题
      */
     stepsTitle?: string | null;
+    stepsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 工艺步骤：副标题
      */
     stepsSubtitle?: string | null;
+    stepsSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 工艺步骤：列表朗读名
      */
@@ -724,33 +1036,96 @@ export interface Product {
      * 前台位置：本产品的产品详情页 › 相关生产线：标题
      */
     relatedTitle?: string | null;
+    relatedTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 相关生产线：副标题
      */
     relatedSubtitle?: string | null;
+    relatedSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 相关生产线：卡片按钮
      */
     relatedButton?: string | null;
+    relatedButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 客户案例：标题
      */
     casesTitle?: string | null;
+    casesTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 客户案例：副标题
      */
     casesSubtitle?: string | null;
+    casesSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 客户案例：卡片按钮
      */
     casesButton?: string | null;
+    casesButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本产品的产品详情页 › 询盘区：小标题
      */
     inquiryKicker?: string | null;
+    inquiryKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
-   * 本产品的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响本产品在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -762,9 +1137,12 @@ export interface Product {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：本产品分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本产品分享到社交平台时的预览图。尺寸 1200×630；不填时用本产品的列表图（没有列表图时用横幅图）（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   updatedAt: string;
@@ -1051,7 +1429,12 @@ export interface Case {
   /**
    * 前台位置：案例列表卡片、首页精选案例。“按用途默认”取主题里的默认比例
    */
-  coverImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  coverImageRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  coverImageRatioCustom?: string | null;
   /**
    * 前台位置：案例列表卡片、首页精选案例
    */
@@ -1145,27 +1528,48 @@ export interface Case {
   /**
    * 前台位置：案例详情顶部。“按用途默认”取主题里的默认比例
    */
-  heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  heroImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  heroImageRatioCustom?: string | null;
   /**
    * 前台位置：案例详情顶部
    */
   heroImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：案例详情 › Project Photos。可点击放大
+   * 前台位置：案例详情 › Project Photos。可点击放大；右边的比例和适配方式对这一组图片都生效
    */
   gallery?: (number | Media)[] | null;
+  /**
+   * 前台位置：案例详情 › Project Photos。“按用途默认”取主题里的默认比例
+   */
+  galleryRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  galleryRatioCustom?: string | null;
+  /**
+   * 前台位置：案例详情 › Project Photos
+   */
+  galleryFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 前台位置：案例详情 › Project Video；首页精选案例。为空时首页和详情显示封面图
    */
   videoUrl?: string | null;
   /**
-   * 前台位置：首页精选案例、案例视频。16:9；不填时用 YouTube 缩略图
+   * 前台位置：首页精选案例、案例视频。只能放图片，16:9；不填时用 YouTube 缩略图
    */
   videoCover?: (number | null) | Media;
   /**
    * 前台位置：首页精选案例、案例视频。“按用途默认”取主题里的默认比例
    */
-  videoCoverRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  videoCoverRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  videoCoverRatioCustom?: string | null;
   /**
    * 前台位置：首页精选案例、案例视频
    */
@@ -1178,10 +1582,28 @@ export interface Case {
      * 前台位置：本案例的案例详情页 › 返回链接
      */
     back?: string | null;
+    backStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 项目概况：标题
      */
     overviewTitle?: string | null;
+    overviewTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 行：客户
      */
@@ -1206,41 +1628,122 @@ export interface Case {
      * 前台位置：本案例的案例详情页 › 正文小节 1
      */
     requirements?: string | null;
+    requirementsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 正文小节 2
      */
     solution?: string | null;
+    solutionStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 正文小节 3
      */
     delivery?: string | null;
+    deliveryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 现场图片标题
      */
     photos?: string | null;
+    photosStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 视频标题
      */
     video?: string | null;
+    videoStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 所用生产线标题
      */
     linesUsed?: string | null;
+    linesUsedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 所用生产线链接
      */
     linesButton?: string | null;
+    linesButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 主按钮
      */
     primaryButton?: string | null;
+    primaryButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：本案例的案例详情页 › 次按钮
      */
     secondaryButton?: string | null;
+    secondaryButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
-   * 本案例的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响本案例在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -1252,9 +1755,12 @@ export interface Case {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：本案例分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：本案例分享到社交平台时的预览图。尺寸 1200×630；不填时用本案例的封面图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   updatedAt: string;
@@ -1968,7 +2474,18 @@ export interface ProductsSelect<T extends boolean = true> {
   category?: T;
   listImage?: T;
   listImageRatio?: T;
+  listImageRatioCustom?: T;
   listImageFit?: T;
+  listLink?:
+    | T
+    | {
+        type?: T;
+        product?: T;
+        caseStudy?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+      };
   listSummary?: T;
   slug?: T;
   sections?:
@@ -1976,19 +2493,28 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         module?: T;
         visible?: T;
+        device?: T;
         background?: T;
+        backgroundColor?: T;
+        backgroundImage?: T;
+        backgroundOverlay?: T;
         id?: T;
       };
   heroImage?: T;
   heroImageRatio?: T;
+  heroImageRatioCustom?: T;
   heroImageFit?: T;
   heroKicker?: T;
   heroKickerHidden?: T;
+  heroKickerStyle?: T;
   heroSummary?: T;
   applications?:
     | T
     | {
         image?: T;
+        imageRatio?: T;
+        imageRatioCustom?: T;
+        imageFit?: T;
         name?: T;
         visible?: T;
         id?: T;
@@ -1996,22 +2522,27 @@ export interface ProductsSelect<T extends boolean = true> {
   introduction?: T;
   overviewImage?: T;
   overviewImageRatio?: T;
+  overviewImageRatioCustom?: T;
   overviewImageFit?: T;
   features?: T;
   proposalTitle?: T;
   proposalTitleHidden?: T;
+  proposalTitleStyle?: T;
   proposalText?: T;
   proposalButtonText?: T;
   proposalButtonTextHidden?: T;
+  proposalButtonTextStyle?: T;
   processText?: T;
   flowImage?: T;
   flowImageRatio?: T;
+  flowImageRatioCustom?: T;
   flowImageFit?: T;
   specTable?: T;
   audience?: T;
   projectSupport?: T;
   detailImage?: T;
   detailImageRatio?: T;
+  detailImageRatioCustom?: T;
   detailImageFit?: T;
   faqs?:
     | T
@@ -2024,8 +2555,10 @@ export interface ProductsSelect<T extends boolean = true> {
   videoUrl?: T;
   videoTitle?: T;
   videoTitleHidden?: T;
+  videoTitleStyle?: T;
   videoCover?: T;
   videoCoverRatio?: T;
+  videoCoverRatioCustom?: T;
   videoCoverFit?: T;
   advantages?:
     | T
@@ -2040,6 +2573,9 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         title?: T;
         image?: T;
+        imageRatio?: T;
+        imageRatioCustom?: T;
+        imageFit?: T;
         description?: T;
         visible?: T;
         id?: T;
@@ -2048,46 +2584,73 @@ export interface ProductsSelect<T extends boolean = true> {
   relatedCases?: T;
   formTitle?: T;
   formTitleHidden?: T;
+  formTitleStyle?: T;
   formIntro?: T;
   formIntroHidden?: T;
   contactImage?: T;
   contactImageRatio?: T;
+  contactImageRatioCustom?: T;
   contactImageFit?: T;
   brochure?: T;
+  brochureInSpecs?: T;
   sectionTexts?:
     | T
     | {
         heroButton?: T;
+        heroButtonStyle?: T;
         brochureButton?: T;
+        brochureButtonStyle?: T;
         brochureMeta?: T;
         applicationsTitle?: T;
+        applicationsTitleStyle?: T;
         applicationsSubtitle?: T;
+        applicationsSubtitleStyle?: T;
         applicationsAria?: T;
         introKicker?: T;
+        introKickerStyle?: T;
         introTitle?: T;
+        introTitleStyle?: T;
         featuresTitle?: T;
+        featuresTitleStyle?: T;
         processTitle?: T;
+        processTitleStyle?: T;
         specsTitle?: T;
+        specsTitleStyle?: T;
         specsModel?: T;
         specsSwipe?: T;
         specsEmpty?: T;
         audienceTitle?: T;
+        audienceTitleStyle?: T;
         supportTitle?: T;
+        supportTitleStyle?: T;
         faqTitle?: T;
+        faqTitleStyle?: T;
         advantagesTitle?: T;
+        advantagesTitleStyle?: T;
         advantagesSubtitle?: T;
+        advantagesSubtitleStyle?: T;
         stepsKicker?: T;
+        stepsKickerStyle?: T;
         stepsTitle?: T;
+        stepsTitleStyle?: T;
         stepsSubtitle?: T;
+        stepsSubtitleStyle?: T;
         stepsAria?: T;
         stepAria?: T;
         relatedTitle?: T;
+        relatedTitleStyle?: T;
         relatedSubtitle?: T;
+        relatedSubtitleStyle?: T;
         relatedButton?: T;
+        relatedButtonStyle?: T;
         casesTitle?: T;
+        casesTitleStyle?: T;
         casesSubtitle?: T;
+        casesSubtitleStyle?: T;
         casesButton?: T;
+        casesButtonStyle?: T;
         inquiryKicker?: T;
+        inquiryKickerStyle?: T;
       };
   seo?:
     | T
@@ -2112,6 +2675,7 @@ export interface CasesSelect<T extends boolean = true> {
   capacity?: T;
   coverImage?: T;
   coverImageRatio?: T;
+  coverImageRatioCustom?: T;
   coverImageFit?: T;
   summary?: T;
   slug?: T;
@@ -2125,31 +2689,47 @@ export interface CasesSelect<T extends boolean = true> {
   deliveryOperation?: T;
   heroImage?: T;
   heroImageRatio?: T;
+  heroImageRatioCustom?: T;
   heroImageFit?: T;
   gallery?: T;
+  galleryRatio?: T;
+  galleryRatioCustom?: T;
+  galleryFit?: T;
   videoUrl?: T;
   videoCover?: T;
   videoCoverRatio?: T;
+  videoCoverRatioCustom?: T;
   videoCoverFit?: T;
   sectionTexts?:
     | T
     | {
         back?: T;
+        backStyle?: T;
         overviewTitle?: T;
+        overviewTitleStyle?: T;
         customer?: T;
         country?: T;
         configuration?: T;
         capacity?: T;
         deliveryDate?: T;
         requirements?: T;
+        requirementsStyle?: T;
         solution?: T;
+        solutionStyle?: T;
         delivery?: T;
+        deliveryStyle?: T;
         photos?: T;
+        photosStyle?: T;
         video?: T;
+        videoStyle?: T;
         linesUsed?: T;
+        linesUsedStyle?: T;
         linesButton?: T;
+        linesButtonStyle?: T;
         primaryButton?: T;
+        primaryButtonStyle?: T;
         secondaryButton?: T;
+        secondaryButtonStyle?: T;
       };
   seo?:
     | T
@@ -2941,7 +3521,7 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
- * 切换配色、字体、字号、间距和默认图框比例；悬浮栏红色和在线沟通蓝色按需求书固定
+ * 切换配色、字体、字号、间距、文字级别、页面宽度和默认图框比例；悬浮栏红色和在线沟通蓝色按需求书固定
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "theme".
@@ -2973,33 +3553,95 @@ export interface Theme {
    */
   spacingScale?: ('compact' | 'standard' | 'relaxed') | null;
   /**
+   * 按文字级别统一设置全站的字号（电脑 / 手机分开）、字体和颜色；不填的项保持现在的样子。某一段标题或按钮需要特别处理时，用它旁边的“文字样式”单独设置，单独设置优先。颜色只用在浅色背景的模块上，深色背景上的文字仍自动为白色
+   */
+  textLevels?: {
+    pageTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    sectionTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    bodyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    buttonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  /**
+   * 前台位置：全站：电脑上内容最宽多少，屏幕更宽时两侧留白
+   */
+  contentWidth?: ('1180' | '1280' | '1440') | null;
+  /**
+   * 前台位置：全站：屏幕不够宽时，内容离屏幕边缘至少留多少；手机上固定 5%
+   */
+  sideGutter?: ('standard' | 'wide' | 'wider') | null;
+  /**
+   * 前台位置：首页顶部横幅。电脑和平板上生效；手机上始终铺满
+   */
+  bannerWidth?: ('content' | 'full') | null;
+  /**
    * 按用途的默认比例；单个图片位置可在该位置另行设置
    */
   defaultRatios?: {
     /**
      * 前台位置：首页生产线卡片、产品列表、产品详情页的设备图
      */
-    equipment?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    equipment?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
      * 前台位置：首页工厂图集、关于我们、联系我们的配图
      */
-    factory?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    factory?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
      * 前台位置：案例列表、案例详情、产品详情页的客户案例卡片
      */
-    case?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    case?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
      * 前台位置：产品详情 › 可生产成品
      */
-    application?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    application?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
      * 前台位置：首页 › 视频模块封面
      */
-    videoCover?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    videoCover?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
      * 前台位置：首页 › Banner。原图比例 = 保持原设计的高度；选具体比例时只在桌面按比例定高度，手机保持原高度
      */
-    banner?: ('4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    banner?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
   };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
@@ -3286,178 +3928,178 @@ export interface UiText {
     emptyButton?: string | null;
   };
   /**
-   * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改）。留空时使用默认文案（输入框里的灰色提示）。
+   * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改）。留空时使用默认文案（输入框里的灰色提示）。
    */
   product?: {
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 横幅小标题默认值
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 横幅小标题默认值
      */
     heroKicker?: string | null;
     heroKickerHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 横幅按钮
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 横幅按钮
      */
     heroButton?: string | null;
     heroButtonHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 手册下载按钮
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 手册下载按钮
      */
     brochureButton?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 手册文件说明
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 手册文件说明
      */
     brochureMeta?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 可生产成品：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：标题
      */
     applicationsTitle?: string | null;
     applicationsTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 可生产成品：副标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：副标题
      */
     applicationsSubtitle?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 可生产成品：区域朗读名
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：区域朗读名
      */
     applicationsAria?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 图文介绍：小标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 图文介绍：小标题
      */
     introKicker?: string | null;
     introKickerHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 图文介绍：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 图文介绍：标题
      */
     introTitle?: string | null;
     introTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 设备特点：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备特点：标题
      */
     featuresTitle?: string | null;
     featuresTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 报价入口：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 报价入口：标题
      */
     proposalTitle?: string | null;
     proposalTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 报价入口：按钮
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 报价入口：按钮
      */
     proposalButton?: string | null;
     proposalButtonHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺流程：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺流程：标题
      */
     processTitle?: string | null;
     processTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 参数表：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：标题
      */
     specsTitle?: string | null;
     specsTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 参数表：表头第一格
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：表头第一格
      */
     specsModel?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 参数表：手机横滑提示
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：手机横滑提示
      */
     specsSwipe?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 参数表：空单元格
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：空单元格
      */
     specsEmpty?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 适用客户：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 适用客户：标题
      */
     audienceTitle?: string | null;
     audienceTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 项目支持：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 项目支持：标题
      */
     supportTitle?: string | null;
     supportTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › FAQ：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › FAQ：标题
      */
     faqTitle?: string | null;
     faqTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 运行视频：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 运行视频：标题
      */
     videoTitle?: string | null;
     videoTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 设备优势：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备优势：标题
      */
     advantagesTitle?: string | null;
     advantagesTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 设备优势：副标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备优势：副标题
      */
     advantagesSubtitle?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺步骤：小标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：小标题
      */
     stepsKicker?: string | null;
     stepsKickerHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺步骤：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：标题
      */
     stepsTitle?: string | null;
     stepsTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺步骤：副标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：副标题
      */
     stepsSubtitle?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺步骤：列表朗读名
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：列表朗读名
      */
     stepsAria?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 工艺步骤：按钮朗读
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：按钮朗读
      */
     stepAria?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 相关生产线：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：标题
      */
     relatedTitle?: string | null;
     relatedTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 相关生产线：副标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：副标题
      */
     relatedSubtitle?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 相关生产线：卡片按钮
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：卡片按钮
      */
     relatedButton?: string | null;
     relatedButtonHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 客户案例：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：标题
      */
     casesTitle?: string | null;
     casesTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 客户案例：副标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：副标题
      */
     casesSubtitle?: string | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 客户案例：卡片按钮
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：卡片按钮
      */
     casesButton?: string | null;
     casesButtonHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 询盘区：小标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：小标题
      */
     inquiryKicker?: string | null;
     inquiryKickerHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 询盘区：标题
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：标题
      */
     inquiryTitle?: string | null;
     inquiryTitleHidden?: boolean | null;
     /**
-     * 前台位置：所有产品详情页（单个产品可在“模块文案覆盖”里改） › 询盘区：说明
+     * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：说明
      */
     inquiryIntro?: string | null;
     inquiryIntroHidden?: boolean | null;
@@ -3759,14 +4401,114 @@ export interface UiText {
 export interface HomePage {
   id: number;
   /**
-   * 前台位置：首页。拖动调整模块顺序；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏
+   * 前台位置：首页。拖动调整模块顺序；点下方“添加模块”可插入图片模块或图片网格（可以插多个）；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏
    */
   sections?:
     | {
         module:
-          'banners' | 'services' | 'companyStats' | 'aboutIntro' | 'factoryGallery' | 'productLines' | 'featuredCases';
+          | 'banners'
+          | 'services'
+          | 'companyStats'
+          | 'aboutIntro'
+          | 'factoryGallery'
+          | 'productLines'
+          | 'featuredCases'
+          | 'imageBanner'
+          | 'imageGrid';
         visible?: boolean | null;
-        background?: ('default' | 'light' | 'dark' | 'blue') | null;
+        /**
+         * 手机指屏幕宽度小于 768px
+         */
+        device?: ('all' | 'desktop' | 'mobile') | null;
+        /**
+         * 深色背景上文字会自动变成白色
+         */
+        background?:
+          | (
+              | 'default'
+              | 'light'
+              | 'cream'
+              | 'sky'
+              | 'mint'
+              | 'peach'
+              | 'blue'
+              | 'dark'
+              | 'graphite'
+              | 'forest'
+              | 'orange'
+              | 'maroon'
+              | 'custom'
+            )
+          | null;
+        /**
+         * 点左边色块用色盘选，或直接输入色号，例如 #EAF2FB
+         */
+        backgroundColor?: string | null;
+        /**
+         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * 越往右背景图越暗，文字越清楚
+         */
+        backgroundOverlay?: number | null;
+        /**
+         * 前台位置：首页 › 图片模块。建议宽 1920 以上；替代文字在媒体库里填写（英文，必填）
+         */
+        desktopImage?: (number | null) | Media;
+        /**
+         * 手机上显示这张；不填时用电脑图，可以放一张竖版海报
+         */
+        mobileImage?: (number | null) | Media;
+        columns?: ('2' | '3' | '4') | null;
+        mobileColumns?: ('1' | '2') | null;
+        /**
+         * 单位 px；留空按图片原来的比例显示，填了按高度裁切（以焦点为中心）
+         */
+        height?: number | null;
+        /**
+         * 单位 px；留空按图片原来的比例显示，填了按高度裁切（以焦点为中心）
+         */
+        mobileHeight?: number | null;
+        imageWidth?: ('content' | 'full') | null;
+        /**
+         * 前台位置：首页 › 图片模块 › 点击图片跳转
+         */
+        link?: {
+          type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+          product?: (number | null) | Product;
+          caseStudy?: (number | null) | Case;
+          page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+          url?: string | null;
+          newTab?: boolean | null;
+        };
+        /**
+         * 前台位置：首页 › 图片网格。拖动调整顺序；每张图可以单独设置点击后跳到哪里，适合做产品入口
+         */
+        gridItems?:
+          | {
+              /**
+               * 替代文字在媒体库里填写（英文，必填）
+               */
+              image?: (number | null) | Media;
+              /**
+               * 不填时用电脑图
+               */
+              mobileImage?: (number | null) | Media;
+              /**
+               * 前台位置：首页 › 图片网格 › 点击图片跳转
+               */
+              link?: {
+                type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+                product?: (number | null) | Product;
+                caseStudy?: (number | null) | Case;
+                page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+                url?: string | null;
+                newTab?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -3778,31 +4520,91 @@ export interface HomePage {
       | {
           enabled?: boolean | null;
           /**
-           * 建议 1920×800 以上
+           * 建议 1920×800 以上。所有横幅共用一个比例，在“主题 › 默认图框比例 › Banner”里设置，切换时高度不会跳
            */
           desktopImage?: (number | null) | Media;
           /**
            * 不填时用桌面图按焦点裁切
            */
           mobileImage?: (number | null) | Media;
+          /**
+           * 图片上盖一层深色，让白色标题更清楚；背景图本身带文字或颜色很亮时调深一点
+           */
+          overlay?: number | null;
           kicker?: string | null;
           kickerHidden?: boolean | null;
+          kickerStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           title: string;
+          titleStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           subtitle?: string | null;
+          subtitleStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           /**
            * 进入联系页并带入关联产品
            */
           quoteButtonText?: string | null;
           quoteButtonTextHidden?: boolean | null;
+          quoteButtonTextStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           /**
            * 进入关联产品详情
            */
           productButtonText?: string | null;
           productButtonTextHidden?: boolean | null;
+          productButtonTextStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           /**
            * “查看产品”链接自动取该产品的网址
            */
           product?: (number | null) | Product;
+          /**
+           * 前台位置：首页 › Banner 图片上文字和按钮以外的地方
+           */
+          link?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
           id?: string | null;
         }[]
       | null;
@@ -3816,10 +4618,28 @@ export interface HomePage {
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 需求与服务 › 模块副标题
      */
     subtitle?: string | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 初始 6 项，图标从内置图标库选择；服务名称请按真实情况确认
      */
@@ -3875,21 +4695,57 @@ export interface HomePage {
      */
     kicker?: string | null;
     kickerHidden?: boolean | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 公司简介 › 标题
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 公司简介 › 公司名标题。{companyName} 自动替换为全站设置里的公司名
      */
     companyTitle?: string | null;
     companyTitleHidden?: boolean | null;
+    companyTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 公司简介 › 按钮
      */
     buttonText?: string | null;
     buttonTextHidden?: boolean | null;
+    buttonTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 属宣传性表述，请确认属实后再用
      */
@@ -3927,16 +4783,90 @@ export interface HomePage {
      */
     kicker?: string | null;
     kickerHidden?: boolean | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 厂房展示 › 标题
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 厂房展示 › 副标题
      */
     subtitle?: string | null;
-    images?: (number | Media)[] | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 厂房展示（对下面所有图片生效；单张图片另选了比例时以单张为准）。“按用途默认”取主题里的默认比例
+     */
+    imagesRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imagesRatioCustom?: string | null;
+    /**
+     * 前台位置：首页 › 厂房展示（对下面所有图片生效；单张图片另选了比例时以单张为准）
+     */
+    imagesFit?: ('default' | 'contain' | 'cover') | null;
+    /**
+     * 前台位置：首页 › 厂房展示。拖动调整顺序；每张图可以设置点击后跳到哪里
+     */
+    items?:
+      | {
+          /**
+           * 前台位置：首页 › 厂房展示
+           */
+          image: number | Media;
+          /**
+           * 前台位置：首页 › 厂房展示。“按用途默认”取主题里的默认比例
+           */
+          imageRatio?:
+            ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+          /**
+           * 图框比例选“自定义…”时填写，例如 5:4、21:9
+           */
+          imageRatioCustom?: string | null;
+          /**
+           * 前台位置：首页 › 厂房展示
+           */
+          imageFit?: ('default' | 'contain' | 'cover') | null;
+          /**
+           * 前台位置：首页 › 厂房展示 › 点击图片跳转
+           */
+          link?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * 前台位置：首页 › 生产线。选中顺序即显示顺序
@@ -3947,11 +4877,29 @@ export interface HomePage {
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 生产线 › 卡片按钮
      */
     buttonText?: string | null;
     buttonTextHidden?: boolean | null;
+    buttonTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     products?: (number | Product)[] | null;
   };
   /**
@@ -3963,29 +4911,74 @@ export interface HomePage {
      */
     kicker?: string | null;
     kickerHidden?: boolean | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 客户案例 › 标题
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 客户案例 › 副标题
      */
     subtitle?: string | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 客户案例 › 卡片链接
      */
     cardButton?: string | null;
     cardButtonHidden?: boolean | null;
+    cardButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 › 客户案例 › 底部按钮
      */
     allButton?: string | null;
     allButtonHidden?: boolean | null;
+    allButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     cases?: (number | Case)[] | null;
   };
   /**
-   * 首页的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响首页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -3997,9 +4990,12 @@ export interface HomePage {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：首页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：首页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -4017,10 +5013,28 @@ export interface AboutPage {
      * 前台位置：关于我们 › 页头 › 页面主标题
      */
     title?: string | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 页头 › 副标题
      */
     subtitle?: string | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：关于我们。拖动调整模块顺序；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏
@@ -4029,7 +5043,42 @@ export interface AboutPage {
     | {
         module: 'intro' | 'scenes' | 'capabilities';
         visible?: boolean | null;
-        background?: ('default' | 'light' | 'dark' | 'blue') | null;
+        /**
+         * 手机指屏幕宽度小于 768px
+         */
+        device?: ('all' | 'desktop' | 'mobile') | null;
+        /**
+         * 深色背景上文字会自动变成白色
+         */
+        background?:
+          | (
+              | 'default'
+              | 'light'
+              | 'cream'
+              | 'sky'
+              | 'mint'
+              | 'peach'
+              | 'blue'
+              | 'dark'
+              | 'graphite'
+              | 'forest'
+              | 'orange'
+              | 'maroon'
+              | 'custom'
+            )
+          | null;
+        /**
+         * 点左边色块用色盘选，或直接输入色号，例如 #EAF2FB
+         */
+        backgroundColor?: string | null;
+        /**
+         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * 越往右背景图越暗，文字越清楚
+         */
+        backgroundOverlay?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -4039,16 +5088,43 @@ export interface AboutPage {
      */
     kicker?: string | null;
     kickerHidden?: boolean | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 公司介绍 › 标题
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 公司介绍 › 按钮
      */
     buttonText?: string | null;
     buttonTextHidden?: boolean | null;
+    buttonTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 公司介绍 › 正文
      */
@@ -4074,7 +5150,11 @@ export interface AboutPage {
     /**
      * 前台位置：关于我们 › 公司介绍右侧。“按用途默认”取主题里的默认比例
      */
-    imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+    imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imageRatioCustom?: string | null;
     /**
      * 前台位置：关于我们 › 公司介绍右侧
      */
@@ -4086,10 +5166,48 @@ export interface AboutPage {
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 生产场景与团队 › 副标题
      */
     subtitle?: string | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：关于我们 › 生产场景与团队。选“纯图片”后标题和说明可以不填，只显示图片
+     */
+    display?: ('cards' | 'images') | null;
+    /**
+     * 前台位置：关于我们 › 生产场景与团队。平板上最多 2 张，手机上 1 张
+     */
+    columns?: ('2' | '3' | '4') | null;
+    /**
+     * 前台位置：关于我们 › 生产场景与团队（纯图片，所有图片统一；单张图片另选了比例时以单张为准）。“按用途默认”取主题里的默认比例
+     */
+    imagesRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imagesRatioCustom?: string | null;
+    /**
+     * 前台位置：关于我们 › 生产场景与团队（纯图片，所有图片统一；单张图片另选了比例时以单张为准）
+     */
+    imagesFit?: ('default' | 'contain' | 'cover') | null;
     items?:
       | {
           /**
@@ -4097,13 +5215,37 @@ export interface AboutPage {
            */
           image?: (number | null) | Media;
           /**
-           * 前台位置：关于我们 › 生产场景与团队 › 卡片标题
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片图片。“按用途默认”取主题里的默认比例
            */
-          title: string;
+          imageRatio?:
+            ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
           /**
-           * 前台位置：关于我们 › 生产场景与团队 › 卡片说明
+           * 图框比例选“自定义…”时填写，例如 5:4、21:9
+           */
+          imageRatioCustom?: string | null;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片图片
+           */
+          imageFit?: ('default' | 'contain' | 'cover') | null;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片标题。纯图片方式下作为图片说明文字显示在图片下方，可不填
+           */
+          title?: string | null;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片说明。纯图片方式下不显示
            */
           description?: string | null;
+          /**
+           * 前台位置：关于我们 › 生产场景与团队 › 点击图片跳转
+           */
+          link?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
           id?: string | null;
         }[]
       | null;
@@ -4114,26 +5256,92 @@ export interface AboutPage {
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：关于我们 › 供应能力与服务支持 › 副标题
      */
     subtitle?: string | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：关于我们 › 供应能力与服务支持。选“纯图片”后标题和说明可以不填，只显示图片
+     */
+    display?: ('cards' | 'images') | null;
+    /**
+     * 前台位置：关于我们 › 供应能力与服务支持。平板上最多 2 张，手机上 1 张
+     */
+    columns?: ('2' | '3' | '4') | null;
+    /**
+     * 前台位置：关于我们 › 供应能力与服务支持（纯图片，所有图片统一；单张图片另选了比例时以单张为准）。“按用途默认”取主题里的默认比例
+     */
+    imagesRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imagesRatioCustom?: string | null;
+    /**
+     * 前台位置：关于我们 › 供应能力与服务支持（纯图片，所有图片统一；单张图片另选了比例时以单张为准）
+     */
+    imagesFit?: ('default' | 'contain' | 'cover') | null;
     items?:
       | {
           /**
-           * 前台位置：关于我们 › 供应能力与服务支持 › 条目标题
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目图片。图文卡片方式下显示在标题上方；纯图片方式下必须上传
            */
-          title: string;
+          image?: (number | null) | Media;
           /**
-           * 前台位置：关于我们 › 供应能力与服务支持 › 条目说明
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目图片。“按用途默认”取主题里的默认比例
+           */
+          imageRatio?:
+            ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+          /**
+           * 图框比例选“自定义…”时填写，例如 5:4、21:9
+           */
+          imageRatioCustom?: string | null;
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目图片
+           */
+          imageFit?: ('default' | 'contain' | 'cover') | null;
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目标题。纯图片方式下作为图片说明文字显示在图片下方，可不填
+           */
+          title?: string | null;
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目说明。纯图片方式下不显示
            */
           description?: string | null;
+          /**
+           * 前台位置：关于我们 › 供应能力与服务支持 › 点击图片跳转
+           */
+          link?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
           id?: string | null;
         }[]
       | null;
   };
   /**
-   * 关于我们的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响关于我们在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -4145,9 +5353,12 @@ export interface AboutPage {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：关于我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：关于我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -4166,17 +5377,55 @@ export interface ProductsPage {
    * 前台位置：产品列表 › 页头 › 页面主标题
    */
   title?: string | null;
+  titleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品列表 › 页头 › 副标题
    */
   subtitle?: string | null;
   subtitleHidden?: boolean | null;
+  subtitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品列表 › 页头 › 简介
    */
   intro?: string | null;
   /**
-   * 产品列表页的搜索标题和分享信息；不填时自动使用标题和简介
+   * 前台位置：产品列表 › 每个产品的列表图（单个产品另选了比例时以产品为准）。“按用途默认”取主题里的默认比例
+   */
+  listImageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  listImageRatioCustom?: string | null;
+  /**
+   * 前台位置：产品列表 › 每个产品的列表图（单个产品另选了比例时以产品为准）
+   */
+  listImageFit?: ('default' | 'contain' | 'cover') | null;
+  /**
+   * 前台位置：产品列表 › 电脑和平板上图片的宽度。手机上图片始终在上方占满一行
+   */
+  listImageWidth?: ('default' | '40' | '50' | '60') | null;
+  /**
+   * 前台位置：产品列表 › 电脑和平板上图片在左边还是右边
+   */
+  listImagePosition?: ('alternate' | 'left' | 'right') | null;
+  /**
+   * 只影响产品列表页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -4188,9 +5437,12 @@ export interface ProductsPage {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：产品列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：产品列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -4209,26 +5461,62 @@ export interface CasesPage {
    * 前台位置：案例列表 › 页面主标题
    */
   title?: string | null;
+  titleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例列表 › 副标题
    */
   subtitle?: string | null;
+  subtitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例列表 › 模块标题
    */
   listTitle?: string | null;
   listTitleHidden?: boolean | null;
+  listTitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例列表 › 模块副标题
    */
   listSubtitle?: string | null;
   listSubtitleHidden?: boolean | null;
+  listSubtitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例列表 › 每页显示的案例数，超过自动分页。默认 9 个（桌面 3 列）
    */
   perPage?: number | null;
   /**
-   * 案例列表页的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响案例列表页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -4240,9 +5528,12 @@ export interface CasesPage {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：案例列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：案例列表页分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -4261,16 +5552,43 @@ export interface ContactPage {
    * 前台位置：联系我们 › 页面主标题
    */
   title?: string | null;
+  titleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 小标题
    */
   kicker?: string | null;
   kickerHidden?: boolean | null;
+  kickerStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 标题
    */
   heading?: string | null;
   headingHidden?: boolean | null;
+  headingStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 简介
    */
@@ -4280,6 +5598,15 @@ export interface ContactPage {
    */
   formTitle?: string | null;
   formTitleHidden?: boolean | null;
+  formTitleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：邮箱
    */
@@ -4311,13 +5638,17 @@ export interface ContactPage {
   /**
    * 前台位置：联系我们 › 联系方式下方。“按用途默认”取主题里的默认比例
    */
-  imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | 'original') | null;
+  imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  imageRatioCustom?: string | null;
   /**
    * 前台位置：联系我们 › 联系方式下方
    */
   imageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 联系我们的搜索标题和分享信息；不填时自动使用标题和简介
+   * 只影响联系我们在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
   seo?: {
     /**
@@ -4329,9 +5660,12 @@ export interface ContactPage {
      */
     seoDescription?: string | null;
     /**
-     * 前台位置：联系我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图
+     * 前台位置：联系我们分享到社交平台时的预览图。尺寸 1200×630；不填时用全站默认分享图（下方预览会显示实际用哪张）
      */
     ogImage?: (number | null) | Media;
+    /**
+     * 勾选后这一页不会出现在 Google 等搜索结果里
+     */
     noindex?: boolean | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -4506,6 +5840,18 @@ export interface ThemeSelect<T extends boolean = true> {
   bodyFont?: T;
   fontScale?: T;
   spacingScale?: T;
+  textLevels?:
+    | T
+    | {
+        pageTitleStyle?: T;
+        sectionTitleStyle?: T;
+        kickerStyle?: T;
+        bodyStyle?: T;
+        buttonStyle?: T;
+      };
+  contentWidth?: T;
+  sideGutter?: T;
+  bannerWidth?: T;
   defaultRatios?:
     | T
     | {
@@ -4797,7 +6143,45 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         module?: T;
         visible?: T;
+        device?: T;
         background?: T;
+        backgroundColor?: T;
+        backgroundImage?: T;
+        backgroundOverlay?: T;
+        desktopImage?: T;
+        mobileImage?: T;
+        columns?: T;
+        mobileColumns?: T;
+        height?: T;
+        mobileHeight?: T;
+        imageWidth?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              product?: T;
+              caseStudy?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
+        gridItems?:
+          | T
+          | {
+              image?: T;
+              mobileImage?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+            };
         id?: T;
       };
   banners?:
@@ -4809,15 +6193,31 @@ export interface HomePageSelect<T extends boolean = true> {
               enabled?: T;
               desktopImage?: T;
               mobileImage?: T;
+              overlay?: T;
               kicker?: T;
               kickerHidden?: T;
+              kickerStyle?: T;
               title?: T;
+              titleStyle?: T;
               subtitle?: T;
+              subtitleStyle?: T;
               quoteButtonText?: T;
               quoteButtonTextHidden?: T;
+              quoteButtonTextStyle?: T;
               productButtonText?: T;
               productButtonTextHidden?: T;
+              productButtonTextStyle?: T;
               product?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
               id?: T;
             };
       };
@@ -4826,7 +6226,9 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         subtitle?: T;
+        subtitleStyle?: T;
         items?:
           | T
           | {
@@ -4853,12 +6255,16 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         kicker?: T;
         kickerHidden?: T;
+        kickerStyle?: T;
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         companyTitle?: T;
         companyTitleHidden?: T;
+        companyTitleStyle?: T;
         buttonText?: T;
         buttonTextHidden?: T;
+        buttonTextStyle?: T;
         tags?:
           | T
           | {
@@ -4872,18 +6278,44 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         kicker?: T;
         kickerHidden?: T;
+        kickerStyle?: T;
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         subtitle?: T;
-        images?: T;
+        subtitleStyle?: T;
+        imagesRatio?: T;
+        imagesRatioCustom?: T;
+        imagesFit?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              imageRatio?: T;
+              imageRatioCustom?: T;
+              imageFit?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+            };
       };
   productLines?:
     | T
     | {
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         buttonText?: T;
         buttonTextHidden?: T;
+        buttonTextStyle?: T;
         products?: T;
       };
   featuredCases?:
@@ -4891,13 +6323,18 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         kicker?: T;
         kickerHidden?: T;
+        kickerStyle?: T;
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         subtitle?: T;
+        subtitleStyle?: T;
         cardButton?: T;
         cardButtonHidden?: T;
+        cardButtonStyle?: T;
         allButton?: T;
         allButtonHidden?: T;
+        allButtonStyle?: T;
         cases?: T;
       };
   seo?:
@@ -4922,14 +6359,20 @@ export interface AboutPageSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleStyle?: T;
         subtitle?: T;
+        subtitleStyle?: T;
       };
   sections?:
     | T
     | {
         module?: T;
         visible?: T;
+        device?: T;
         background?: T;
+        backgroundColor?: T;
+        backgroundImage?: T;
+        backgroundOverlay?: T;
         id?: T;
       };
   intro?:
@@ -4937,13 +6380,17 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         kicker?: T;
         kickerHidden?: T;
+        kickerStyle?: T;
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         buttonText?: T;
         buttonTextHidden?: T;
+        buttonTextStyle?: T;
         body?: T;
         image?: T;
         imageRatio?: T;
+        imageRatioCustom?: T;
         imageFit?: T;
       };
   scenes?:
@@ -4951,13 +6398,33 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         subtitle?: T;
+        subtitleStyle?: T;
+        display?: T;
+        columns?: T;
+        imagesRatio?: T;
+        imagesRatioCustom?: T;
+        imagesFit?: T;
         items?:
           | T
           | {
               image?: T;
+              imageRatio?: T;
+              imageRatioCustom?: T;
+              imageFit?: T;
               title?: T;
               description?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
               id?: T;
             };
       };
@@ -4966,12 +6433,33 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         subtitle?: T;
+        subtitleStyle?: T;
+        display?: T;
+        columns?: T;
+        imagesRatio?: T;
+        imagesRatioCustom?: T;
+        imagesFit?: T;
         items?:
           | T
           | {
+              image?: T;
+              imageRatio?: T;
+              imageRatioCustom?: T;
+              imageFit?: T;
               title?: T;
               description?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
               id?: T;
             };
       };
@@ -4994,9 +6482,16 @@ export interface AboutPageSelect<T extends boolean = true> {
  */
 export interface ProductsPageSelect<T extends boolean = true> {
   title?: T;
+  titleStyle?: T;
   subtitle?: T;
   subtitleHidden?: T;
+  subtitleStyle?: T;
   intro?: T;
+  listImageRatio?: T;
+  listImageRatioCustom?: T;
+  listImageFit?: T;
+  listImageWidth?: T;
+  listImagePosition?: T;
   seo?:
     | T
     | {
@@ -5016,11 +6511,15 @@ export interface ProductsPageSelect<T extends boolean = true> {
  */
 export interface CasesPageSelect<T extends boolean = true> {
   title?: T;
+  titleStyle?: T;
   subtitle?: T;
+  subtitleStyle?: T;
   listTitle?: T;
   listTitleHidden?: T;
+  listTitleStyle?: T;
   listSubtitle?: T;
   listSubtitleHidden?: T;
+  listSubtitleStyle?: T;
   perPage?: T;
   seo?:
     | T
@@ -5041,13 +6540,17 @@ export interface CasesPageSelect<T extends boolean = true> {
  */
 export interface ContactPageSelect<T extends boolean = true> {
   title?: T;
+  titleStyle?: T;
   kicker?: T;
   kickerHidden?: T;
+  kickerStyle?: T;
   heading?: T;
   headingHidden?: T;
+  headingStyle?: T;
   intro?: T;
   formTitle?: T;
   formTitleHidden?: T;
+  formTitleStyle?: T;
   emailLabel?: T;
   phoneLabel?: T;
   whatsappLabel?: T;
@@ -5056,6 +6559,7 @@ export interface ContactPageSelect<T extends boolean = true> {
   hoursLabel?: T;
   image?: T;
   imageRatio?: T;
+  imageRatioCustom?: T;
   imageFit?: T;
   seo?:
     | T

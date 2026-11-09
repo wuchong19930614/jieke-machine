@@ -48,7 +48,8 @@ export function validateSpecTable(input: unknown): true | string {
   const table = normalizeSpecTable(input)
   const ids = new Set<string>()
   for (const [index, model] of table.models.entries()) {
-    if (!model.name) return `第 ${index + 1} 个型号没有填写型号名`
+    // 型号名输入框里的灰色字只是示例，容易被当成已填：提示写清楚位置
+    if (!model.name) return `表头第 ${index + 1} 列的型号名还没填（灰色字只是示例），请在红框里填写型号，例如 LT-300`
     if (ids.has(model.id)) return '型号编号重复，请刷新后重试'
     ids.add(model.id)
   }
@@ -56,7 +57,7 @@ export function validateSpecTable(input: unknown): true | string {
   if (new Set(names).size !== names.length) return '型号名不能重复'
   const rowIds = new Set<string>()
   for (const [index, row] of table.rows.entries()) {
-    if (!row.label) return `第 ${index + 1} 行没有填写参数名`
+    if (!row.label) return `第 ${index + 1} 行的参数名还没填（灰色字只是示例），请在红框里填写，或删除这一行`
     if (rowIds.has(row.id)) return '参数行编号重复，请刷新后重试'
     rowIds.add(row.id)
   }

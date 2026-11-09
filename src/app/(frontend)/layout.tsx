@@ -15,7 +15,8 @@ import { globalDoc } from '@/lib/locate'
 import { getLocator } from '@/lib/locator'
 import { siteUrl } from '@/lib/previewPath'
 import { indexingAllowed, JsonLd, organizationJsonLd } from '@/lib/seo'
-import { themeStyle } from '@/lib/theme'
+import { FONT_VARS } from '@/lib/textStyle'
+import { themeStyle, themeTextCss } from '@/lib/theme'
 
 import './globals.css'
 
@@ -23,7 +24,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter', preload: false })
 const montserrat = Montserrat({ subsets: ['latin'], display: 'swap', variable: '--font-montserrat', preload: false })
 const openSans = Open_Sans({ subsets: ['latin'], display: 'swap', variable: '--font-open-sans', preload: false })
-const FONT_VARS = { inter: '--font-inter', montserrat: '--font-montserrat', 'open-sans': '--font-open-sans' }
+// 上面三个 variable 名与 lib/textStyle.ts 的 FONT_VARS 对应（主题字体和“文字样式”共用那一份）
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings(await isDraft())
@@ -42,10 +43,13 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   const draft = await isDraft()
   const [settings, ui, theme, L] = await Promise.all([getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
+  const textCss = themeTextCss(theme)
 
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable} ${openSans.variable}`} style={themeStyle(theme, FONT_VARS)}>
       <body>
+        {/* 主题 › 文字级别；内容来自清洗后的数字、色号和内置字体名（lib/textStyle.ts） */}
+        {textCss ? <style data-theme-text dangerouslySetInnerHTML={{ __html: textCss }} /> : null}
         <UiProvider>
           <LightboxProvider texts={ui.common}>
             <a className="skip-link" href="#main" {...L(globalDoc('ui-texts'), 'common.skipToContent')}>

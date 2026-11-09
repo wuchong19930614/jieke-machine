@@ -2,7 +2,7 @@
 // 参数表编辑器（技术方案 3.4）：像电子表格一样增删和调整型号列、参数行，数值按型号 id 保存
 import { Button, FieldLabel, useField } from '@payloadcms/ui'
 import type { JSONFieldClientComponent } from 'payload'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 
 import { newId, normalizeSpecTable, type SpecTable } from '@/lib/specTable'
 
@@ -19,8 +19,22 @@ export const SpecTableField: JSONFieldClientComponent = ({ path, field }) => {
   const table = useMemo(() => normalizeSpecTable(value, { trim: false }), [value])
   const update = (next: SpecTable) => setValue(next)
   const description = typeof field.admin?.description === 'string' ? field.admin.description : undefined
+  const box = useRef<HTMLDivElement>(null)
 
-  const addModel = () => update({ ...table, models: [...table.models, { id: newId('m'), name: '' }] })
+  // 新增型号列时直接填好型号名，避免把灰色示例当成已填、保存时才被拦下；
+  // 序号取第一个没被用过的（删过中间的列再新增时不会和现有型号重名）
+  const addModel = () => {
+    const used = new Set(table.models.map((m) => m.name.trim()))
+    let n = table.models.length + 1
+    while (used.has(`Model ${n}`)) n++
+    update({ ...table, models: [...table.models, { id: newId('m'), name: `Model ${n}` }] })
+  }
+  // 报错旁的按钮：滚动到第一个没填的输入框并聚焦
+  const focusEmpty = () => {
+    const input = box.current?.querySelector<HTMLInputElement>('.jk-spec__input--empty')
+    input?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    input?.focus()
+  }
   const removeModel = (id: string) => {
     if (!window.confirm('删除这个型号会同时删除该列的所有数值，确定吗？')) return
     update({
@@ -35,10 +49,19 @@ export const SpecTableField: JSONFieldClientComponent = ({ path, field }) => {
   const addRow = () => update({ ...table, rows: [...table.rows, { id: newId('r'), label: '', public: false, values: {} }] })
 
   return (
-    <div className="field-type jk-spec" id={`field-${path.replace(/\./g, '__')}`}>
+    <div className="field-type jk-spec" id={`field-${path.replace(/\./g, '__')}`} ref={box}>
       <FieldLabel label={typeof field.label === 'string' ? field.label : '参数表'} path={path} />
       {description ? <p className="jk-spec__desc">{description}</p> : null}
-      {showError && errorMessage ? <p className="jk-spec__error">{errorMessage}</p> : null}
+      {showError && errorMessage ? (
+        <p className="jk-spec__error">
+          {errorMessage}
+          {table.models.some((m) => !m.name.trim()) || table.rows.some((r) => !r.label.trim()) ? (
+            <button type="button" className="jk-spec__jump" onClick={focusEmpty}>
+              跳到没填的位置
+            </button>
+          ) : null}
+        </p>
+      ) : null}
       <div className="jk-spec__scroll">
         <table className="jk-spec__table">
           <thead>
@@ -49,13 +72,14 @@ export const SpecTableField: JSONFieldClientComponent = ({ path, field }) => {
               {table.models.map((model, index) => (
                 <th key={model.id}>
                   <input
-                    className="jk-spec__input"
+                    className={`jk-spec__input${model.name.trim() ? '' : ' jk-spec__input--empty'}`}
                     value={model.name}
                     placeholder={`型号 ${index + 1}，如 LT-300`}
                     onChange={(e) =>
                       update({ ...table, models: table.models.map((m) => (m.id === model.id ? { ...m, name: e.target.value } : m)) })
                     }
                   />
+                  {model.name.trim() ? null : <span className="jk-spec__required">必填：型号名</span>}
                   <div className="jk-spec__colctrl">
                     <button type="button" title="左移" onClick={() => update({ ...table, models: move(table.models, index, index - 1) })}>
                       ←
@@ -85,7 +109,7 @@ export const SpecTableField: JSONFieldClientComponent = ({ path, field }) => {
                 </td>
                 <td>
                   <input
-                    className="jk-spec__input"
+                    className={`jk-spec__input${row.label.trim() ? '' : ' jk-spec__input--empty'}`}
                     value={row.label}
                     placeholder="如 Capacity (kg/h)"
                     onChange={(e) => update({ ...table, rows: table.rows.map((r) => (r.id === row.id ? { ...r, label: e.target.value } : r)) })}

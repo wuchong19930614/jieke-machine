@@ -11,9 +11,9 @@ import { ZoomButton } from '@/components/client/Lightbox'
 import { ProcessSteps } from '@/components/client/ProcessSteps'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
 import { CurrentProduct } from '@/components/client/WhatsAppLink'
-import { Img, mediaOf } from '@/components/Img'
+import { Img, mediaOf, pickRatio } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
-import { Breadcrumbs, crumbHome, crumbNav, orderedSections, Section, SectionTitle } from '@/components/Section'
+import { backgroundProps, type BackgroundSpec, Breadcrumbs, crumbHome, crumbNav, orderedSections, Section, SectionTitle } from '@/components/Section'
 import { SpecTable } from '@/components/SpecTable'
 import { fill } from '@/content/defineTexts'
 import { overrideTexts } from '@/content/overrideFields'
@@ -22,7 +22,7 @@ import { PRODUCT_SECTION_DEFAULT_BACKGROUND, PRODUCT_SECTIONS, type ProductSecti
 import { getCountries } from '@/lib/countries'
 import { getProduct, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc, publishedSlugs } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
-import { getLocator, locateGroup } from '@/lib/locator'
+import { getLocator, locateGroup, textStyleSheet } from '@/lib/locator'
 import { redirectOr404 } from '@/lib/redirectOr404'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { siteUrl } from '@/lib/previewPath'
@@ -66,6 +66,8 @@ export default async function ProductPage({ params }: Params) {
   if (!product) return redirectOr404(`/products/${slug}/`)
 
   const P = collectionDoc('products', product.id)
+  // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
+  const textStyles = textStyleSheet(P, product)
   const t = { ...ui.product, ...overrideTexts(product.sectionTexts) }
   const visible = <T extends { visible?: boolean | null }>(list: T[] | null | undefined) =>
     (list ?? []).map((item, index) => ({ item, index })).filter(({ item }) => item.visible !== false)
@@ -83,7 +85,7 @@ export default async function ProductPage({ params }: Params) {
   const zoomable = (field: 'overviewImage' | 'flowImage' | 'detailImage', defaultFit: 'contain' | 'cover', ratioKey: string) => {
     const media = mediaOf(product[field])
     if (!media?.url) return null
-    const ratio = product[`${field}Ratio` as 'overviewImageRatio']
+    const ratio = pickRatio(product, field)
     const fit = product[`${field}Fit` as 'overviewImageFit']
     return (
       <div className="lp-wide-image">
@@ -94,12 +96,13 @@ export default async function ProductPage({ params }: Params) {
     )
   }
 
-  const render = (module: ProductSectionKey, background: string): React.ReactNode => {
+  const render = (module: ProductSectionKey, background: BackgroundSpec): React.ReactNode => {
     switch (module) {
-      case 'hero':
+      case 'hero': {
+        const bg = backgroundProps(background)
         return (
-          <div key={module} className={`lp-solution-hero ${background === 'default' ? '' : `lp-bg-${background}`}`}>
-            <Img media={product.heroImage} ratio={product.heroImageRatio} fit={product.heroImageFit} defaultRatio="21/9" defaultFit="cover" sizes="100vw" priority attrs={L(P, 'heroImage')} />
+          <div key={module} className={`lp-solution-hero ${bg.className}`} style={bg.style}>
+            <Img media={product.heroImage} ratio={pickRatio(product, 'heroImage')} fit={product.heroImageFit} defaultRatio="21/9" defaultFit="cover" sizes="100vw" priority attrs={L(P, 'heroImage')} />
             <div className="lp-solution-heading">
               {heroKicker ? (
                 <div className="lp-kicker" {...L(P, 'heroKicker')}>
@@ -130,7 +133,8 @@ export default async function ProductPage({ params }: Params) {
                     data-track-product={product.name}
                     {...L(P, 'brochure')}
                   >
-                    <Download size={16} aria-hidden="true" /> {t.brochureButton}
+                    {/* 按钮文字单独标注，产品手册分组里给“手册下载按钮”设的文字样式作用在这里 */}
+                    <Download size={16} aria-hidden="true" /> <span {...L(P, 'sectionTexts.brochureButton')}>{t.brochureButton}</span>
                     <small>{fill(t.brochureMeta, { fileSize: formatSize(brochure.filesize) })}</small>
                   </a>
                 ) : null}
@@ -139,16 +143,17 @@ export default async function ProductPage({ params }: Params) {
             </div>
           </div>
         )
+      }
       case 'applications': {
         const items = visible(product.applications).filter(({ item }) => item.name)
         if (!items.length) return null
         return (
           <Section key={module} background={background}>
-            <SectionTitle title={{ text: t.applicationsTitle, attrs: L(P, 'sectionTexts.applicationsTitle') }} subtitle={{ text: t.applicationsSubtitle }} />
+            <SectionTitle title={{ text: t.applicationsTitle, attrs: L(P, 'sectionTexts.applicationsTitle') }} subtitle={{ text: t.applicationsSubtitle, attrs: L(P, 'sectionTexts.applicationsSubtitle') }} />
             <ul className="lp-grid4 lp-applications" aria-label={t.applicationsAria}>
               {items.map(({ item, index }) => (
                 <li key={index} className="lp-application">
-                  <Img media={item.image} defaultRatio={defaultRatio(theme, 'application')} defaultFit="cover" sizes="(max-width: 767px) 50vw, 240px" attrs={L(P, `applications.${index}.image`)} />
+                  <Img media={item.image} ratio={pickRatio(item, 'image')} fit={item.imageFit} defaultRatio={defaultRatio(theme, 'application')} defaultFit="cover" sizes="(max-width: 767px) 50vw, 240px" attrs={L(P, `applications.${index}.image`)} />
                   <strong {...L(P, `applications.${index}.name`)}>{item.name}</strong>
                 </li>
               ))}
@@ -224,6 +229,29 @@ export default async function ProductPage({ params }: Params) {
             <div className="lp-article" {...L(P, 'specTable')}>
               {t.specsTitle ? <h3 {...L(P, 'sectionTexts.specsTitle')}>{t.specsTitle}</h3> : null}
               {table}
+              {/* 顶部横幅的下载按钮容易被忽略，参数表下方再放一个入口（后台可关闭） */}
+              {brochure?.url && product.brochureInSpecs !== false ? (
+                <a
+                  href={brochure.url}
+                  className="lp-brochure-card"
+                  download
+                  target="_blank"
+                  rel="noopener"
+                  data-track="download_brochure"
+                  data-track-location="specs"
+                  data-track-product={product.name}
+                  {...L(P, 'brochureInSpecs')}
+                >
+                  <Download size={20} aria-hidden="true" />
+                  <span className="lp-brochure-card__text">
+                    <b>{product.name}</b>
+                    <small>{fill(t.brochureMeta, { fileSize: formatSize(brochure.filesize) })}</small>
+                  </span>
+                  <span className="lp-brochure-card__button" {...L(P, 'sectionTexts.brochureButton')}>
+                    {t.brochureButton}
+                  </span>
+                </a>
+              ) : null}
             </div>
           </Section>
         )
@@ -294,7 +322,7 @@ export default async function ProductPage({ params }: Params) {
         if (!items.length) return null
         return (
           <Section key={module} background={background} className="lp-benefits">
-            <SectionTitle title={{ text: t.advantagesTitle, attrs: L(P, 'sectionTexts.advantagesTitle') }} subtitle={{ text: t.advantagesSubtitle }} />
+            <SectionTitle title={{ text: t.advantagesTitle, attrs: L(P, 'sectionTexts.advantagesTitle') }} subtitle={{ text: t.advantagesSubtitle, attrs: L(P, 'sectionTexts.advantagesSubtitle') }} />
             <div className="lp-grid3">
               {items.map(({ item, index }, i) => (
                 <div key={index}>
@@ -329,7 +357,11 @@ export default async function ProductPage({ params }: Params) {
                     </div>
                   ) : null}
                   {t.stepsTitle ? <h2 {...L(P, 'sectionTexts.stepsTitle')}>{t.stepsTitle}</h2> : null}
-                  {t.stepsSubtitle ? <p className="lp-muted">{t.stepsSubtitle}</p> : null}
+                  {t.stepsSubtitle ? (
+                    <p className="lp-muted" {...L(P, 'sectionTexts.stepsSubtitle')}>
+                      {t.stepsSubtitle}
+                    </p>
+                  ) : null}
                 </>
               }
               steps={steps.map(({ item, index }) => ({
@@ -339,7 +371,7 @@ export default async function ProductPage({ params }: Params) {
                 titleAttrs: L(P, `processSteps.${index}.title`) as Record<string, string>,
                 panel: (
                   <>
-                    <Img media={item.image} defaultRatio={defaultRatio(theme, 'equipment')} defaultFit="contain" sizes="(max-width: 767px) 100vw, 640px" attrs={L(P, `processSteps.${index}.image`)} />
+                    <Img media={item.image} ratio={pickRatio(item, 'image')} fit={item.imageFit} defaultRatio={defaultRatio(theme, 'equipment')} defaultFit="contain" sizes="(max-width: 767px) 100vw, 640px" attrs={L(P, `processSteps.${index}.image`)} />
                     <h3 {...L(P, `processSteps.${index}.title`)}>{item.title}</h3>
                     {item.description ? (
                       <p className="lp-muted" style={{ whiteSpace: 'pre-line' }} {...L(P, `processSteps.${index}.description`)}>
@@ -358,13 +390,13 @@ export default async function ProductPage({ params }: Params) {
         if (!list.length) return null
         return (
           <Section key={module} background={background}>
-            <SectionTitle title={{ text: t.relatedTitle, attrs: L(P, 'sectionTexts.relatedTitle') }} subtitle={{ text: t.relatedSubtitle }} />
+            <SectionTitle title={{ text: t.relatedTitle, attrs: L(P, 'sectionTexts.relatedTitle') }} subtitle={{ text: t.relatedSubtitle, attrs: L(P, 'sectionTexts.relatedSubtitle') }} />
             <div className="lp-grid3" {...L(P, 'relatedProducts')}>
               {list.map((item) => {
                 const doc = collectionDoc('products', item.id)
                 return (
                   <article key={item.id} className="lp-product">
-                    <Img media={item.listImage} ratio={item.listImageRatio} fit={item.listImageFit} defaultRatio={defaultRatio(theme, 'equipment')} sizes="(max-width: 767px) 100vw, 400px" attrs={L(doc, 'listImage')} />
+                    <Img media={item.listImage} ratio={pickRatio(item, 'listImage')} fit={item.listImageFit} defaultRatio={defaultRatio(theme, 'equipment')} sizes="(max-width: 767px) 100vw, 400px" attrs={L(doc, 'listImage')} />
                     <div className="lp-product-body">
                       <h3 {...L(doc, 'name')}>
                         <Link href={`/products/${item.slug}/`}>{item.name}</Link>
@@ -387,7 +419,7 @@ export default async function ProductPage({ params }: Params) {
         if (!list.length) return null
         return (
           <Section key={module} background={background}>
-            <SectionTitle title={{ text: t.casesTitle, attrs: L(P, 'sectionTexts.casesTitle') }} subtitle={{ text: t.casesSubtitle }} />
+            <SectionTitle title={{ text: t.casesTitle, attrs: L(P, 'sectionTexts.casesTitle') }} subtitle={{ text: t.casesSubtitle, attrs: L(P, 'sectionTexts.casesSubtitle') }} />
             <div className="lp-grid3" {...L(P, 'relatedCases')}>
               {list.map((item) => (
                 <CaseCard
@@ -421,7 +453,7 @@ export default async function ProductPage({ params }: Params) {
                     {formIntro}
                   </p>
                 ) : null}
-                <Img media={product.contactImage} ratio={product.contactImageRatio} fit={product.contactImageFit} defaultRatio={defaultRatio(theme, 'equipment')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(P, 'contactImage')} />
+                <Img media={product.contactImage} ratio={pickRatio(product, 'contactImage')} fit={product.contactImageFit} defaultRatio={defaultRatio(theme, 'equipment')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(P, 'contactImage')} />
               </div>
               <InquiryForm
                 source="product_page"
@@ -440,15 +472,13 @@ export default async function ProductPage({ params }: Params) {
     }
   }
 
-  const sections = orderedSections(product.sections, PRODUCT_SECTIONS).map((s) => ({
-    ...s,
-    background: product.sections?.length ? s.background : PRODUCT_SECTION_DEFAULT_BACKGROUND[s.module],
-  }))
+  const sections = orderedSections(product.sections, PRODUCT_SECTIONS, PRODUCT_SECTION_DEFAULT_BACKGROUND)
   const base = siteUrl()
   const image = mediaOf(product.listImage) ?? mediaOf(product.heroImage)
 
   return (
     <>
+      {textStyles}
       <div className="lp-section" style={{ paddingTop: 15, paddingBottom: 0 }}>
         <Breadcrumbs
           label={ui.common.breadcrumb}
