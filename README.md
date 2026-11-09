@@ -101,7 +101,7 @@ npm run dev
 - `npm run decrypt-backup -- 备份文件 [输出文件]`：解密数据库备份
 - `npm run import:legal`：把 `docs/隐私政策与Cookie说明模板（含巴西LGPD）.md` 里的隐私政策和 Cookie 说明录入“辅助页面”，自动填入公司名称、地址、网址和日期。默认存为草稿，加 `-- --publish` 直接发布；只操作本地 `file:` 数据库，导入线上库要另加 `-- --allow-remote`。运行结束会列出还没替换的方括号占位（如隐私邮箱、DPO、各服务商的保存期限），需与法务确认后在后台填写。脚本在 Next.js 之外运行，不能刷新线上已生成的页面，所以导入线上库时不要加 `--publish`：存为草稿，在后台填完占位后点“发布修改”，前台才会更新
 - `npm run typecheck` / `npm run lint` / `npm test`：类型检查、代码检查、单元测试
-- `patches/`：用 patch-package 给依赖打的补丁，安装依赖时由 `postinstall` 自动打上。目前包含 `@payloadcms/storage-vercel-blob` 3.91.0（上传前在浏览器里检查文件类型和大小，选了视频等不支持的文件立刻提示；上传失败时显示服务器返回的具体原因，原版只显示英文通用提示。类型和大小限制要和 `src/collections/Media.ts` 保持一致）、`@payloadcms/ui` 3.91.0（批量上传时直传失败记入错误数并弹出原因，原版吞掉错误会误报成功）和 `@payloadcms/next` 3.91.0（判断页面配置是否发布过时补上 `_status`，原版只要最新一版是草稿就误报“还没有发布过”）。升级这三个包时，补丁对不上会让安装报错，需要重新修改并运行 `npx patch-package <包名>`，或者确认新版已修复后删掉补丁
+- `patches/`：用 patch-package 给依赖打的补丁，安装依赖时由 `postinstall` 自动打上。目前包含 `@payloadcms/storage-vercel-blob` 3.91.0（上传前在浏览器里检查文件类型和大小，选了视频等不支持的文件立刻提示；上传失败时显示服务器返回的具体原因，原版只显示英文通用提示。类型和大小限制要和 `src/collections/Media.ts` 保持一致）、`@payloadcms/ui` 3.91.0（批量上传时直传失败记入错误数并弹出原因，原版吞掉错误会误报成功）和 `@payloadcms/next` 3.91.0（判断页面配置是否发布过时补上 `_status`，原版只要最新一版是草稿就误报“还没有发布过”）。升级这三个包时，补丁对不上会让安装报错，需要重新修改并运行 `npx patch-package <包名>`，或者确认新版已修复后删掉补丁。`vercel.json` 把安装命令设为 `npm ci`（每次部署先清空依赖再全新安装）：Vercel 默认沿用上次部署留下的依赖包，里面已经打过旧版补丁，改了补丁后新补丁会叠不上、安装直接失败
 
 <a id="s3"></a>
 
@@ -370,7 +370,7 @@ turso db import restore.db
 
 ## 九、部署注意事项
 
-- Vercel 项目：Node.js 选 24.x，区域 `dub1`，构建命令 `npm run build:vercel`（已写在 `vercel.json`）。
+- Vercel 项目：Node.js 选 24.x，区域 `dub1`，安装命令 `npm ci`、构建命令 `npm run build:vercel`（都已写在 `vercel.json`）。
 - 域名 `jetcomachinery.com` 在 Vercel 上配置，代码里不写死：项目的 Domains 里同时添加 `www.jetcomachinery.com` 和 `jetcomachinery.com`，按提示在域名解析里加记录；环境变量 `NEXT_PUBLIC_SITE_URL` 在 Production 环境填 `https://www.jetcomachinery.com`，改完要重新部署才生效。不带 www 的地址会自动 308 跳转到 www（`next.config.ts` 的 `hostRedirects`）。Preview 环境另填测试站的固定地址（如分支地址），不填时会回落到 `http://localhost:3000`，测试站后台的保存、上传等请求会被当成未登录。
 - 按 Vercel 免费版（Hobby）配置：定时任务都是每天一次（改成更频繁的写法部署会报错）；防火墙每个项目只能建 1 条限流规则，询盘接口 `/api/inquiries` 和表单令牌接口 `/api/form-token` 共用这一条；没有密码保护，测试站用 Vercel 账号授权或共享链接限制访问。免费版条款限非商用，见技术方案 10.4 节。
 - 测试环境（Vercel 预览地址）全站 noindex；正式环境在后台“全站设置 › 统计、收录与安全”勾选“允许搜索引擎收录”后才开放收录，主要页面内容录入完成前保持关闭。
