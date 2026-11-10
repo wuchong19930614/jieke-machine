@@ -667,3 +667,346 @@
   color: var(--theme-elevation-500);
   font-size: 11px;
 }
+
+
+/* ==========================================================================
+   后台整体视觉（2026-11 优化，方案 B：浅色侧栏 + 卡片分区）。只改外观，不动任何功能。
+   Payload 自带样式在 @layer payload-default 里，这里的普通样式会自动盖过它；
+   颜色都走下面的 --jk-* 变量，深色主题下换一套值，结构不变
+   ========================================================================== */
+html[data-theme='light'] {
+  --jk-page: #f7f8fa;
+  --jk-surface: #fff;
+  --jk-line: #eceff3;
+  --jk-line-strong: #d5dbe3;
+  --jk-ink: #142b42;
+  --jk-text: #2a3442;
+  --jk-muted: #8592a3;
+  --jk-hover: #f3f5f8;
+  --jk-brand: #3275df;
+  --jk-brand-ink: #2164c4;
+  --jk-brand-soft: #eaf2fd;
+  --jk-focus: rgb(50 117 223 / 18%);
+  --jk-shadow: 0 1px 2px rgb(20 46 70 / 5%);
+}
+html[data-theme='dark'] {
+  --jk-page: var(--theme-bg);
+  --jk-surface: var(--theme-elevation-50);
+  --jk-line: var(--theme-elevation-100);
+  --jk-line-strong: var(--theme-elevation-200);
+  --jk-ink: var(--theme-text);
+  --jk-text: var(--theme-elevation-800);
+  --jk-muted: var(--theme-elevation-500);
+  --jk-hover: var(--theme-elevation-100);
+  --jk-brand: #5b93ec;
+  --jk-brand-ink: #8fb6f5;
+  --jk-brand-soft: rgb(50 117 223 / 20%);
+  --jk-focus: rgb(91 147 236 / 30%);
+  --jk-shadow: none;
+}
+
+/* ---------- 页面底色 ---------- */
+body,
+.template-default,
+.template-default__wrap {
+  background: var(--jk-page);
+}
+
+/* ---------- 左侧菜单 ---------- */
+.nav {
+  background: var(--jk-surface);
+  border-right: 1px solid var(--jk-line);
+  border-left: 0;
+}
+.jk-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 calc(var(--base) * 0.75);
+  padding: 4px 10px 14px;
+  border-bottom: 1px solid var(--jk-line);
+  color: var(--jk-ink);
+  text-decoration: none;
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--jk-brand);
+    color: #fff;
+    font-weight: 700;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+    b {
+      overflow: hidden;
+      font-size: 14px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    small {
+      color: var(--jk-muted);
+      font-size: 12px;
+    }
+  }
+}
+.nav-group {
+  width: 100%;
+}
+.nav-group__toggle {
+  margin: calc(var(--base) * 0.6) 0 4px;
+  padding: 0 10px;
+  color: var(--jk-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.nav__link {
+  --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+  width: 100%;
+  margin: 1px 0;
+  padding: 7px 10px 7px 36px;
+  border-radius: 8px;
+  color: var(--jk-text);
+  font-size: 14px;
+  line-height: 20px;
+  transition: background-color 0.15s, color 0.15s;
+
+  /* 每项前面的线条小图标（图形见下方按菜单 id 设置的 --jk-icon） */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 11px;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: currentColor;
+    opacity: 0.55;
+    mask: var(--jk-icon) center / contain no-repeat;
+  }
+  &:hover,
+  &:focus-visible {
+    background: var(--jk-hover);
+    color: var(--jk-ink);
+    text-decoration: none;
+  }
+}
+/* 当前所在的菜单：浅蓝底块 + 蓝字加粗 + 蓝色图标。jk-active 由 admin/components/NavActive.tsx 标记
+   （Payload 原版因网址末尾斜杠判断不出当前菜单）；indicator 是原版的标记，以后 Payload 修好了也能生效 */
+.nav__link.jk-active,
+.nav__link:has(.nav__link-indicator) {
+  background: var(--jk-brand-soft);
+  color: var(--jk-brand-ink);
+  font-weight: 600;
+
+  &::before {
+    opacity: 1;
+  }
+}
+.nav__link-indicator {
+  display: none;
+}
+  #nav-global-home-page { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3Cpath d='M9 22V12h6v10'/%3E%3C/svg%3E"); }
+  #nav-global-about-page { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E"); }
+  #nav-global-products-page { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='7' height='7' x='3' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='14' rx='1'/%3E%3Crect width='7' height='7' x='3' y='14' rx='1'/%3E%3C/svg%3E"); }
+  #nav-global-cases-page { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E"); }
+  #nav-global-contact-page { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3C/svg%3E"); }
+  #nav-pages { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z'/%3E%3Cpath d='M14 2v6h6'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E"); }
+  #nav-products { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7.5 4.27 9 5.15'/%3E%3Cpath d='M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z'/%3E%3Cpath d='m3.3 7 8.7 5 8.7-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/svg%3E"); }
+  #nav-cases { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='7' rx='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/svg%3E"); }
+  #nav-media { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21'/%3E%3C/svg%3E"); }
+  #nav-inquiries { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E"); }
+  #nav-global-site-settings { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 21v-7'/%3E%3Cpath d='M4 10V3'/%3E%3Cpath d='M12 21v-9'/%3E%3Cpath d='M12 8V3'/%3E%3Cpath d='M20 21v-5'/%3E%3Cpath d='M20 12V3'/%3E%3Cpath d='M1 14h6'/%3E%3Cpath d='M9 8h6'/%3E%3Cpath d='M17 16h6'/%3E%3C/svg%3E"); }
+  #nav-global-theme { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z'/%3E%3C/svg%3E"); }
+  #nav-global-ui-texts { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7V4h16v3'/%3E%3Cpath d='M9 20h6'/%3E%3Cpath d='M12 4v16'/%3E%3C/svg%3E"); }
+  #nav-users { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E"); }
+  #nav-redirects { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 14 5-5-5-5'/%3E%3Cpath d='M4 20v-7a4 4 0 0 1 4-4h12'/%3E%3C/svg%3E"); }
+  #nav-backups { --jk-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='5' rx='9' ry='3'/%3E%3Cpath d='M3 5v14a9 3 0 0 0 18 0V5'/%3E%3Cpath d='M3 12a9 3 0 0 0 18 0'/%3E%3C/svg%3E"); }
+
+/* ---------- 编辑页顶部：标题区和操作栏 ---------- */
+.doc-header {
+  background: var(--jk-surface);
+}
+.doc-controls {
+  background: var(--jk-surface);
+  border-bottom: 1px solid var(--jk-line);
+  box-shadow: var(--jk-shadow);
+}
+.status__value {
+  display: inline-block;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--jk-brand-soft);
+  color: var(--jk-brand-ink);
+  font-weight: 600;
+}
+
+/* ---------- 按钮：主按钮品牌蓝，次按钮白底描边 ---------- */
+.btn--style-primary {
+  border-radius: 8px;
+  background: var(--jk-brand);
+  color: #fff;
+
+  &:not(.btn--disabled):hover,
+  &:not(.btn--disabled):focus-visible {
+    background: var(--jk-brand-ink);
+  }
+  &.btn--disabled {
+    background: var(--jk-line-strong);
+    color: var(--jk-surface);
+  }
+}
+.btn--style-secondary {
+  border-radius: 8px;
+  background: var(--jk-surface);
+}
+.btn--style-pill {
+  border-radius: 999px;
+}
+
+/* ---------- 分组变成白色圆角卡片 ---------- */
+.collapsible {
+  border: 1px solid var(--jk-line);
+  border-radius: 10px;
+  background: var(--jk-surface);
+  box-shadow: var(--jk-shadow);
+}
+.collapsible__toggle-wrap {
+  border-radius: 10px 10px 0 0;
+  background: var(--jk-surface);
+}
+.collapsible--collapsed .collapsible__toggle-wrap {
+  border-radius: 10px;
+}
+/* 注意：.collapsible__toggle 是盖在标题上的透明按钮，原版靠 color: transparent 隐藏“切换区块”读屏文字，不能给它设颜色 */
+.collapsible__toggle-wrap .row-label {
+  color: var(--jk-ink);
+  font-weight: 600;
+}
+.collapsible__content {
+  border-top: 1px solid var(--jk-line);
+}
+/* 页面配置里不带折叠的大分组（首页的“Banner 轮播”“需求与服务”等）也做成卡片，标题前加一条品牌蓝竖线 */
+/* 原版用负外边距把这里拉成通栏；做成卡片后去掉负外边距，和上方字段左右对齐 */
+.group-field--top-level,
+.group-field--top-level:first-child {
+  margin: 0 0 var(--base);
+  padding: calc(var(--base) * 0.9) calc(var(--base) * 1.1);
+  border: 1px solid var(--jk-line);
+  border-radius: 10px;
+  background: var(--jk-surface);
+  box-shadow: var(--jk-shadow);
+}
+.group-field--top-level > .group-field__wrap > .group-field__header .group-field__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--jk-ink);
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 4px;
+    height: 1em;
+    border-radius: 2px;
+    background: var(--jk-brand);
+  }
+}
+
+/* ---------- 字段：标题加粗、说明变浅、输入框圆角和聚焦光晕 ---------- */
+.field-label {
+  color: var(--jk-text);
+  font-weight: 600;
+}
+.field-description {
+  color: var(--jk-muted);
+}
+.field-type input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']),
+.field-type textarea,
+.rs__control {
+  border-color: var(--jk-line-strong);
+  border-radius: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field-type input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']):focus,
+.field-type textarea:focus,
+.rs__control.rs__control--is-focused {
+  border-color: var(--jk-brand);
+  box-shadow: 0 0 0 3px var(--jk-focus);
+  outline: none;
+}
+
+/* ---------- 列表页：表格放进白色圆角卡片，表头浅灰，行悬停高亮 ---------- */
+.collection-list .table {
+  overflow: auto;
+  border: 1px solid var(--jk-line);
+  border-radius: 10px;
+  background: var(--jk-surface);
+  box-shadow: var(--jk-shadow);
+}
+.collection-list .table table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.collection-list .table thead th {
+  background: var(--jk-page);
+  color: var(--jk-muted);
+  font-weight: 600;
+}
+.collection-list .table tbody tr {
+  background: var(--jk-surface);
+}
+.collection-list .table tbody tr:hover td {
+  background: var(--jk-hover);
+}
+.list-header__title {
+  color: var(--jk-ink);
+}
+
+/* ---------- 后台首页：入口卡片 ---------- */
+.card {
+  border: 1px solid var(--jk-line);
+  border-radius: 10px;
+  background: var(--jk-surface);
+  box-shadow: var(--jk-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+
+  &.card--has-onclick:hover {
+    border-color: var(--jk-brand);
+    box-shadow: 0 4px 12px rgb(50 117 223 / 12%);
+  }
+}
+.card__title {
+  color: var(--jk-ink);
+}
+.jk-dashboard {
+  border-color: var(--jk-line);
+  border-radius: 12px;
+  background: var(--jk-surface);
+  box-shadow: var(--jk-shadow);
+
+  &__link {
+    border-color: var(--jk-line-strong);
+    border-radius: 8px;
+    transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+
+    &:hover {
+      border-color: var(--jk-brand);
+      background: var(--jk-brand-soft);
+      color: var(--jk-brand-ink);
+    }
+  }
+}

@@ -46,3 +46,6 @@ coverage/
 
 # 本地开发工具配置
 .claude/
+
+# 设计讨论用的临时页面
+.superpowers/
