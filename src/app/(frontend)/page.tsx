@@ -171,7 +171,7 @@ export default async function HomePageView() {
         const items = (home.services?.items ?? []).map((item, index) => ({ item, index })).filter(({ item }) => item.name)
         if (!items.length) return null
         return (
-          <Section key={module} background={background}>
+          <Section key={module} background={background} className="lp-home-services">
             <SectionTitle title={{ text: services.title, attrs: L(H, 'services.title') }} subtitle={{ text: services.subtitle, attrs: L(H, 'services.subtitle') }} />
             <ul className="lp-store-service-grid">
               {items.map(({ item, index }) => {
