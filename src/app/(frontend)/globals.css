@@ -1998,6 +1998,9 @@ body.lp-locating [data-locate] {
   --lp-accent: #00ad91;
   --lp-brand: #00ad91;
   --lp-brand-ink: #008f79;
+  /* Keep full-width homepage modules aligned to the same usable desktop canvas
+     in both the public page and the CMS preview iframe. */
+  --lp-home-content-width: min(calc(100vw - 4 * var(--gutter)), var(--lp-content-width, 1180px));
 }
 .lp-home .lp-title::after {
   background: #00ad91;
@@ -2041,7 +2044,8 @@ body.lp-locating [data-locate] {
   line-height: 1.8;
 }
 .lp-home .lp-store-service-grid {
-  max-width: 100%;
+  width: var(--lp-home-content-width);
+  max-width: none;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
@@ -2096,7 +2100,9 @@ body.lp-locating [data-locate] {
   font-size: clamp(1.35em, 2vw, 1.8em);
 }
 .lp-home .lp-store-stats {
-  max-width: var(--lp-content-width, 1180px);
+  width: var(--lp-home-content-width);
+  max-width: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: auto;
   padding-top: 22px;
   gap: 24px;
@@ -2228,6 +2234,7 @@ body.lp-locating [data-locate] {
     padding: 18px 0;
   }
   .lp-home .lp-store-stats {
+    width: auto;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
     padding-top: 8px;
