@@ -353,10 +353,10 @@ export default async function HomePageView() {
   // 没有 Banner 时给读屏一个 h1；Banner 只在电脑（或只在手机）显示时，另一类设备上也补一个
   const srTitle = !bannerSection ? 'sr-only' : bannerDevice === 'lp-only-desktop' ? 'sr-only lp-only-mobile' : bannerDevice === 'lp-only-mobile' ? 'sr-only lp-only-desktop' : null
   return (
-    <>
+    <div className="lp-home">
       {textStyles}
       {srTitle ? <h1 className={srTitle}>{settings.companyName || 'Home'}</h1> : null}
       {content}
-    </>
+    </div>
   )
 }

@@ -1992,3 +1992,272 @@ body.lp-locating [data-locate] {
   position: relative;
   z-index: 1;
 }
+
+/* ---------- 首页版式优化 ---------- */
+.lp-home {
+  --lp-accent: #00ad91;
+  --lp-brand: #00ad91;
+  --lp-brand-ink: #008f79;
+}
+.lp-home .lp-title::after {
+  background: #00ad91;
+}
+.lp-home > .lp-section {
+  padding-top: clamp(52px, 6vw, 82px);
+  padding-bottom: clamp(52px, 6vw, 82px);
+}
+.lp-home > .lp-section > .lp-title {
+  max-width: 780px;
+  margin: 0 auto 38px;
+}
+.lp-home > .lp-section > .lp-title h2 {
+  letter-spacing: -0.025em;
+  line-height: 1.22;
+}
+.lp-home > .lp-section > .lp-title p {
+  max-width: 680px;
+  margin: 12px auto 0;
+  line-height: 1.75;
+}
+.lp-home .lp-hero {
+  width: min(calc(100% - 2 * var(--gutter)), var(--lp-content-width, 1180px));
+  min-height: clamp(430px, 46vw, 610px);
+  margin: var(--lp-hero-top, 24px) auto 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+.lp-home .lp-banner-copy {
+  max-width: 780px;
+}
+.lp-home .lp-banner-copy h1,
+.lp-home .lp-banner-copy .lp-h1 {
+  text-wrap: balance;
+  text-shadow: 0 2px 20px rgb(0 0 0 / 18%);
+}
+.lp-home .lp-banner-copy p {
+  max-width: 660px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.8;
+}
+.lp-home .lp-store-service-grid {
+  max-width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.lp-home .lp-store-service-grid li {
+  min-height: 88px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #edf1ef;
+  border-bottom: 2px solid #dce9e6;
+  border-radius: 0;
+  background: #fff;
+  color: var(--lp-ink);
+  box-shadow: none;
+  text-align: left;
+  font-size: 0.92em;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+.lp-home .lp-store-service-grid li:hover {
+  transform: translateY(-2px);
+  border-bottom-color: #00ad91;
+}
+.lp-home > .lp-section:has(.lp-store-service-grid) {
+  margin-inline: var(--gutter);
+  background: #f5f8f7;
+}
+.lp-home .lp-store-service-grid svg {
+  box-sizing: content-box;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  padding: 11px;
+  border-radius: 50%;
+  background: #e6f6f2;
+  color: #00a98d;
+  stroke-width: 1.8;
+}
+.lp-home .lp-store-company {
+  padding: 10px var(--gutter) 28px;
+  background: #fff;
+  color: var(--lp-ink);
+}
+.lp-home .lp-store-brandline {
+  max-width: var(--lp-content-width, 1180px);
+  min-height: 52px;
+  margin: auto;
+  gap: 14px 30px;
+  text-align: center;
+}
+.lp-home .lp-store-brandline strong {
+  font-size: clamp(1.35em, 2vw, 1.8em);
+}
+.lp-home .lp-store-stats {
+  max-width: var(--lp-content-width, 1180px);
+  margin: auto;
+  padding-top: 22px;
+  gap: 24px;
+}
+.lp-home .lp-store-stats li {
+  gap: 5px;
+  padding: 2px 22px;
+  border-right: 1px solid var(--lp-line);
+  text-align: left;
+}
+.lp-home .lp-store-stats li:last-child {
+  border-right: 0;
+}
+.lp-home .lp-store-stats strong {
+  color: #00ad91;
+  font-size: clamp(1.55em, 2.4vw, 2em);
+  letter-spacing: -0.02em;
+}
+.lp-home .lp-store-stats span {
+  color: #536a7b;
+  font-size: 0.82em;
+  letter-spacing: 0.035em;
+  line-height: 1.4;
+}
+.lp-home .lp-store-about {
+  grid-template-columns: minmax(230px, 0.78fr) minmax(0, 1.65fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: stretch;
+}
+.lp-home .lp-store-about aside {
+  align-self: center;
+  text-align: left;
+}
+.lp-home .lp-store-about aside h2 {
+  margin: 8px 0 18px;
+  font-size: clamp(1.8em, 3vw, 2.45em);
+  line-height: 1.2;
+}
+.lp-home .lp-store-about aside ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.lp-home .lp-store-about aside li {
+  margin: 0;
+  padding: 8px 13px;
+  border-radius: 3px;
+}
+.lp-home .lp-store-about-copy {
+  padding: clamp(24px, 4vw, 42px);
+  border: 1px solid var(--lp-line);
+  box-shadow: 0 12px 32px rgb(20 43 66 / 6%);
+  line-height: 1.8;
+}
+.lp-home .lp-store-blue-button {
+  margin-top: 18px;
+  padding: 12px 22px;
+  transition: filter 180ms ease, transform 180ms ease;
+}
+.lp-home .lp-store-blue-button:hover {
+  filter: brightness(0.94);
+  transform: translateY(-1px);
+}
+.lp-home .lp-store-factory-grid {
+  gap: 18px;
+}
+.lp-home .lp-store-factory-grid .lp-image-link {
+  overflow: hidden;
+  background: var(--lp-soft);
+}
+.lp-home .lp-store-factory-grid img {
+  transition: transform 300ms ease;
+}
+.lp-home .lp-store-factory-grid .lp-image-link:hover img {
+  transform: scale(1.035);
+}
+.lp-home .lp-store-lines {
+  gap: 28px;
+}
+.lp-home .lp-store-line {
+  gap: clamp(24px, 4vw, 52px);
+  padding: clamp(20px, 3vw, 34px);
+  border: 1px solid var(--lp-line);
+  box-shadow: 0 10px 28px rgb(20 43 66 / 5%);
+}
+
+@media (max-width: 767px) {
+  .lp-home > .lp-section {
+    padding-top: 44px;
+    padding-bottom: 44px;
+  }
+  .lp-home > .lp-section > .lp-title {
+    margin-bottom: 26px;
+  }
+  .lp-home .lp-hero {
+    min-height: 420px;
+    width: 100%;
+    margin-top: 0;
+  }
+  .lp-home .lp-banner-copy h1,
+  .lp-home .lp-banner-copy .lp-h1 {
+    font-size: clamp(1.8em, 8vw, 2.15em);
+    line-height: 1.2;
+  }
+  .lp-home .lp-store-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .lp-home > .lp-section:has(.lp-store-service-grid) {
+    margin-inline: 0;
+  }
+  .lp-home .lp-store-service-grid li {
+    min-height: 76px;
+    gap: 10px;
+    padding: 12px;
+    font-size: 0.85em;
+  }
+  .lp-home .lp-store-service-grid svg {
+    flex-basis: 18px;
+    width: 18px;
+    height: 18px;
+    padding: 8px;
+  }
+  .lp-home .lp-store-company {
+    padding: 18px 6% 34px;
+  }
+  .lp-home .lp-store-brandline {
+    min-height: 0;
+    padding: 18px 0;
+  }
+  .lp-home .lp-store-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    padding-top: 8px;
+  }
+  .lp-home .lp-store-stats li {
+    padding: 14px 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--lp-line);
+  }
+  .lp-home .lp-store-stats li:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .lp-home .lp-store-stats strong {
+    font-size: 2em;
+  }
+  .lp-home .lp-store-about aside {
+    text-align: center;
+  }
+  .lp-home .lp-store-about aside ul {
+    justify-content: center;
+  }
+  .lp-home .lp-store-line {
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-home .lp-store-service-grid li,
+  .lp-home .lp-store-factory-grid img,
+  .lp-home .lp-store-blue-button {
+    transition: none;
+  }
+}
