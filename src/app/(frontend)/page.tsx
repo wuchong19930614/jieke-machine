@@ -339,7 +339,7 @@ export default async function HomePageView() {
                 subtitle={{ text: cases.subtitle, attrs: L(H, 'featuredCases.subtitle') }}
               />
               {cases.allButton ? (
-                <LinkTo link={linkHref(home.featuredCases?.allLink, draft) ?? { href: '/case-studies/', newTab: false }} className="lp-outline" attrs={L(H, 'featuredCases.allButton')}>
+                <LinkTo link={linkHref(home.featuredCases?.allLink, draft) ?? { href: '/case-studies/', newTab: false }} className="lp-link lp-home-cases-all" attrs={L(H, 'featuredCases.allButton')}>
                   {cases.allButton}
                 </LinkTo>
               ) : null}
@@ -353,6 +353,7 @@ export default async function HomePageView() {
                   buttonText={cases.cardButton}
                   buttonAttrs={L(H, 'featuredCases.cardButton')}
                   ratio={defaultRatio(theme, 'case')}
+                  sizes={list.length === 1 ? '(max-width: 1060px) 94vw, 960px' : undefined}
                   variant="featured"
                   labels={{ country: ui.caseList.countryLabel, equipment: ui.caseList.equipmentLabel }}
                   photosLabel={{ text: ui.caseDetail.photos || 'Project Photos', attrs: L(U, 'caseDetail.photos') }}
