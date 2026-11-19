@@ -3,7 +3,7 @@ import type { Field } from 'payload'
 
 import { textFields } from '@/content/defineTexts'
 import { ABOUT_BANNER_TEXTS, ABOUT_CAPABILITIES_TEXTS, ABOUT_INTRO_TEXTS, ABOUT_SCENES_TEXTS } from '@/content/texts'
-import { at, imageField, linkField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
+import { at, imageField, linkField, photoGalleryField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { ABOUT_SECTION_DEFAULT_BACKGROUND, ABOUT_SECTIONS } from '@/lib/constants'
 
@@ -77,6 +77,7 @@ export const AboutPage = editableGlobal({
         { name: 'body', type: 'richText', label: '正文', admin: { description: at(`${A} › 公司介绍 › 正文`) } },
         textStyleField('body', '正文'),
         imageField({ name: 'image', label: '公司或工厂图', location: `${A} › 公司介绍右侧` }),
+        photoGalleryField(`${A} › 公司介绍 › 公司与工厂图集`),
       ],
     },
     {

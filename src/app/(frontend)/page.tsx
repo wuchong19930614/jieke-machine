@@ -24,6 +24,7 @@ import { ProductionGallery } from '@/components/client/ProductionGallery'
 import { ImageModule, type ImageModuleRow } from '@/components/ImageModule'
 import { imageSrc, Img, mediaOf, ownOrGroupFit, ownOrGroupRatio, pickRatio } from '@/components/Img'
 import { linkHref, LinkTo } from '@/components/LinkTo'
+import { galleryPhotos, PhotoGallery } from '@/components/PhotoGallery'
 import { hasRichText, RichText } from '@/components/RichText'
 import { backgroundProps, type BackgroundSpec, deviceClass, orderedSections, Section, SectionTitle } from '@/components/Section'
 import { fill, withDefaults } from '@/content/defineTexts'
@@ -113,14 +114,14 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
         {quoteText || productText ? (
           <div className="lp-actions">
             {productText ? (
-              <Link href={product ? `/products/${product.slug}/` : '/products/'} className="lp-action" {...L(H, `${path}.productButtonText`)}>
+              <LinkTo link={linkHref(slide.productLink, draft) ?? { href: product ? `/products/${product.slug}/` : '/products/', newTab: false }} className="lp-action" attrs={L(H, `${path}.productButtonText`)}>
                 {productText}
-              </Link>
+              </LinkTo>
             ) : null}
             {quoteText ? (
-              <Link href={product ? `/contact/?product=${encodeURIComponent(product.slug)}` : '/contact/'} className={productText ? 'lp-outline' : 'lp-action'} {...L(H, `${path}.quoteButtonText`)}>
+              <LinkTo link={linkHref(slide.quoteLink, draft) ?? { href: product ? `/contact/?product=${encodeURIComponent(product.slug)}` : '/contact/', newTab: false }} className={productText ? 'lp-outline' : 'lp-action'} attrs={L(H, `${path}.quoteButtonText`)}>
                 {quoteText}
-              </Link>
+              </LinkTo>
             ) : null}
           </div>
         ) : null}
@@ -134,6 +135,7 @@ export default async function HomePageView() {
   const [home, aboutPage, settings, ui, theme, L] = await Promise.all([getHomePage(draft), getAboutPage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
   // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
   const textStyles = textStyleSheet(H, home)
+  const aboutPhotoStyles = textStyleSheet(globalDoc('about-page'), aboutPage)
   const productStyles = (home.productLines?.products ?? []).filter((product): product is Product => isVisibleDoc<Product>(product, draft)).map((product) => textStyleSheet(collectionDoc('products', product.id), product))
   const caseStyles = (home.featuredCases?.cases ?? []).filter((item): item is Case => isVisibleDoc<Case>(item, draft)).map((item) => textStyleSheet(collectionDoc('cases', item.id), item))
 
@@ -143,6 +145,10 @@ export default async function HomePageView() {
   const factory = withDefaults(T.HOME_FACTORY_TEXTS, home.factoryGallery)
   const lines = withDefaults(T.HOME_LINES_TEXTS, home.productLines)
   const cases = withDefaults(T.HOME_CASES_TEXTS, home.featuredCases)
+  const inquiry = home.inquiry?.custom ? withDefaults(T.CONTACT_BAND_TEXTS, home.inquiry) : settings.contactBand
+  const inquiryDoc = home.inquiry?.custom ? H : S
+  const inquiryPath = home.inquiry?.custom ? 'inquiry' : 'contactBand'
+  const inquiryHref = home.inquiry?.custom ? linkHref(home.inquiry.link, draft) : null
   const videoTexts = { playAria: ui.common.playVideo, videoError: ui.common.videoError, watchOnYouTube: ui.common.watchOnYouTube, contactUs: ui.common.contactUs, opensNewTab: ui.common.opensNewTab }
 
   const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND, IMAGE_SECTION_MODULES.map((m) => m.value))
@@ -177,7 +183,7 @@ export default async function HomePageView() {
         const items = (home.services?.items ?? []).map((item, index) => ({ item, index })).filter(({ item }) => item.name)
         if (!items.length) return null
         return (
-          <Section key={module} background={background} className="lp-home-services">
+          <Section key={module} id="services" background={background} className="lp-home-services">
             <SectionTitle title={{ text: services.title, attrs: L(H, 'services.title') }} subtitle={{ text: services.subtitle, attrs: L(H, 'services.subtitle') }} />
             <ul className="lp-store-service-grid">
               {items.map(({ item, index }) => {
@@ -222,39 +228,35 @@ export default async function HomePageView() {
         const useHomeImage = Boolean(mediaOf(home.aboutIntro?.image))
         const imageSource = useHomeImage ? home.aboutIntro : aboutPage.intro
         const image = mediaOf(imageSource?.image)
+        const homePhotos = galleryPhotos(home.aboutIntro?.photos)
+        const photos = homePhotos.length ? homePhotos : useHomeImage ? [] : galleryPhotos(aboutPage.intro?.photos)
         // 正文、公司名标题、标签都没有时整个模块不显示（小标题、标题和按钮只是模块外壳）
-        if (!companyTitle && !hasRichText(home.aboutIntro?.body) && !tags.length && !image) return null
+        if (!companyTitle && !hasRichText(home.aboutIntro?.body) && !tags.length && !image && !photos.length) return null
         return (
-          <Section key={module} background={background} className="lp-store-about lp-home-story">
-            <div className={image ? 'lp-home-story-copy has-image' : 'lp-home-story-copy'}>
-            <aside>
-              {about.kicker ? (
-                <div className="lp-kicker" {...L(H, 'aboutIntro.kicker')}>
-                  {about.kicker}
-                </div>
-              ) : null}
-              {about.title ? <h2 {...L(H, 'aboutIntro.title')}>{about.title}</h2> : null}
-              {tags.length ? (
-                <ul>
-                  {tags.map(({ t, index }) => (
-                    <li key={index} {...L(H, `aboutIntro.tags.${index}.label`)}>
-                      {t.label}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </aside>
-            <div className="lp-store-about-copy">
-              {companyTitle ? <h3 {...L(H, 'aboutIntro.companyTitle')}>{companyTitle}</h3> : null}
-              <RichText data={home.aboutIntro?.body} attrs={L(H, 'aboutIntro.body')} />
-              {about.buttonText ? (
-                <Link href="/about/" className="lp-store-blue-button" {...L(H, 'aboutIntro.buttonText')}>
-                  {about.buttonText}
-                </Link>
-              ) : null}
+          <Section key={module} id="company" background={background} className="lp-store-about lp-home-story">
+            <div className={image || photos.length ? 'lp-home-story-copy has-image' : 'lp-home-story-copy'}>
+              <aside>
+                {about.kicker ? <div className="lp-kicker" {...L(H, 'aboutIntro.kicker')}>{about.kicker}</div> : null}
+                {about.title ? <h2 {...L(H, 'aboutIntro.title')}>{about.title}</h2> : null}
+                {tags.length ? (
+                  <ul>
+                    {tags.map(({ t, index }) => <li key={index} {...L(H, `aboutIntro.tags.${index}.label`)}>{t.label}</li>)}
+                  </ul>
+                ) : null}
+              </aside>
+              <div className="lp-store-about-copy">
+                {companyTitle ? <h3 {...L(H, 'aboutIntro.companyTitle')}>{companyTitle}</h3> : null}
+                <RichText data={home.aboutIntro?.body} attrs={L(H, 'aboutIntro.body')} />
+                {about.buttonText ? (
+                  <LinkTo link={linkHref(home.aboutIntro?.buttonLink, draft) ?? { href: '/about/', newTab: false }} className="lp-store-blue-button" attrs={L(H, 'aboutIntro.buttonText')}>
+                    {about.buttonText}
+                  </LinkTo>
+                ) : null}
+              </div>
             </div>
-            </div>
-            <Img media={image} ratio={pickRatio(imageSource, 'image')} fit={imageSource?.imageFit} defaultRatio="original" sizes="(max-width: 767px) 100vw, 650px" attrs={useHomeImage ? L(H, 'aboutIntro.image') : L(globalDoc('about-page'), 'intro.image')} />
+            {photos.length ? (
+              <PhotoGallery photos={photos} doc={homePhotos.length ? H : globalDoc('about-page')} basePath={homePhotos.length ? 'aboutIntro' : 'intro'} L={L} zoomLabel={ui.common.clickToEnlarge} />
+            ) : <Img media={image} ratio={pickRatio(imageSource, 'image')} fit={imageSource?.imageFit} defaultRatio="original" sizes="(max-width: 767px) 100vw, 650px" attrs={useHomeImage ? L(H, 'aboutIntro.image') : L(globalDoc('about-page'), 'intro.image')} />}
           </Section>
         )
       }
@@ -293,25 +295,26 @@ export default async function HomePageView() {
         const products = (home.productLines?.products ?? []).filter((p): p is Product => isVisibleDoc<Product>(p, draft))
         if (!products.length) return null
         return (
-          <Section key={module} background={background} className="lp-home-production">
-            <ProductionGallery title={<SectionTitle title={{ text: lines.title, attrs: L(H, 'productLines.title') }} />} labels={{ prev: ui.banner.prev, next: ui.banner.next }} items={products.map((product) => {
+          <Section key={module} id="lines" background={background} className="lp-home-production">
+            <ProductionGallery title={<SectionTitle title={{ text: lines.title, attrs: L(H, 'productLines.title') }} subtitle={{ text: lines.subtitle, attrs: L(H, 'productLines.subtitle') }} />} labels={{ prev: ui.banner.prev, next: ui.banner.next }} items={products.map((product) => {
               const doc = collectionDoc('products', product.id)
               const href = `/products/${product.slug}/`
               return (
                 <article key={product.id} className="lp-production-slide">
                   {mediaOf(product.listImage) ? (
                     <LinkTo link={linkHref(product.listLink, draft) ?? { href, newTab: false }} className="lp-production-image" label={product.name}>
-                      <Img media={product.listImage} ratio={pickRatio(product, 'listImage')} fit={product.listImageFit} defaultRatio={defaultRatio(theme, 'equipment')} sizes="(max-width: 767px) 90vw, 900px" attrs={L(doc, 'listImage')} />
+                      <Img media={product.listImage} ratio={pickRatio(product, 'listImage')} fit={product.listImageFit} defaultRatio="12/5" defaultFit="cover" sizes="(max-width: 767px) 90vw, 900px" attrs={L(doc, 'listImage')} />
                     </LinkTo>
                   ) : null}
                   <div className="lp-production-caption">
                     <h3 {...L(doc, 'name')}><Link href={href}>{product.name}</Link></h3>
                     {product.listSummary ? <p {...L(doc, 'listSummary')}>{product.listSummary}</p> : null}
-                    {lines.buttonText ? <Link className="lp-link" href={href} {...L(H, 'productLines.buttonText')}>{lines.buttonText} →</Link> : null}
+                    {lines.buttonText ? <Link className="lp-link" href={href} {...L(H, 'productLines.buttonText')}>{lines.buttonText}</Link> : null}
                   </div>
                 </article>
               )
             })} />
+            {lines.inquiryButton ? <div className="lp-production-tail"><LinkTo className="lp-link" link={linkHref(home.productLines?.inquiryLink, draft) ?? { href: '/contact/', newTab: false }} attrs={L(H, 'productLines.inquiryButton')}>{lines.inquiryButton}</LinkTo></div> : null}
           </Section>
         )
       }
@@ -320,12 +323,19 @@ export default async function HomePageView() {
         const list = (home.featuredCases?.cases ?? []).filter((c): c is Case => isVisibleDoc<Case>(c, draft)).slice(0, 3)
         if (!list.length) return null
         return (
-          <Section key={module} background={background} className="lp-home-cases">
-            <SectionTitle
-              kicker={{ text: cases.kicker, attrs: L(H, 'featuredCases.kicker') }}
-              title={{ text: cases.title, attrs: L(H, 'featuredCases.title') }}
-              subtitle={{ text: cases.subtitle, attrs: L(H, 'featuredCases.subtitle') }}
-            />
+          <Section key={module} id="cases" background={background} className={list.length === 1 ? 'lp-home-cases lp-home-cases--single' : 'lp-home-cases'}>
+            <div className="lp-home-cases-heading">
+              <SectionTitle
+                kicker={{ text: cases.kicker, attrs: L(H, 'featuredCases.kicker') }}
+                title={{ text: cases.title, attrs: L(H, 'featuredCases.title') }}
+                subtitle={{ text: cases.subtitle, attrs: L(H, 'featuredCases.subtitle') }}
+              />
+              {cases.allButton ? (
+                <LinkTo link={linkHref(home.featuredCases?.allLink, draft) ?? { href: '/case-studies/', newTab: false }} className="lp-outline" attrs={L(H, 'featuredCases.allButton')}>
+                  {cases.allButton}
+                </LinkTo>
+              ) : null}
+            </div>
             <div className="lp-grid3">
               {list.map((item) => (
                 <CaseCard
@@ -336,18 +346,14 @@ export default async function HomePageView() {
                   buttonAttrs={L(H, 'featuredCases.cardButton')}
                   ratio={defaultRatio(theme, 'case')}
                   variant="featured"
+                  labels={{ country: ui.caseList.countryLabel, equipment: ui.caseList.equipmentLabel }}
+                  photosLabel={{ text: ui.caseDetail.photos || 'Project Photos', attrs: L(U, 'caseDetail.photos') }}
+                  zoomLabel={ui.common.clickToEnlarge}
                   videoTexts={videoTexts}
                   draft={draft}
                 />
               ))}
             </div>
-            {cases.allButton ? (
-              <div style={{ textAlign: 'center', marginTop: 26 }}>
-                <Link href="/case-studies/" className="lp-outline" {...L(H, 'featuredCases.allButton')}>
-                  {cases.allButton}
-                </Link>
-              </div>
-            ) : null}
           </Section>
         )
       }
@@ -368,12 +374,26 @@ export default async function HomePageView() {
   // 没有 Banner 时给读屏一个 h1；Banner 只在电脑（或只在手机）显示时，另一类设备上也补一个
   const srTitle = !bannerSection ? 'sr-only' : bannerDevice === 'lp-only-desktop' ? 'sr-only lp-only-mobile' : bannerDevice === 'lp-only-mobile' ? 'sr-only lp-only-desktop' : null
   return (
-    <div className={theme.bannerWidth === 'full' ? 'lp-home lp-home-wide' : 'lp-home'}>
+    <div className={`lp-home${theme.bannerWidth === 'full' ? ' lp-home-wide' : ''}`} data-home-topbar={home.showTopBar ? 'show' : 'hide'}>
       {textStyles}
+      {aboutPhotoStyles}
       {productStyles}
       {caseStyles}
       {srTitle ? <h1 className={srTitle}>{settings.companyName || 'Home'}</h1> : null}
       {content}
+      {inquiry.title || inquiry.text || inquiry.buttonText ? (
+        <section id="quote" className="lp-contact-band lp-home-quote">
+          <div>
+            {inquiry.title ? <h2 {...L(inquiryDoc, `${inquiryPath}.title`)}>{inquiry.title}</h2> : null}
+            {inquiry.text ? <p {...L(inquiryDoc, `${inquiryPath}.text`)}>{inquiry.text}</p> : null}
+          </div>
+          {inquiry.buttonText ? (
+            <LinkTo link={inquiryHref ?? { href: '/contact/', newTab: false }} className="lp-action" attrs={L(inquiryDoc, `${inquiryPath}.buttonText`)}>
+              {inquiry.buttonText}
+            </LinkTo>
+          ) : null}
+        </section>
+      ) : null}
     </div>
   )
 }

@@ -321,7 +321,7 @@ export interface Product {
     | boolean
     | null;
   /**
-   * 前台位置：首页生产线、产品列表、相关生产线卡片。建议尺寸：1600×1000 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+   * 前台位置：首页生产线、产品列表、相关生产线卡片。首页横滑大图建议 1920×800 px；产品列表和相关生产线卡片建议将设备主体居中。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   listImage?: (number | null) | Media;
   /**
@@ -1575,6 +1575,19 @@ export interface Case {
    */
   coverImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
+   * 显示在封面图片下方。留空时使用案例简介或媒体库图片说明。
+   */
+  coverCaption?: string | null;
+  coverCaptionStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
    * 前台位置：首页案例卡片、产品详情的客户案例块。建议 160 个字符以内
    */
   summary?: string | null;
@@ -1709,7 +1722,45 @@ export interface Case {
    */
   heroImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：案例详情 › Project Photos。建议 1200×900 px，可点击放大；选择原图比例后，每张图按自己的宽高调整。
+   * 前台位置：案例详情 › 现场图片 / 首页精选案例。第一张为首图，拖动可排序。建议使用清晰横图 1600×1000 px；设备细节图可上传竖图 1000×1400 px。前台按数量自动排列，手机端收成单列。
+   */
+  photos?:
+    | {
+        /**
+         * 前台位置：案例详情 › 现场图片 / 首页精选案例。推荐横图 1600×1000 px 或竖图 1000×1400 px。默认完整显示。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+         */
+        image: number | Media;
+        /**
+         * 前台位置：案例详情 › 现场图片 / 首页精选案例。“按用途默认”取主题里的默认比例
+         */
+        imageRatio?:
+          ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+        /**
+         * 图框比例选“自定义…”时填写，例如 5:4、21:9
+         */
+        imageRatioCustom?: string | null;
+        /**
+         * 前台位置：案例详情 › 现场图片 / 首页精选案例
+         */
+        imageFit?: ('default' | 'contain' | 'cover') | null;
+        /**
+         * 显示在本图正下方，可说明设备、现场进度或交付情况。
+         */
+        caption: string;
+        captionStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 前台位置：案例详情 › Project Photos。旧图继续显示在「图片与说明」之后。两处选了同一张图时，使用「图片与说明」里的设置。建议 1200×900 px，旧图说明取媒体库。
    */
   gallery?: (number | Media)[] | null;
   /**
@@ -2862,6 +2913,8 @@ export interface CasesSelect<T extends boolean = true> {
   coverImageRatio?: T;
   coverImageRatioCustom?: T;
   coverImageFit?: T;
+  coverCaption?: T;
+  coverCaptionStyle?: T;
   summary?: T;
   summaryStyle?: T;
   capacityStyle?: T;
@@ -2880,6 +2933,17 @@ export interface CasesSelect<T extends boolean = true> {
   heroImageRatio?: T;
   heroImageRatioCustom?: T;
   heroImageFit?: T;
+  photos?:
+    | T
+    | {
+        image?: T;
+        imageRatio?: T;
+        imageRatioCustom?: T;
+        imageFit?: T;
+        caption?: T;
+        captionStyle?: T;
+        id?: T;
+      };
   gallery?: T;
   galleryRatio?: T;
   galleryRatioCustom?: T;
@@ -6843,6 +6907,10 @@ export interface HomePage {
       }[]
     | null;
   /**
+   * V4 样稿默认隐藏首页顶部细条；右侧联系浮窗仍按原设置显示。
+   */
+  showTopBar?: boolean | null;
+  /**
    * 前台位置：首页 › Banner。按顺序播放已启用的 Banner，每 5 秒切换一次
    */
   banners?: {
@@ -6907,6 +6975,17 @@ export interface HomePage {
             | boolean
             | null;
           /**
+           * 前台位置：首页 › Banner 报价按钮
+           */
+          quoteLink?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
+          /**
            * 进入关联产品详情；没有已发布的关联产品时进入产品列表。
            */
           productButtonText?: string | null;
@@ -6920,6 +6999,17 @@ export interface HomePage {
             | number
             | boolean
             | null;
+          /**
+           * 前台位置：首页 › Banner 产品按钮
+           */
+          productLink?: {
+            type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+            product?: (number | null) | Product;
+            caseStudy?: (number | null) | Case;
+            page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+            url?: string | null;
+            newTab?: boolean | null;
+          };
           /**
            * “查看产品”链接自动取该产品的网址
            */
@@ -7113,6 +7203,17 @@ export interface HomePage {
       | boolean
       | null;
     /**
+     * 前台位置：首页 › 公司简介按钮
+     */
+    buttonLink?: {
+      type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+      product?: (number | null) | Product;
+      caseStudy?: (number | null) | Case;
+      page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
+    /**
      * 属宣传性表述，请确认属实后再用
      */
     tags?:
@@ -7173,6 +7274,44 @@ export interface HomePage {
      * 前台位置：首页 › 公司简介
      */
     imageFit?: ('default' | 'contain' | 'cover') | null;
+    /**
+     * 前台位置：首页 › 公司简介右侧图集（留空沿用现有单图或关于我们图集）。第一张为首图，拖动可排序。建议使用清晰横图 1600×1000 px；设备细节图可上传竖图 1000×1400 px。前台按数量自动排列，手机端收成单列。
+     */
+    photos?:
+      | {
+          /**
+           * 前台位置：首页 › 公司简介右侧图集（留空沿用现有单图或关于我们图集）。推荐横图 1600×1000 px 或竖图 1000×1400 px。默认完整显示。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+           */
+          image: number | Media;
+          /**
+           * 前台位置：首页 › 公司简介右侧图集（留空沿用现有单图或关于我们图集）。“按用途默认”取主题里的默认比例
+           */
+          imageRatio?:
+            ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+          /**
+           * 图框比例选“自定义…”时填写，例如 5:4、21:9
+           */
+          imageRatioCustom?: string | null;
+          /**
+           * 前台位置：首页 › 公司简介右侧图集（留空沿用现有单图或关于我们图集）
+           */
+          imageFit?: ('default' | 'contain' | 'cover') | null;
+          /**
+           * 显示在本图正下方，可说明设备、现场进度或交付情况。
+           */
+          caption?: string | null;
+          captionStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * 前台位置：首页 › Factory & Workshop。初始 6 张，桌面 3 列 2 行
@@ -7287,6 +7426,20 @@ export interface HomePage {
       | boolean
       | null;
     /**
+     * 前台位置：首页 › 生产线 › 模块说明
+     */
+    subtitle?: string | null;
+    subtitleHidden?: boolean | null;
+    subtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
      * 前台位置：首页 › 生产线 › 卡片按钮
      */
     buttonText?: string | null;
@@ -7300,10 +7453,35 @@ export interface HomePage {
       | number
       | boolean
       | null;
+    /**
+     * 前台位置：首页 › 生产线 › 下方咨询按钮
+     */
+    inquiryButton?: string | null;
+    inquiryButtonHidden?: boolean | null;
+    inquiryButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 生产线 › 咨询按钮
+     */
+    inquiryLink?: {
+      type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+      product?: (number | null) | Product;
+      caseStudy?: (number | null) | Case;
+      page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
     products?: (number | Product)[] | null;
   };
   /**
-   * 前台位置：首页 › Customer Case Studies。最多 3 个；有视频时显示 16:9 视频封面，点击后原位播放
+   * 前台位置：首页 › Customer Case Studies。最多 3 个。每个案例的封面、国家、设备和图片说明在对应案例记录中编辑。
    */
   featuredCases?: {
     /**
@@ -7375,7 +7553,77 @@ export interface HomePage {
       | number
       | boolean
       | null;
+    /**
+     * 前台位置：首页 › 客户案例 › 查看全部
+     */
+    allLink?: {
+      type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+      product?: (number | null) | Product;
+      caseStudy?: (number | null) | Case;
+      page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
     cases?: (number | Case)[] | null;
+  };
+  /**
+   * V4 首页底部询价区。关闭独立设置时，跟随全站设置里的报价引导条。
+   */
+  inquiry?: {
+    custom?: boolean | null;
+    /**
+     * 前台位置：首页 › 首页询价 › 标题
+     */
+    title?: string | null;
+    titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 首页询价 › 说明
+     */
+    text?: string | null;
+    textHidden?: boolean | null;
+    textStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 首页询价 › 按钮
+     */
+    buttonText?: string | null;
+    buttonTextHidden?: boolean | null;
+    buttonTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 首页询价按钮
+     */
+    link?: {
+      type?: ('default' | 'product' | 'caseStudy' | 'page' | 'custom') | null;
+      product?: (number | null) | Product;
+      caseStudy?: (number | null) | Case;
+      page?: ('/' | '/products/' | '/case-studies/' | '/about/' | '/contact/') | null;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
   };
   /**
    * 只影响首页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
@@ -7568,6 +7816,44 @@ export interface AboutPage {
      * 前台位置：关于我们 › 公司介绍右侧
      */
     imageFit?: ('default' | 'contain' | 'cover') | null;
+    /**
+     * 前台位置：关于我们 › 公司介绍 › 公司与工厂图集。第一张为首图，拖动可排序。建议使用清晰横图 1600×1000 px；设备细节图可上传竖图 1000×1400 px。前台按数量自动排列，手机端收成单列。
+     */
+    photos?:
+      | {
+          /**
+           * 前台位置：关于我们 › 公司介绍 › 公司与工厂图集。推荐横图 1600×1000 px 或竖图 1000×1400 px。默认完整显示。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+           */
+          image: number | Media;
+          /**
+           * 前台位置：关于我们 › 公司介绍 › 公司与工厂图集。“按用途默认”取主题里的默认比例
+           */
+          imageRatio?:
+            ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+          /**
+           * 图框比例选“自定义…”时填写，例如 5:4、21:9
+           */
+          imageRatioCustom?: string | null;
+          /**
+           * 前台位置：关于我们 › 公司介绍 › 公司与工厂图集
+           */
+          imageFit?: ('default' | 'contain' | 'cover') | null;
+          /**
+           * 显示在本图正下方，可说明设备、现场进度或交付情况。
+           */
+          caption?: string | null;
+          captionStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   scenes?: {
     /**
@@ -8939,6 +9225,7 @@ export interface HomePageSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  showTopBar?: T;
   banners?:
     | T
     | {
@@ -8959,9 +9246,29 @@ export interface HomePageSelect<T extends boolean = true> {
               quoteButtonText?: T;
               quoteButtonTextHidden?: T;
               quoteButtonTextStyle?: T;
+              quoteLink?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
               productButtonText?: T;
               productButtonTextHidden?: T;
               productButtonTextStyle?: T;
+              productLink?:
+                | T
+                | {
+                    type?: T;
+                    product?: T;
+                    caseStudy?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
               product?: T;
               link?:
                 | T
@@ -9024,6 +9331,16 @@ export interface HomePageSelect<T extends boolean = true> {
         buttonText?: T;
         buttonTextHidden?: T;
         buttonTextStyle?: T;
+        buttonLink?:
+          | T
+          | {
+              type?: T;
+              product?: T;
+              caseStudy?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
         tags?:
           | T
           | {
@@ -9037,6 +9354,17 @@ export interface HomePageSelect<T extends boolean = true> {
         imageRatio?: T;
         imageRatioCustom?: T;
         imageFit?: T;
+        photos?:
+          | T
+          | {
+              image?: T;
+              imageRatio?: T;
+              imageRatioCustom?: T;
+              imageFit?: T;
+              caption?: T;
+              captionStyle?: T;
+              id?: T;
+            };
       };
   factoryGallery?:
     | T
@@ -9078,9 +9406,25 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         titleHidden?: T;
         titleStyle?: T;
+        subtitle?: T;
+        subtitleHidden?: T;
+        subtitleStyle?: T;
         buttonText?: T;
         buttonTextHidden?: T;
         buttonTextStyle?: T;
+        inquiryButton?: T;
+        inquiryButtonHidden?: T;
+        inquiryButtonStyle?: T;
+        inquiryLink?:
+          | T
+          | {
+              type?: T;
+              product?: T;
+              caseStudy?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
         products?: T;
       };
   featuredCases?:
@@ -9100,7 +9444,41 @@ export interface HomePageSelect<T extends boolean = true> {
         allButton?: T;
         allButtonHidden?: T;
         allButtonStyle?: T;
+        allLink?:
+          | T
+          | {
+              type?: T;
+              product?: T;
+              caseStudy?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
         cases?: T;
+      };
+  inquiry?:
+    | T
+    | {
+        custom?: T;
+        title?: T;
+        titleHidden?: T;
+        titleStyle?: T;
+        text?: T;
+        textHidden?: T;
+        textStyle?: T;
+        buttonText?: T;
+        buttonTextHidden?: T;
+        buttonTextStyle?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              product?: T;
+              caseStudy?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
       };
   seo?:
     | T
@@ -9158,6 +9536,17 @@ export interface AboutPageSelect<T extends boolean = true> {
         imageRatio?: T;
         imageRatioCustom?: T;
         imageFit?: T;
+        photos?:
+          | T
+          | {
+              image?: T;
+              imageRatio?: T;
+              imageRatioCustom?: T;
+              imageFit?: T;
+              caption?: T;
+              captionStyle?: T;
+              id?: T;
+            };
       };
   scenes?:
     | T

@@ -63,6 +63,26 @@ export function imageField({ name, label, location, required, hint, documents }:
   }
 }
 
+export function photoGalleryField(location: string, { captionsRequired = false }: { captionsRequired?: boolean } = {}): ArrayField {
+  return {
+    name: 'photos',
+    type: 'array',
+    label: '图片与说明',
+    labels: { singular: '照片', plural: '照片' },
+    maxRows: 16,
+    admin: {
+      description: at(location, '第一张为首图，拖动可排序。建议使用清晰横图 1600×1000 px；设备细节图可上传竖图 1000×1400 px。前台按数量自动排列，手机端收成单列。'),
+      initCollapsed: true,
+      components: { RowLabel: titleRowLabel('caption') },
+    },
+    fields: [
+      imageField({ name: 'image', label: '照片', location, required: true, hint: '推荐横图 1600×1000 px 或竖图 1000×1400 px。默认完整显示。' }),
+      { name: 'caption', type: 'textarea', label: '这张图的说明', required: captionsRequired, admin: { description: '显示在本图正下方，可说明设备、现场进度或交付情况。' } },
+      textStyleField('caption', '图片说明'),
+    ],
+  }
+}
+
 // 自定义比例“宽:高”，允许中文冒号和小数
 export const CUSTOM_RATIO = /^\d+(\.\d+)?\s*[:：]\s*\d+(\.\d+)?$/
 

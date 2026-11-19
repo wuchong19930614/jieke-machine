@@ -4,7 +4,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionCo
 import { isLoggedIn, recordCreateDeleteAccess, recordEditAccess } from '@/access'
 import { overrideGroup } from '@/content/overrideFields'
 import { UI_CASE_DETAIL } from '@/content/texts'
-import { at, imageField, ratioFitFields, seoGroup, slugField, textStyleField } from '@/fields'
+import { at, imageField, photoGalleryField, ratioFitFields, seoGroup, slugField, textStyleField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
@@ -74,6 +74,8 @@ export const Cases: CollectionConfig = {
           ],
         },
         imageField({ name: 'coverImage', label: '封面图', location: '案例列表卡片、首页精选案例' }),
+        { name: 'coverCaption', type: 'textarea', label: '封面图片说明', admin: { description: '显示在封面图片下方。留空时使用案例简介或媒体库图片说明。' } },
+        textStyleField('coverCaption', '封面图片说明'),
         { name: 'summary', type: 'textarea', label: '项目简介', admin: { description: at('首页案例卡片、产品详情的客户案例块', '建议 160 个字符以内') } },
         textStyleField('summary', '项目简介'),
         textStyleField('capacity', '产能'),
@@ -129,6 +131,7 @@ export const Cases: CollectionConfig = {
       admin: { initCollapsed: true },
       fields: [
         imageField({ name: 'heroImage', label: '详情页主图', location: `${D}顶部`, hint: '不填时用封面图' }),
+        photoGalleryField(`${D} › 现场图片 / 首页精选案例`, { captionsRequired: true }),
         {
           type: 'row',
           fields: [
@@ -137,9 +140,9 @@ export const Cases: CollectionConfig = {
               type: 'upload',
               relationTo: 'media',
               hasMany: true,
-              label: '现场图片',
+              label: '原有现场图片',
               filterOptions: { mimeType: { contains: 'image' } },
-              admin: { width: '50%', description: at(`${D} › Project Photos`, '建议 1200×900 px，可点击放大；选择原图比例后，每张图按自己的宽高调整。') },
+              admin: { width: '50%', description: at(`${D} › Project Photos`, '旧图继续显示在「图片与说明」之后。两处选了同一张图时，使用「图片与说明」里的设置。建议 1200×900 px，旧图说明取媒体库。') },
             },
             ...ratioFitFields('gallery', `${D} › Project Photos`),
           ],

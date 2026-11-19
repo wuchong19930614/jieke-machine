@@ -179,7 +179,7 @@ export const Products: CollectionConfig = {
           ],
         },
         textStyleField('name', '英文名称'),
-        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片' }),
+        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片', hint: '首页横滑大图建议 1920×800 px；产品列表和相关生产线卡片建议将设备主体居中。' }),
         linkField({ name: 'listLink', label: '点击列表图跳转', location: '首页生产线、产品列表里点击列表图时打开的页面', defaultLabel: '本产品详情页（默认）' }),
         {
           name: 'listSummary',

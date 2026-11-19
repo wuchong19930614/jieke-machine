@@ -407,7 +407,9 @@ export const HOME_FACTORY_TEXTS = {
 
 export const HOME_LINES_TEXTS = {
   title: ['模块标题', 'Our Production Lines', { hideable: true }],
+  subtitle: ['模块说明', 'Explore equipment by the type of food you process.', { hideable: true }],
   buttonText: ['卡片按钮', 'View Details →', { hideable: true }],
+  inquiryButton: ['下方咨询按钮', 'Discuss Your Project ↗', { hideable: true }],
 } as const satisfies TextDefs
 
 export const HOME_CASES_TEXTS = {

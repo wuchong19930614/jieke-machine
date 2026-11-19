@@ -1,6 +1,7 @@
 // 首页配置（技术方案 3.3），模块默认顺序按需求书第二部分
 import { textFields } from '@/content/defineTexts'
 import {
+  CONTACT_BAND_TEXTS,
   HOME_ABOUT_TEXTS,
   HOME_CASES_TEXTS,
   HOME_FACTORY_TEXTS,
@@ -9,7 +10,7 @@ import {
   HOME_STATS_TEXTS,
   UI_BANNER,
 } from '@/content/texts'
-import { at, hideField, imageField, linkField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
+import { at, hideField, imageField, linkField, photoGalleryField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS, SERVICE_ICONS } from '@/lib/constants'
 
@@ -24,6 +25,7 @@ export const HomePage = editableGlobal({
   refresh: [PATHS.home],
   fields: [
     sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),
+    { name: 'showTopBar', type: 'checkbox', label: '首页显示顶部联系方式细条', defaultValue: false, admin: { description: 'V4 样稿默认隐藏首页顶部细条；右侧联系浮窗仍按原设置显示。' } },
     {
       name: 'banners',
       type: 'group',
@@ -89,6 +91,7 @@ export const HomePage = editableGlobal({
               ],
             },
             textStyleField('quoteButtonText', '报价按钮', { opacity: false }),
+            linkField({ name: 'quoteLink', label: '报价按钮跳转', location: `${H} › Banner 报价按钮`, defaultLabel: '联系页（有关联产品时带入产品）' }),
             {
               type: 'row',
               fields: [
@@ -97,6 +100,7 @@ export const HomePage = editableGlobal({
               ],
             },
             textStyleField('productButtonText', '产品按钮', { opacity: false }),
+            linkField({ name: 'productLink', label: '产品按钮跳转', location: `${H} › Banner 产品按钮`, defaultLabel: '关联产品或产品列表' }),
             { name: 'product', type: 'relationship', relationTo: 'products', label: '关联产品', admin: { description: '“查看产品”链接自动取该产品的网址' } },
             linkField({ name: 'link', label: '点击横幅图片跳转', location: `${H} › Banner 图片上文字和按钮以外的地方`, defaultLabel: '不跳转' }),
           ],
@@ -172,6 +176,7 @@ export const HomePage = editableGlobal({
       admin: { description: at(`${H} › About Us`) },
       fields: [
         ...textFields(HOME_ABOUT_TEXTS, `${H} › 公司简介`, { styled: true }),
+        linkField({ name: 'buttonLink', label: '公司简介按钮跳转', location: `${H} › 公司简介按钮`, defaultLabel: '关于我们' }),
         {
           name: 'tags',
           type: 'array',
@@ -189,6 +194,7 @@ export const HomePage = editableGlobal({
         { name: 'body', type: 'richText', label: '简介正文', admin: { description: at(`${H} › 公司简介 › 正文`) } },
         textStyleField('body', '简介正文'),
         imageField({ name: 'image', label: '公司简介配图', location: `${H} › 公司简介`, hint: '建议 1200×800 px；留空时使用「关于我们 › 公司介绍」配图。' }),
+        photoGalleryField(`${H} › 公司简介右侧图集（留空沿用现有单图或关于我们图集）`),
       ],
     },
     {
@@ -223,6 +229,7 @@ export const HomePage = editableGlobal({
       admin: { description: at(`${H} › 生产线`, '选中顺序即轮播顺序；大图来自各产品的列表图。') },
       fields: [
         ...textFields(HOME_LINES_TEXTS, `${H} › 生产线`, { styled: true }),
+        linkField({ name: 'inquiryLink', label: '生产线咨询按钮跳转', location: `${H} › 生产线 › 咨询按钮`, defaultLabel: '联系页' }),
         { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: '生产线' },
       ],
     },
@@ -230,10 +237,22 @@ export const HomePage = editableGlobal({
       name: 'featuredCases',
       type: 'group',
       label: '客户案例',
-      admin: { description: at(`${H} › Customer Case Studies`, '最多 3 个；有视频时显示 16:9 视频封面，点击后原位播放') },
+      admin: { description: at(`${H} › Customer Case Studies`, '最多 3 个。每个案例的封面、国家、设备和图片说明在对应案例记录中编辑。') },
       fields: [
         ...textFields(HOME_CASES_TEXTS, `${H} › 客户案例`, { styled: true }),
+        linkField({ name: 'allLink', label: '查看案例按钮跳转', location: `${H} › 客户案例 › 查看全部`, defaultLabel: '案例列表' }),
         { name: 'cases', type: 'relationship', relationTo: 'cases', hasMany: true, maxRows: 3, label: '精选案例' },
+      ],
+    },
+    {
+      name: 'inquiry',
+      type: 'group',
+      label: '首页询价',
+      admin: { description: 'V4 首页底部询价区。关闭独立设置时，跟随全站设置里的报价引导条。' },
+      fields: [
+        { name: 'custom', type: 'checkbox', label: '使用首页独立文案', defaultValue: false },
+        ...textFields(CONTACT_BAND_TEXTS, `${H} › 首页询价`, { styled: true }),
+        linkField({ location: `${H} › 首页询价按钮`, defaultLabel: '联系页' }),
       ],
     },
     seoGroup(H),

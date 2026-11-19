@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { notFoundMetadata } from '@/components/AuxPage'
-import { ZoomButton } from '@/components/client/Lightbox'
+import { galleryPhotos, PhotoGallery } from '@/components/PhotoGallery'
 import { VideoEmbed } from '@/components/client/VideoEmbed'
 import { Img, mediaOf, pickRatio } from '@/components/Img'
 import { hasRichText, RichText } from '@/components/RichText'
@@ -18,7 +18,7 @@ import { redirectOr404 } from '@/lib/redirectOr404'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import { youtubeId } from '@/lib/youtube'
-import type { Media, Product } from '@/payload-types'
+import type { Product } from '@/payload-types'
 
 type Params = { params: Promise<{ slug: string }> }
 
@@ -58,10 +58,19 @@ export default async function CaseDetailPage({ params }: Params) {
   const textStyles = textStyleSheet(C, item)
   const t = { ...ui.caseDetail, ...overrideTexts(item.sectionTexts) }
   const lines = (item.products ?? []).filter((p): p is Product => isVisibleDoc<Product>(p, draft))
-  const gallery = (item.gallery ?? []).map(mediaOf).filter((m): m is Media => Boolean(m?.url))
+  const gallery = galleryPhotos(item.photos, item.gallery ?? [], pickRatio(item, 'gallery'), item.galleryFit, item.summary || item.title)
   const video = youtubeId(item.videoUrl)
   const cover = mediaOf(item.videoCover) ?? mediaOf(item.coverImage)
   const heroField = mediaOf(item.heroImage) ? 'heroImage' : 'coverImage'
+  const hero = mediaOf(item[heroField])
+  const heroPhoto = gallery.find(({ media }) => media.id === hero?.id)
+  const heroCaption = heroField === 'coverImage'
+    ? item.coverCaption || heroPhoto?.caption || item.summary || hero?.caption
+    : heroPhoto?.caption || hero?.caption || item.summary || item.title
+  const heroCaptionPath = heroField === 'coverImage' && item.coverCaption
+    ? 'coverCaption'
+    : heroPhoto?.path ? `${heroPhoto.path}.caption` : 'summary'
+  const galleryPhotosAfterHero = gallery.filter(({ media }) => media.id !== hero?.id)
 
   const overview = [
     item.showCustomerName && item.customerName ? { label: t.customer, labelKey: 'customer', value: item.customerName, path: 'customerName' } : null,
@@ -97,7 +106,7 @@ export default async function CaseDetailPage({ params }: Params) {
       </PageBanner>
       <Section>
         <div className="lp-article">
-          <div className="lp-wide-image">
+          {hero ? <figure className="lp-wide-image">
             <Img
               media={item[heroField]}
               ratio={pickRatio(item, heroField)}
@@ -108,7 +117,8 @@ export default async function CaseDetailPage({ params }: Params) {
               priority
               attrs={L(C, heroField)}
             />
-          </div>
+            {heroCaption ? <figcaption className="lp-muted lp-case-description" {...L(C, heroCaptionPath)}>{heroCaption}</figcaption> : null}
+          </figure> : null}
           {overview.length ? (
             <>
               {t.overviewTitle ? <h2 {...L(C, 'sectionTexts.overviewTitle')}>{t.overviewTitle}</h2> : null}
@@ -136,21 +146,10 @@ export default async function CaseDetailPage({ params }: Params) {
               </div>
             ) : null,
           )}
-          {gallery.length ? (
+          {galleryPhotosAfterHero.length ? (
             <>
               {t.photos ? <h3 {...L(C, 'sectionTexts.photos')}>{t.photos}</h3> : null}
-              <div className="lp-grid3" {...L(C, 'gallery')}>
-                {gallery.map((m, index) => (
-                  <ZoomButton
-                    key={m.id}
-                    index={index}
-                    label={ui.common.clickToEnlarge}
-                    items={gallery.map((g) => ({ src: g.url!, alt: g.alt ?? '', caption: g.caption, width: g.width, height: g.height }))}
-                  >
-                    <Img media={m} ratio={pickRatio(item, 'gallery')} fit={item.galleryFit} defaultRatio={defaultRatio(theme, 'case')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 300px" />
-                  </ZoomButton>
-                ))}
-              </div>
+              <PhotoGallery photos={galleryPhotosAfterHero} doc={C} L={L} zoomLabel={ui.common.clickToEnlarge} />
             </>
           ) : null}
           {video ? (
