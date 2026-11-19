@@ -15,11 +15,14 @@ export function galleryPhotos(rows: PhotoRow[] | null | undefined, legacy: unkno
       ratio: pickRatio(row, 'image'), fit: row.imageFit, path: `photos.${index}`,
     }] : []
   })
-  if (listed.length) return listed
-  return legacy.flatMap((value, index): GalleryPhoto[] => {
+  const seen = new Set(listed.map(({ media }) => media.id))
+  const remaining = legacy.flatMap((value, index): GalleryPhoto[] => {
     const media = mediaOf(value)
-    return media ? [{ key: `legacy-${index}-${media.id}`, media, caption: media.caption || captionFallback, ratio: legacyRatio, fit: legacyFit }] : []
+    if (!media || seen.has(media.id)) return []
+    seen.add(media.id)
+    return [{ key: `legacy-${index}-${media.id}`, media, caption: media.caption || captionFallback, ratio: legacyRatio, fit: legacyFit }]
   })
+  return [...listed, ...remaining]
 }
 
 export function PhotoGallery({ photos, doc, basePath = '', L, zoomLabel, compact = false }: { photos: GalleryPhoto[]; doc: DocKey; basePath?: string; L: Locator; zoomLabel: string; compact?: boolean }) {

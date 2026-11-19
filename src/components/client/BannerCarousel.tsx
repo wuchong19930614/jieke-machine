@@ -138,7 +138,7 @@ export function BannerCarousel({
         </div>
       ))}
       {total > 1 ? (
-        <>
+        <div className="lp-banner-controls">
           <button type="button" className="lp-banner-arrow lp-banner-prev" aria-label={texts.prev} onClick={() => go(index - 1)}>
             ‹
           </button>
@@ -170,7 +170,7 @@ export function BannerCarousel({
               {paused ? texts.play : texts.pause}
             </button>
           </div>
-        </>
+        </div>
       ) : null}
     </section>
   )

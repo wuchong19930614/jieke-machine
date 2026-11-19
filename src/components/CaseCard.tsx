@@ -20,12 +20,13 @@ type Props = {
   ratio: string
   variant: 'featured' | 'list' | 'related'
   labels?: { country: string; equipment: string }
+  photosLabel?: { text: string; attrs?: LocateAttrs }
   zoomLabel?: string
   videoTexts?: { playAria: string; videoError: string; watchOnYouTube: string; contactUs: string; opensNewTab: string }
   draft: boolean
 }
 
-export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, labels, zoomLabel, videoTexts, draft }: Props) {
+export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, labels, photosLabel, zoomLabel, videoTexts, draft }: Props) {
   const doc = collectionDoc('cases', item.id)
   const href = `/case-studies/${item.slug}/`
   const video = variant === 'featured' ? youtubeId(item.videoUrl) : null
@@ -80,12 +81,12 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, lab
           <div className="lp-params">
             {item.country ? (
               <span {...L(doc, 'country')}>
-                {labels.country} <b>{countryName(item.country)}</b>
+                <span>{labels.country}</span> <b>{countryName(item.country)}</b>
               </span>
             ) : null}
             {equipmentText ? (
               <span>
-                {labels.equipment} <b {...L(doc, item.equipmentConfiguration ? 'equipmentConfiguration' : 'products')}>{equipmentText}</b>
+                <span>{labels.equipment}</span> <b {...L(doc, item.equipmentConfiguration ? 'equipmentConfiguration' : 'products')}>{equipmentText}</b>
               </span>
             ) : null}
           </div>
@@ -96,7 +97,12 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, lab
           </Link>
         ) : null}
       </div>
-      {zoomLabel && extraPhotos.length ? <PhotoGallery photos={extraPhotos} doc={doc} L={L} zoomLabel={zoomLabel} compact /> : null}
+      {photosLabel && zoomLabel && extraPhotos.length ? (
+        <details className="lp-case-gallery">
+          <summary><span {...photosLabel.attrs}>{photosLabel.text}</span> <span>({extraPhotos.length})</span></summary>
+          <PhotoGallery photos={extraPhotos} doc={doc} L={L} zoomLabel={zoomLabel} compact />
+        </details>
+      ) : null}
     </article>
   )
 }

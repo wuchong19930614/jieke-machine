@@ -142,7 +142,7 @@ export const Cases: CollectionConfig = {
               hasMany: true,
               label: '原有现场图片',
               filterOptions: { mimeType: { contains: 'image' } },
-              admin: { width: '50%', description: at(`${D} › Project Photos`, '未添加「图片与说明」时继续显示这组旧图。建议 1200×900 px，图片说明取媒体库。') },
+              admin: { width: '50%', description: at(`${D} › Project Photos`, '旧图继续显示在「图片与说明」之后。两处选了同一张图时，使用「图片与说明」里的设置。建议 1200×900 px，旧图说明取媒体库。') },
             },
             ...ratioFitFields('gallery', `${D} › Project Photos`),
           ],

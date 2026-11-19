@@ -303,13 +303,13 @@ export default async function HomePageView() {
                 <article key={product.id} className="lp-production-slide">
                   {mediaOf(product.listImage) ? (
                     <LinkTo link={linkHref(product.listLink, draft) ?? { href, newTab: false }} className="lp-production-image" label={product.name}>
-                      <Img media={product.listImage} ratio={pickRatio(product, 'listImage')} fit={product.listImageFit} defaultRatio="12/5" sizes="(max-width: 767px) 90vw, 900px" attrs={L(doc, 'listImage')} />
+                      <Img media={product.listImage} ratio={pickRatio(product, 'listImage')} fit={product.listImageFit} defaultRatio="12/5" defaultFit="cover" sizes="(max-width: 767px) 90vw, 900px" attrs={L(doc, 'listImage')} />
                     </LinkTo>
                   ) : null}
                   <div className="lp-production-caption">
                     <h3 {...L(doc, 'name')}><Link href={href}>{product.name}</Link></h3>
                     {product.listSummary ? <p {...L(doc, 'listSummary')}>{product.listSummary}</p> : null}
-                    {lines.buttonText ? <Link className="lp-link" href={href} {...L(H, 'productLines.buttonText')}>{lines.buttonText} →</Link> : null}
+                    {lines.buttonText ? <Link className="lp-link" href={href} {...L(H, 'productLines.buttonText')}>{lines.buttonText}</Link> : null}
                   </div>
                 </article>
               )
@@ -347,6 +347,7 @@ export default async function HomePageView() {
                   ratio={defaultRatio(theme, 'case')}
                   variant="featured"
                   labels={{ country: ui.caseList.countryLabel, equipment: ui.caseList.equipmentLabel }}
+                  photosLabel={{ text: ui.caseDetail.photos || 'Project Photos', attrs: L(U, 'caseDetail.photos') }}
                   zoomLabel={ui.common.clickToEnlarge}
                   videoTexts={videoTexts}
                   draft={draft}

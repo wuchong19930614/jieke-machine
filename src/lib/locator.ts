@@ -34,7 +34,7 @@ export function textStyleSheet(doc: DocKey, data: unknown): React.ReactNode {
     })
     .join('')
   // 内容都来自清洗后的数字、色号和内置字体名（lib/textStyle.ts），可以直接写入
-  return css ? React.createElement('style', { 'data-text-styles': doc, dangerouslySetInnerHTML: { __html: css } }) : null
+  return css ? React.createElement('style', { key: doc, 'data-text-styles': doc, dangerouslySetInnerHTML: { __html: css } }) : null
 }
 
 export const getLocator = cache(async (): Promise<Locator> => {
