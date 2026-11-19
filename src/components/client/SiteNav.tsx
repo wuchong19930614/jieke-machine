@@ -1,7 +1,7 @@
 'use client'
 // 页头导航：当前栏目高亮；手机端收起为菜单按钮（技术方案 4.2）
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 import { useState } from 'react'
 
 import type { LocateAttrs } from '@/lib/locator'
@@ -18,6 +18,7 @@ export function SiteNav({
   menuLocate?: LocateAttrs
 }) {
   const pathname = usePathname() || '/'
+  const segment = useSelectedLayoutSegment()
   const [open, setOpen] = useState(false)
   // 切换页面后收起手机菜单
   const [lastPath, setLastPath] = useState(pathname)
@@ -26,7 +27,7 @@ export function SiteNav({
     setOpen(false)
   }
 
-  const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href))
+  const isCurrent = (href: string) => segment === (href.split('/')[1] || null)
 
   return (
     <>

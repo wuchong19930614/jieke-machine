@@ -22,6 +22,7 @@ export const HomePage = editableGlobal({
   slug: 'home-page',
   label: '首页',
   group: '页面管理',
+  beforeDocumentControls: ['@/admin/components/FullWidthHomePreview#FullWidthHomePreview'],
   refresh: [PATHS.home],
   fields: [
     sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),

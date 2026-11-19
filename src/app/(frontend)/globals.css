@@ -2294,9 +2294,9 @@ body.lp-locating [data-locate] {
   background: #102b3d;
   padding: 0;
 }
-.lp-home .lp-hero:not([data-ratio]) { min-height: clamp(430px, var(--banner-auto-height, 46vw), 640px); }
+.lp-home .lp-hero:not([data-ratio]) { min-height: clamp(430px, var(--banner-auto-height, 46vw), 560px); }
 .lp-home .lp-banner-slide::after {
-  background: linear-gradient(90deg, #0e283a 13%, rgb(14 40 58 / 97%) 29%, rgb(14 40 58 / var(--overlay, .5)) 62%, rgb(14 40 58 / 7%) 100%);
+  background: linear-gradient(90deg, #0e283a 28%, rgb(14 40 58 / 88%) 39%, rgb(14 40 58 / var(--overlay, .5)) 66%, rgb(14 40 58 / 7%) 100%);
 }
 .lp-home .lp-banner-slide picture { position: absolute; inset: 0 0 0 34%; }
 .lp-home .lp-banner-copy {
@@ -2307,8 +2307,8 @@ body.lp-locating [data-locate] {
 }
 .lp-home .lp-banner-copy h1,
 .lp-home .lp-banner-copy .lp-h1 {
-  max-width: 660px;
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  max-width: 850px;
+  font-size: clamp(2.5rem, 4.9vw, 3.5rem);
   line-height: 1.04;
   text-wrap: pretty;
   overflow-wrap: anywhere;
