@@ -52,8 +52,8 @@ export function TopBar({ settings, ui, L }: ChromeProps) {
 export function SiteHeader({ settings, ui, L }: ChromeProps) {
   const items = [
     { href: '/', key: 'home' as const },
-    { href: '/about/', key: 'about' as const },
     { href: '/products/', key: 'products' as const },
+    { href: '/about/', key: 'about' as const },
     { href: '/case-studies/', key: 'cases' as const },
     { href: '/contact/', key: 'contact' as const },
   ].map((item) => ({ href: item.href, label: settings.nav[item.key], locate: L(S, `navLabels.${item.key}`) }))
@@ -65,7 +65,7 @@ export function SiteHeader({ settings, ui, L }: ChromeProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={settings.logo.url} alt="" width={settings.logo.width ?? undefined} height={settings.logo.height ?? undefined} />
         ) : null}
-        {settings.companyName ? <span>{settings.companyName}</span> : null}
+        {settings.companyName ? <span {...L(S, 'companyName')}>{settings.companyName}</span> : null}
       </Link>
       <SiteNav items={items} texts={ui.common} menuLocate={L(U, 'common.menu')} />
     </header>

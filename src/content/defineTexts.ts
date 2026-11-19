@@ -15,9 +15,6 @@ export function defaultsOf<T extends TextDefs>(defs: T): TextsOf<T> {
   return result as TextsOf<T>
 }
 
-// 可以单独设“文字样式”的文案：标题、小标题、副标题、按钮（第 4 点：正文由主题统一管理，不单独设）
-export const STYLED_TEXT_KEY = /^(kicker|title|subtitle|heading|companyTitle|formTitle|listTitle|listSubtitle|buttonText|cardButton|allButton)$/
-
 export function textFields(defs: TextDefs, location: string, { styled = false }: { styled?: boolean } = {}): Field[] {
   return Object.entries(defs).flatMap(([name, [label, defaultValue, options]]) => {
     const field = {
@@ -35,17 +32,17 @@ export function textFields(defs: TextDefs, location: string, { styled = false }:
     } as Field
     // 可隐藏的字段与“隐藏”勾选放在同一行；行不占数据路径，字段仍是 name 和 nameHidden
     const main = options?.hideable ? ({ type: 'row', fields: [field, hideField(name, label)] } as Field) : field
-    return styled && !options?.textarea && STYLED_TEXT_KEY.test(name) ? [main, textStyleField(name, label, { opacity: !isButtonTextKey(name) })] : [main]
+    return styled ? [main, textStyleField(name, label, { opacity: !isButtonTextKey(name) })] : [main]
   })
 }
 
-export function textGroup(name: string, label: string, location: string, defs: TextDefs): GroupField {
+export function textGroup(name: string, label: string, location: string, defs: TextDefs, options?: { styled?: boolean }): GroupField {
   return {
     name,
     type: 'group',
     label,
     admin: { description: `前台位置：${location}。留空时使用默认文案（输入框里的灰色提示）。` },
-    fields: textFields(defs, location),
+    fields: textFields(defs, location, options),
   }
 }
 

@@ -14,6 +14,7 @@ function summary(style: TextStyle | null | undefined): string {
   if (style.size || style.sizeMobile) parts.push(`字号 ${style.size ?? '默认'}${style.sizeMobile ? ` / 手机 ${style.sizeMobile}` : ''}`)
   if (style.font) parts.push(TEXT_STYLE_FONTS.find((f) => f.value === style.font)?.label ?? style.font)
   if (style.color) parts.push(style.color)
+  if (style.weight) parts.push(style.weight === 700 ? '加粗' : '常规')
   if (style.opacity) parts.push(`透明度 ${style.opacity}%`)
   return parts.length ? parts.join(' · ') : '跟随主题'
 }
@@ -65,6 +66,14 @@ export function TextStyleEditor({ path, target, opacity = true }: { path: string
                   {f.label}
                 </option>
               ))}
+            </select>
+          </label>
+          <label className="jk-ts__item">
+            <span>字重</span>
+            <select value={style.weight ?? ''} onChange={(e) => set({ weight: e.target.value === '700' ? 700 : e.target.value === '400' ? 400 : undefined })}>
+              <option value="">跟随主题</option>
+              <option value="400">常规</option>
+              <option value="700">加粗</option>
             </select>
           </label>
           <div className="jk-ts__item jk-ts__item--wide">

@@ -1,7 +1,7 @@
 // 隐私政策（正文按 docs/隐私政策与Cookie说明模板（含巴西LGPD）.md 在后台录入）
 import type { Metadata } from 'next'
 
-import { auxAttrs, AuxBody, auxTitle } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxTextStyles, auxTitle } from '@/components/AuxPage'
 import { Breadcrumbs, crumbHome, PageBanner, Section } from '@/components/Section'
 import { getAuxPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
 import { getLocator } from '@/lib/locator'
@@ -18,9 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrivacyPolicyPage() {
   const draft = await isDraft()
   const [page, ui, L] = await Promise.all([getAuxPage(SLUG, draft), getUiTexts(draft), getLocator()])
+  const textStyles = auxTextStyles(page)
   const title = auxTitle(SLUG, page)
   return (
     <>
+      {textStyles}
       <PageBanner
         breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), { text: title, attrs: auxAttrs(SLUG, page, L, 'title') }]} />}
         title={{ text: title, attrs: auxAttrs(SLUG, page, L, 'title') }}

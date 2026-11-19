@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { auxAttrs, AuxBody, auxPageName, auxTitle } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxTextStyles, auxPageName, auxTitle } from '@/components/AuxPage'
 import { ThankYouTracker } from '@/components/client/ThankYouTracker'
 import { Section } from '@/components/Section'
 import { getAuxPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
@@ -23,9 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ThankYouPage() {
   const draft = await isDraft()
   const [page, settings, ui, L] = await Promise.all([getAuxPage(SLUG, draft), getSettings(draft), getUiTexts(draft), getLocator()])
+  const textStyles = auxTextStyles(page)
   const t = ui.thankYou
   return (
     <Section>
+      {textStyles}
       <div className="lp-message-page">
         {t.kicker ? (
           <div className="lp-kicker" {...L(U, 'thankYou.kicker')}>

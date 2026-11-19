@@ -185,17 +185,17 @@ export const Theme = editableGlobal({
         {
           type: 'row',
           fields: [
-            ratio('equipment', '设备', '4/3', '首页生产线卡片、产品列表、产品详情页的设备图'),
-            ratio('factory', '工厂与团队', '4/3', '首页工厂图集、关于我们、联系我们的配图'),
-            ratio('case', '案例', '4/3', '案例列表、案例详情、产品详情页的客户案例卡片'),
+            ratio('equipment', '设备', 'original', '首页生产线卡片、产品列表、产品详情页的设备图'),
+            ratio('factory', '工厂与团队', 'original', '首页工厂图集、关于我们、联系我们的配图'),
+            ratio('case', '案例', 'original', '案例列表、案例详情、产品详情页的客户案例卡片'),
           ],
         },
         {
           type: 'row',
           fields: [
-            ratio('application', '成品', '1/1', '产品详情 › 可生产成品'),
+            ratio('application', '成品', 'original', '产品详情 › 可生产成品'),
             ratio('videoCover', '视频封面', '16/9', '首页 › 视频模块封面'),
-            ratio('banner', 'Banner', 'original', '首页 › Banner', '原图比例 = 保持原设计的高度；选具体比例时只在桌面按比例定高度，手机保持原高度'),
+            ratio('banner', 'Banner', 'original', '首页 › Banner', '按原图：以第一张有效横幅的宽高为准，轮播时高度不跳。手动比例在桌面生效。'),
           ],
         },
       ],

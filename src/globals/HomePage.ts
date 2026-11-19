@@ -55,7 +55,7 @@ export const HomePage = editableGlobal({
                   relationTo: 'media',
                   label: '手机图',
                   filterOptions: { mimeType: { contains: 'image' } },
-                  admin: { width: '50%', description: '不填时用桌面图按焦点裁切' },
+                  admin: { width: '50%', description: '建议 1080×1440 px，主体靠中间；不填时用桌面图按焦点裁切。' },
                 },
               ],
             },
@@ -92,7 +92,7 @@ export const HomePage = editableGlobal({
             {
               type: 'row',
               fields: [
-                { name: 'productButtonText', type: 'text', label: '产品按钮', admin: { width: '75%', placeholder: UI_BANNER.productButton[1], description: '进入关联产品详情' } },
+                { name: 'productButtonText', type: 'text', label: '产品按钮', admin: { width: '75%', placeholder: UI_BANNER.productButton[1], description: '进入关联产品详情；没有已发布的关联产品时进入产品列表。' } },
                 hideField('productButtonText', '产品按钮'),
               ],
             },
@@ -132,6 +132,7 @@ export const HomePage = editableGlobal({
                 { name: 'name', type: 'text', label: '服务名称', required: true, admin: { width: '60%' } },
               ],
             },
+            textStyleField('name', '服务名称'),
           ],
         },
       ],
@@ -158,6 +159,8 @@ export const HomePage = editableGlobal({
                 { name: 'label', type: 'text', label: '标签', required: true, admin: { width: '60%' } },
               ],
             },
+            textStyleField('value', '数值'),
+            textStyleField('label', '数据标签'),
           ],
         },
       ],
@@ -181,9 +184,11 @@ export const HomePage = editableGlobal({
             { label: 'Wide Range of Models' },
             { label: 'Strict Quality Inspection' },
           ],
-          fields: [{ name: 'label', type: 'text', label: '标签', required: true }],
+          fields: [{ name: 'label', type: 'text', label: '标签', required: true }, textStyleField('label', '优势标签')],
         },
         { name: 'body', type: 'richText', label: '简介正文', admin: { description: at(`${H} › 公司简介 › 正文`) } },
+        textStyleField('body', '简介正文'),
+        imageField({ name: 'image', label: '公司简介配图', location: `${H} › 公司简介`, hint: '建议 1200×800 px；留空时使用「关于我们 › 公司介绍」配图。' }),
       ],
     },
     {
@@ -214,8 +219,8 @@ export const HomePage = editableGlobal({
     {
       name: 'productLines',
       type: 'group',
-      label: '四类生产线',
-      admin: { description: at(`${H} › 生产线`, '选中顺序即显示顺序') },
+      label: '核心生产线',
+      admin: { description: at(`${H} › 生产线`, '选中顺序即轮播顺序；大图来自各产品的列表图。') },
       fields: [
         ...textFields(HOME_LINES_TEXTS, `${H} › 生产线`, { styled: true }),
         { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: '生产线' },

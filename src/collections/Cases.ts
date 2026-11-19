@@ -4,7 +4,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionCo
 import { isLoggedIn, recordCreateDeleteAccess, recordEditAccess } from '@/access'
 import { overrideGroup } from '@/content/overrideFields'
 import { UI_CASE_DETAIL } from '@/content/texts'
-import { at, imageField, ratioFitFields, seoGroup, slugField } from '@/fields'
+import { at, imageField, ratioFitFields, seoGroup, slugField, textStyleField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
@@ -59,6 +59,7 @@ export const Cases: CollectionConfig = {
       label: '基本信息',
       fields: [
         { name: 'title', type: 'text', label: '案例标题', required: true, admin: { description: at(`${D}主标题、案例列表、首页精选案例`) } },
+        textStyleField('title', '案例标题'),
         {
           type: 'row',
           fields: [
@@ -72,8 +73,10 @@ export const Cases: CollectionConfig = {
             { name: 'capacity', type: 'text', label: '产能（kg/h）', admin: { width: '50%', description: at(`${D} › 项目概况 › Capacity`, '只填数字或范围，如 300 或 300–500') } },
           ],
         },
-        imageField({ name: 'coverImage', label: '封面图', location: '案例列表卡片、首页精选案例', hint: '默认 4:3' }),
+        imageField({ name: 'coverImage', label: '封面图', location: '案例列表卡片、首页精选案例' }),
         { name: 'summary', type: 'textarea', label: '项目简介', admin: { description: at('首页案例卡片、产品详情的客户案例块', '建议 160 个字符以内') } },
+        textStyleField('summary', '项目简介'),
+        textStyleField('capacity', '产能'),
       ],
     },
     slugField('title', '网址 /case-studies/{网址短名}/'),
@@ -83,6 +86,7 @@ export const Cases: CollectionConfig = {
       admin: { initCollapsed: true },
       fields: [
         { name: 'customerName', type: 'text', label: '客户名称', admin: { description: at(`${D} › 项目概况 › Customer`) } },
+        textStyleField('customerName', '客户名称'),
         { name: 'showCustomerName', type: 'checkbox', label: '在前台显示客户名称', defaultValue: false, admin: { description: '按客户允许公开的范围勾选' } },
       ],
     },
@@ -100,6 +104,7 @@ export const Cases: CollectionConfig = {
           admin: { description: at('案例卡片的 Equipment、案例详情的 Production Lines Used') },
         },
         { name: 'equipmentConfiguration', type: 'textarea', label: '设备配置', admin: { description: at(`${D} › 项目概况 › Equipment Configuration`) } },
+        textStyleField('equipmentConfiguration', '设备配置'),
         {
           name: 'deliveryDate',
           type: 'date',
@@ -134,7 +139,7 @@ export const Cases: CollectionConfig = {
               hasMany: true,
               label: '现场图片',
               filterOptions: { mimeType: { contains: 'image' } },
-              admin: { width: '50%', description: at(`${D} › Project Photos`, '可点击放大；右边的比例和适配方式对这一组图片都生效') },
+              admin: { width: '50%', description: at(`${D} › Project Photos`, '建议 1200×900 px，可点击放大；选择原图比例后，每张图按自己的宽高调整。') },
             },
             ...ratioFitFields('gallery', `${D} › Project Photos`),
           ],

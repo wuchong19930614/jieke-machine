@@ -1,14 +1,29 @@
 // 富文本：按结构化数据渲染，不支持直接写 HTML（技术方案 9.1）
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
-import { type JSXConvertersFunction, LinkJSXConverter, RichText as LexicalRichText } from '@payloadcms/richtext-lexical/react'
+import { type JSXConvertersFunction, LinkJSXConverter, RichText as LexicalRichText, TextJSXConverter } from '@payloadcms/richtext-lexical/react'
 
 import { lexicalText } from '@/lib/fieldWalk'
 import type { LocateAttrs } from '@/lib/locator'
 import { frontendPath } from '@/lib/previewPath'
+import { richTextStyles } from '@/lib/richTextStyles'
 
 // 内部链接（指向产品、案例、辅助页面）换成前台网址；不传时 Payload 会输出 href="#"
 const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
+  text: (args) => {
+    const state = (args.node as unknown as { $?: Record<string, unknown> }).$
+    const preset = (key: keyof typeof richTextStyles) => {
+      const value = state?.[key]
+      const options = richTextStyles[key] as Record<string, { css: Record<string, string> }>
+      return typeof value === 'string' && Object.hasOwn(options, value) ? options[value].css : undefined
+    }
+    const color = preset('color')?.color
+    const fontSize = preset('fontSize')?.['font-size']
+    const fontFamily = preset('fontFamily')?.['font-family']
+    const convert = TextJSXConverter.text
+    const content = typeof convert === 'function' ? convert(args) : args.node.text
+    return color || fontSize || fontFamily ? <span style={{ color, fontSize, fontFamily }}>{content}</span> : content
+  },
   ...LinkJSXConverter({
     internalDocToHref: ({ linkNode }) => {
       const doc = linkNode.fields.doc

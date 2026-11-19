@@ -3,7 +3,7 @@ import type { Field } from 'payload'
 
 import { textFields } from '@/content/defineTexts'
 import { ABOUT_BANNER_TEXTS, ABOUT_CAPABILITIES_TEXTS, ABOUT_INTRO_TEXTS, ABOUT_SCENES_TEXTS } from '@/content/texts'
-import { at, imageField, linkField, ratioFitFields, sectionsField, seoGroup, titleRowLabel } from '@/fields'
+import { at, imageField, linkField, ratioFitFields, sectionsField, seoGroup, textStyleField, titleRowLabel } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { ABOUT_SECTION_DEFAULT_BACKGROUND, ABOUT_SECTIONS } from '@/lib/constants'
 
@@ -64,7 +64,7 @@ export const AboutPage = editableGlobal({
   slug: 'about-page',
   label: '关于我们',
   group: '页面管理',
-  refresh: [PATHS.about],
+  refresh: [PATHS.about, PATHS.home],
   fields: [
     { name: 'banner', type: 'group', label: '页头', fields: textFields(ABOUT_BANNER_TEXTS, `${A} › 页头`, { styled: true }) },
     sectionsField(ABOUT_SECTIONS, A, ABOUT_SECTION_DEFAULT_BACKGROUND),
@@ -75,6 +75,7 @@ export const AboutPage = editableGlobal({
       fields: [
         ...textFields(ABOUT_INTRO_TEXTS, `${A} › 公司介绍`, { styled: true }),
         { name: 'body', type: 'richText', label: '正文', admin: { description: at(`${A} › 公司介绍 › 正文`) } },
+        textStyleField('body', '正文'),
         imageField({ name: 'image', label: '公司或工厂图', location: `${A} › 公司介绍右侧` }),
       ],
     },
@@ -101,6 +102,8 @@ export const AboutPage = editableGlobal({
               admin: { description: at(`${A} › 生产场景与团队 › 卡片标题`, '纯图片方式下作为图片说明文字显示在图片下方，可不填') },
             } as Field,
             { name: 'description', type: 'textarea', label: '说明', admin: { description: at(`${A} › 生产场景与团队 › 卡片说明`, '纯图片方式下不显示') } },
+            textStyleField('title', '卡片标题'),
+            textStyleField('description', '卡片说明'),
             linkField({ location: `${A} › 生产场景与团队 › 点击图片跳转` }),
           ],
         },
@@ -130,6 +133,8 @@ export const AboutPage = editableGlobal({
               admin: { description: at(`${A} › 供应能力与服务支持 › 条目标题`, '纯图片方式下作为图片说明文字显示在图片下方，可不填') },
             } as Field,
             { name: 'description', type: 'textarea', label: '说明', admin: { description: at(`${A} › 供应能力与服务支持 › 条目说明`, '纯图片方式下不显示') } },
+            textStyleField('title', '条目标题'),
+            textStyleField('description', '条目说明'),
             linkField({ location: `${A} › 供应能力与服务支持 › 点击图片跳转` }),
           ],
         },

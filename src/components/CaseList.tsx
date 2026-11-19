@@ -7,7 +7,7 @@ import { fill, withDefaults } from '@/content/defineTexts'
 import { CASES_PAGE_TEXTS } from '@/content/texts'
 import { CASES_PER_PAGE_DEFAULT } from '@/lib/constants'
 import { getCases, getCasesPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
-import { globalDoc } from '@/lib/locate'
+import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
 import { breadcrumbJsonLd, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
@@ -29,11 +29,13 @@ export async function CaseList({ pageNumber }: { pageNumber: number }) {
   const textStyles = textStyleSheet(G, page)
   const perPage = page.perPage || CASES_PER_PAGE_DEFAULT
   const { docs, totalPages } = await getCases(draft, pageNumber, perPage)
+  const caseStyles = docs.map((item) => textStyleSheet(collectionDoc('cases', item.id), item))
   const t = ui.caseList
 
   return (
     <>
       {textStyles}
+      {caseStyles}
       <PageBanner
         breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/case-studies/', settings.nav.cases, 'cases', L)]} />}
         title={{ text: texts.title, attrs: L(G, 'title') }}

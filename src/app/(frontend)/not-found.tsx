@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { auxAttrs, AuxBody, auxTitle, notFoundMetadata } from '@/components/AuxPage'
+import { auxAttrs, AuxBody, auxTextStyles, auxTitle, notFoundMetadata } from '@/components/AuxPage'
 import { Section } from '@/components/Section'
 import { getAuxPage, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
@@ -18,9 +18,11 @@ const U = globalDoc('ui-texts')
 export default async function NotFound() {
   const draft = await isDraft()
   const [page, ui, L] = await Promise.all([getAuxPage('not-found', draft), getUiTexts(draft), getLocator()])
+  const textStyles = auxTextStyles(page)
   const t = ui.notFound
   return (
     <Section>
+      {textStyles}
       <div className="lp-message-page">
         <div className="lp-code" aria-hidden="true" {...L(U, 'notFound.code')}>
           {t.code}

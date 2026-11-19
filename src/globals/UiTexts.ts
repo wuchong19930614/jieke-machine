@@ -26,7 +26,7 @@ const section = (name: string, label: string, location: string, defs: TextDefs):
   type: 'collapsible',
   label,
   admin: { initCollapsed: true },
-  fields: [textGroup(name, label, location, defs)],
+  fields: [textGroup(name, label, location, defs, { styled: name !== 'pageTitles' })],
 })
 
 export const UiTexts = editableGlobal({

@@ -8,7 +8,7 @@ import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/compone
 import { withDefaults } from '@/content/defineTexts'
 import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
 import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
-import { globalDoc } from '@/lib/locate'
+import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
@@ -36,9 +36,11 @@ export default async function ProductsListPage() {
   const texts = withDefaults(PRODUCTS_PAGE_TEXTS, page)
   // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
   const textStyles = textStyleSheet(G, page)
+  const productStyles = products.map((item) => textStyleSheet(collectionDoc('products', item.id), item))
   return (
     <>
       {textStyles}
+      {productStyles}
       <PageBanner
         breadcrumb={<Breadcrumbs label={ui.common.breadcrumb} items={[crumbHome(ui.common.home, L), crumbNav('/products/', settings.nav.products, 'products', L)]} />}
         title={{ text: texts.title, attrs: L(G, 'title') }}

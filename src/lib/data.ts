@@ -86,6 +86,7 @@ export type Settings = Awaited<ReturnType<typeof getSettings>>
 export const getUiTexts = cache(async (draft: boolean) => {
   const ui = await global<UiText>('ui-texts', draft, 0)
   return {
+    raw: ui,
     common: withDefaults(T.UI_COMMON, ui.common),
     topBar: withDefaults(T.UI_TOPBAR, ui.topBar),
     footer: withDefaults(T.UI_FOOTER, ui.footer),

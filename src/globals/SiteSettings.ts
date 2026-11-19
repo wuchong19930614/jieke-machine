@@ -13,7 +13,7 @@ import {
   SEO_TEXTS,
   WHATSAPP_TEXTS,
 } from '@/content/texts'
-import { at } from '@/fields'
+import { at, textStyleField } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 
 import { editableGlobal } from './helpers'
@@ -48,6 +48,7 @@ export const SiteSettings = editableGlobal({
       label: '品牌',
       fields: [
         { name: 'companyName', type: 'text', label: '公司英文名', admin: { description: at('页头 Logo 旁、页脚、首页公司数据通栏、邮件署名') } },
+        textStyleField('companyName', '公司英文名'),
         {
           name: 'logo',
           type: 'upload',
@@ -57,6 +58,7 @@ export const SiteSettings = editableGlobal({
           admin: { description: at('页头、页脚、蓝色在线沟通面板', '建议透明背景 PNG，高度 80px 以上') },
         },
         { name: 'footerIntro', type: 'textarea', label: '页脚简介', admin: { description: at('页脚 › 品牌区') } },
+        textStyleField('footerIntro', '页脚简介'),
       ],
     },
     {
@@ -64,6 +66,7 @@ export const SiteSettings = editableGlobal({
       label: '联系方式',
       fields: [
         { name: 'email', type: 'email', label: '业务邮箱', admin: { description: at('顶栏、页脚、联系页、邮箱弹层') } },
+        textStyleField('email', '业务邮箱'),
         {
           type: 'row',
           fields: [
@@ -80,6 +83,10 @@ export const SiteSettings = editableGlobal({
         },
         { name: 'address', type: 'textarea', label: '地址', admin: { description: at('页脚、联系页') } },
         { name: 'officeHours', type: 'text', label: '办公时间', admin: { description: at('联系页', '建议注明时区，如 Mon–Sat, 9:00–18:00 (GMT+8)') } },
+        textStyleField('phone', '电话'),
+        textStyleField('whatsapp', 'WhatsApp 号码'),
+        textStyleField('address', '地址'),
+        textStyleField('officeHours', '办公时间'),
       ],
     },
     {
@@ -99,10 +106,10 @@ export const SiteSettings = editableGlobal({
       label: '公共组件文案',
       admin: { initCollapsed: true },
       fields: [
-        textGroup('navLabels', '导航', '页头导航和页脚 Quick Links（顺序固定）', NAV_TEXTS),
-        textGroup('floatingTools', '右侧悬浮栏', '右侧悬浮栏的提示文字', FLOATING_TEXTS),
-        textGroup('contactBand', '报价引导条', '所有页面的页脚上方', CONTACT_BAND_TEXTS),
-        textGroup('formTexts', '表单文案', '联系页、产品页、联系弹窗和离线留言四种表单', FORM_TEXTS),
+        textGroup('navLabels', '导航', '页头导航和页脚 Quick Links（顺序固定）', NAV_TEXTS, { styled: true }),
+        textGroup('floatingTools', '右侧悬浮栏', '右侧悬浮栏的提示文字', FLOATING_TEXTS, { styled: true }),
+        textGroup('contactBand', '报价引导条', '所有页面的页脚上方', CONTACT_BAND_TEXTS, { styled: true }),
+        textGroup('formTexts', '表单文案', '联系页、产品页、联系弹窗和离线留言四种表单', FORM_TEXTS, { styled: true }),
       ],
     },
     {
@@ -117,8 +124,8 @@ export const SiteSettings = editableGlobal({
             { name: 'tawkWidgetId', type: 'text', label: 'tawk.to Widget ID', admin: { width: '50%', description: at('同上', '通常为 default 或一串字符') } },
           ],
         },
-        textGroup('redPanel', '红色在线服务窗口', '悬浮栏第 4 个按钮打开的窗口', RED_PANEL_TEXTS),
-        textGroup('bluePanel', '蓝色在线沟通面板', '悬浮栏第 6 个按钮打开的欢迎面板', BLUE_PANEL_TEXTS),
+        textGroup('redPanel', '红色在线服务窗口', '悬浮栏第 4 个按钮打开的窗口', RED_PANEL_TEXTS, { styled: true }),
+        textGroup('bluePanel', '蓝色在线沟通面板', '悬浮栏第 6 个按钮打开的欢迎面板', BLUE_PANEL_TEXTS, { styled: true }),
       ],
     },
     {

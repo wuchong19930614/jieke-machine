@@ -1,6 +1,6 @@
 // 文字样式（第 4、15 点）：后台“文字样式”保存的 JSON → 前台 CSS。
 // 只接受范围内的数字、# 色号和内置字体键，生成的 CSS 不会混进任意内容
-export type TextStyle = { size?: number; sizeMobile?: number; font?: string; color?: string; opacity?: number }
+export type TextStyle = { size?: number; sizeMobile?: number; font?: string; color?: string; weight?: 400 | 700; opacity?: number }
 
 // 按钮类文案（键名里带 button）不提供透明度：透明度会连按钮底色一起变淡
 export const isButtonTextKey = (key: string): boolean => /button/i.test(key)
@@ -31,6 +31,7 @@ export function cleanTextStyle(value: unknown): TextStyle | null {
   if (sizeMobile) style.sizeMobile = sizeMobile
   if (typeof v.font === 'string' && (FONT_KEYS as readonly string[]).includes(v.font)) style.font = v.font
   if (typeof v.color === 'string' && HEX.test(v.color.trim())) style.color = v.color.trim().toUpperCase()
+  if (v.weight === 400 || v.weight === 700) style.weight = v.weight
   if (typeof v.opacity === 'number' && v.opacity >= 10 && v.opacity < 100) style.opacity = Math.round(v.opacity)
   return Object.keys(style).length ? style : null
 }
@@ -47,6 +48,7 @@ export function validateTextStyle(value: unknown): true | string {
     if (v[key] !== undefined && v[key] !== null && !sizeOf(v[key])) return `${label}请填 ${TEXT_SIZE_MIN}–${TEXT_SIZE_MAX} 之间的数字（单位 px）`
   }
   if (v.color && !(typeof v.color === 'string' && HEX.test(v.color.trim()))) return '颜色请填 # 开头的 6 位色号，例如 #FFFFFF'
+  if (v.weight != null && v.weight !== 400 && v.weight !== 700) return '字重请选择默认、常规或加粗'
   return true
 }
 
@@ -58,6 +60,7 @@ export function textStyleDeclarations(style: TextStyle, { opacity = true } = {})
   if (style.size) desktop.push(`font-size:${style.size}px`)
   if (style.font) desktop.push(`font-family:${fontFamily(style.font)}`)
   if (style.color) desktop.push(`color:${style.color}`)
+  if (style.weight) desktop.push(`font-weight:${style.weight}`)
   if (opacity && style.opacity) desktop.push(`opacity:${style.opacity / 100}`)
   const mobileSize = style.sizeMobile ?? (style.size ? Math.max(TEXT_SIZE_MIN, Math.round(style.size * MOBILE_SCALE)) : undefined)
   return { desktop: desktop.join(';'), mobile: mobileSize ? `font-size:${mobileSize}px` : '' }
