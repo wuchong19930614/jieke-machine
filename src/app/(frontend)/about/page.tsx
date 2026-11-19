@@ -1,5 +1,6 @@
 // 关于我们（技术方案 3.3）
 import type { Metadata } from 'next'
+import { galleryPhotos, PhotoGallery } from '@/components/PhotoGallery'
 import Link from 'next/link'
 import React from 'react'
 
@@ -41,9 +42,10 @@ export default async function AboutPageView() {
 
   const render = (module: (typeof ABOUT_SECTIONS)[number]['value'], background: BackgroundSpec): React.ReactNode => {
     switch (module) {
-      case 'intro':
+      case 'intro': {
+        const photos = galleryPhotos(page.intro?.photos)
         // 正文和图片都没有时整块不显示（小标题、标题和按钮只是模块外壳）
-        if (!hasRichText(page.intro?.body) && !mediaOf(page.intro?.image)) return null
+        if (!hasRichText(page.intro?.body) && !mediaOf(page.intro?.image) && !photos.length) return null
         return (
           <Section key={module} background={background}>
             <div className="lp-split">
@@ -63,10 +65,11 @@ export default async function AboutPageView() {
                   </div>
                 ) : null}
               </div>
-              <Img media={page.intro?.image} ratio={pickRatio(page.intro, 'image')} fit={page.intro?.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(A, 'intro.image')} />
+              {photos.length ? <PhotoGallery photos={photos} doc={A} basePath="intro" L={L} zoomLabel={ui.common.clickToEnlarge} /> : <Img media={page.intro?.image} ratio={pickRatio(page.intro, 'image')} fit={page.intro?.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(A, 'intro.image')} />}
             </div>
           </Section>
         )
+      }
       case 'scenes':
       case 'capabilities': {
         const group = page[module] as GridGroup | undefined

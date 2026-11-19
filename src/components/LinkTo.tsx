@@ -1,6 +1,7 @@
 // “点击跳转”设置（fields 里的 linkField）→ 前台链接
 import Link from 'next/link'
 import React from 'react'
+import type { LocateAttrs } from '@/lib/locator'
 
 export type LinkValue =
   | { type?: string | null; product?: unknown; caseStudy?: unknown; page?: string | null; url?: string | null; newTab?: boolean | null }
@@ -35,18 +36,18 @@ export function linkHref(link: LinkValue, draft: boolean): ResolvedLink | null {
 }
 
 // 有链接时包一层；本站路径用 next/link，外部网址、邮件、电话和新窗口用普通 <a>
-export function LinkTo({ link, className, children, label }: { link: ResolvedLink | null; className?: string; children?: React.ReactNode; label?: string }) {
+export function LinkTo({ link, className, children, label, attrs }: { link: ResolvedLink | null; className?: string; children?: React.ReactNode; label?: string; attrs?: LocateAttrs }) {
   if (!link) return <>{children}</>
   const internal = link.href.startsWith('/') && !link.href.startsWith('//')
   if (link.newTab || !internal) {
     return (
-      <a href={link.href} className={className} aria-label={label} {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+      <a href={link.href} className={className} aria-label={label} {...attrs} {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
         {children}
       </a>
     )
   }
   return (
-    <Link href={link.href} className={className} aria-label={label}>
+    <Link href={link.href} className={className} aria-label={label} {...attrs}>
       {children}
     </Link>
   )
