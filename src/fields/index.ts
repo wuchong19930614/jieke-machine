@@ -190,11 +190,11 @@ export function slugField(source: string, location: string): TextField {
 }
 
 // SEO 设置不显示在页面上，业务人员常以为“前台没体现”：分组标题写明这一点，默认收起，并在后台直接预览效果
-export function seoGroup(location: string): CollapsibleField {
+export function seoGroup(location: string, className?: string): CollapsibleField {
   return {
     type: 'collapsible',
     label: '搜索引擎与分享设置（不在页面上显示）',
-    admin: { initCollapsed: true },
+    admin: { initCollapsed: true, className },
     fields: [seoFields(location)],
   }
 }

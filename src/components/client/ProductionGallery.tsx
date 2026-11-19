@@ -3,6 +3,8 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useId, useRef, useState, type ReactNode } from 'react'
 
+const railStart = (track: HTMLElement) => track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).paddingLeft)
+
 export function ProductionGallery({ title, items, labels }: { title: ReactNode; items: ReactNode[]; labels: { prev: string; next: string } }) {
   const track = useRef<HTMLDivElement>(null)
   const id = useId()
@@ -12,9 +14,9 @@ export function ProductionGallery({ title, items, labels }: { title: ReactNode; 
     const el = track.current
     const slide = el?.children.item(index)
     if (!el || !slide) return
-    const offset = slide.getBoundingClientRect().left - el.getBoundingClientRect().left
+    const offset = slide.getBoundingClientRect().left - railStart(el)
     el.scrollTo({
-      left: el.scrollLeft + offset - (el.clientWidth - slide.clientWidth) / 2,
+      left: el.scrollLeft + offset,
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     })
   }
@@ -37,10 +39,10 @@ export function ProductionGallery({ title, items, labels }: { title: ReactNode; 
         move(active + (event.key === 'ArrowLeft' ? -1 : 1))
       }} onScroll={(event) => {
         const el = event.currentTarget
-        const center = el.getBoundingClientRect().left + el.clientWidth / 2
+        const start = railStart(el)
         const closest = Array.from(el.children).reduce((best, child, index) => {
           const box = child.getBoundingClientRect()
-          const distance = Math.abs(box.left + box.width / 2 - center)
+          const distance = Math.abs(box.left - start)
           return distance < best.distance ? { index, distance } : best
         }, { index: 0, distance: Infinity })
         setActive(closest.index)

@@ -22,9 +22,11 @@ export const HomePage = editableGlobal({
   slug: 'home-page',
   label: '首页',
   group: '页面管理',
+  beforeDocumentControls: ['@/admin/components/FullWidthHomePreview#FullWidthHomePreview'],
   refresh: [PATHS.home],
   fields: [
     sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),
+    { name: 'homeEditorOrder', type: 'ui', admin: { components: { Field: '@/admin/components/HomeEditorOrder#HomeEditorOrder' } } },
     { name: 'showTopBar', type: 'checkbox', label: '首页显示顶部联系方式细条', defaultValue: false, admin: { description: 'V4 样稿默认隐藏首页顶部细条；右侧联系浮窗仍按原设置显示。' } },
     {
       name: 'banners',
@@ -49,7 +51,7 @@ export const HomePage = editableGlobal({
                   relationTo: 'media',
                   label: '桌面图',
                   filterOptions: { mimeType: { contains: 'image' } },
-                  admin: { width: '50%', description: '建议 1920×800 以上。所有横幅共用一个比例，在“主题 › 默认图框比例 › Banner”里设置，切换时高度不会跳' },
+                  admin: { width: '50%', description: '请选高清原图，建议 1920×800 px 以上。所有横幅共用一个比例，可在“主题 › 默认图框比例 › Banner”中设置。' },
                 },
                 {
                   name: 'mobileImage',
@@ -70,7 +72,7 @@ export const HomePage = editableGlobal({
               defaultValue: 50,
               admin: {
                 step: 5,
-                description: '图片上盖一层深色，让白色标题更清楚；背景图本身带文字或颜色很亮时调深一点',
+                description: '调节文字所在区域的渐变遮罩。默认优先突出图片；图片较亮时可调深一点。',
                 components: { Field: '@/admin/components/RangeField#RangeField' },
               },
             },
@@ -145,9 +147,17 @@ export const HomePage = editableGlobal({
       name: 'companyStats',
       type: 'group',
       label: '公司数据通栏',
-      admin: { description: at(`${H} › 公司数据通栏`, '公司名自动取全站设置') },
+      admin: { description: at(`${H} › 公司数据通栏`, '可以为这里单独设置公司名或隐藏公司名') },
       fields: [
         ...textFields(HOME_STATS_TEXTS, `${H} › 公司数据通栏`, { styled: true }),
+        {
+          type: 'row',
+          fields: [
+            { name: 'companyName', type: 'text', label: '通栏公司名', admin: { width: '75%', description: '留空时显示全站公司名。此项只影响首页数据通栏。' } },
+            hideField('companyName', '通栏公司名'),
+          ],
+        },
+        textStyleField('companyName', '通栏公司名'),
         {
           name: 'stats',
           type: 'array',
@@ -177,19 +187,24 @@ export const HomePage = editableGlobal({
       fields: [
         ...textFields(HOME_ABOUT_TEXTS, `${H} › 公司简介`, { styled: true }),
         linkField({ name: 'buttonLink', label: '公司简介按钮跳转', location: `${H} › 公司简介按钮`, defaultLabel: '关于我们' }),
+        hideField('tags', '全部优势标签'),
         {
           name: 'tags',
           type: 'array',
           label: '优势标签',
           labels: { singular: '标签', plural: '标签' },
-          admin: { description: '属宣传性表述，请确认属实后再用', components: { RowLabel: titleRowLabel('label') } },
+          admin: { description: '逐条展开可隐藏；通过每行右侧的菜单可以删除。', components: { RowLabel: titleRowLabel('label') } },
           defaultValue: [
             { label: 'Reliable Supplier' },
             { label: 'Extensive Experience' },
             { label: 'Wide Range of Models' },
             { label: 'Strict Quality Inspection' },
           ],
-          fields: [{ name: 'label', type: 'text', label: '标签', required: true }, textStyleField('label', '优势标签')],
+          fields: [
+            { name: 'label', type: 'text', label: '标签', required: true },
+            { name: 'visible', type: 'checkbox', label: '在首页显示', defaultValue: true },
+            textStyleField('label', '优势标签'),
+          ],
         },
         { name: 'body', type: 'richText', label: '简介正文', admin: { description: at(`${H} › 公司简介 › 正文`) } },
         textStyleField('body', '简介正文'),
@@ -255,7 +270,7 @@ export const HomePage = editableGlobal({
         linkField({ location: `${H} › 首页询价按钮`, defaultLabel: '联系页' }),
       ],
     },
-    seoGroup(H),
+    seoGroup(H, 'jk-home-seo'),
   ],
 })
 

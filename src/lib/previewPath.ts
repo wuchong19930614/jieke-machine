@@ -28,3 +28,9 @@ export function frontendPath(args: { collection?: string | null; global?: string
 }
 
 export const siteUrl = (): string => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/+$/, '')
+
+export function previewUrl({ collection, global, slug }: { collection?: string; global?: string; slug?: string | null }): string {
+  const query = new URLSearchParams({ secret: process.env.PREVIEW_SECRET || '', collection: collection ?? global ?? '' })
+  if (slug) query.set('slug', slug)
+  return `${siteUrl()}/api/preview?${query.toString()}`
+}

@@ -28,7 +28,7 @@ import { Theme } from './globals/Theme'
 import { UiTexts } from './globals/UiTexts'
 import { PATHS, revalidate } from './hooks/revalidate'
 import { explainUnexpectedError, labelValidationFields } from './hooks/serverErrors'
-import { siteUrl } from './lib/previewPath'
+import { previewUrl, siteUrl } from './lib/previewPath'
 import { resendEmailAdapter } from './lib/server/payloadEmail'
 import { keepSessionInPlugin } from './lib/server/pluginSession'
 
@@ -41,14 +41,6 @@ const withoutLocalFiles = (collection: CollectionConfig): CollectionConfig =>
   typeof collection.upload === 'object' ? { ...collection, upload: { ...collection.upload, disableLocalStorage: true } } : collection
 const PREVIEW_COLLECTIONS = ['products', 'cases', 'pages']
 const PREVIEW_GLOBALS = ['home-page', 'about-page', 'products-page', 'cases-page', 'contact-page', 'site-settings', 'theme', 'ui-texts']
-
-// 预览地址按技术方案 6.3：secret + collection（或页面配置名）+ slug，由接口换算成前台网址，避免任意跳转
-const previewUrl = (params: { collection?: string; global?: string; slug?: string | null }): string => {
-  const query = new URLSearchParams({ secret: process.env.PREVIEW_SECRET || '' })
-  query.set('collection', params.collection ?? params.global ?? '')
-  if (params.slug) query.set('slug', params.slug)
-  return `${SITE_URL}/api/preview?${query.toString()}`
-}
 
 export default buildConfig({
   serverURL: SITE_URL,

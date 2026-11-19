@@ -65,8 +65,8 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: { '/admin/*': ['./docs/后台操作教程.md'] },
   images: {
     formats: ['image/avif', 'image/webp'],
-    // 横幅桌面图用 80，其余用默认 75
-    qualities: [75, 80],
+    // 首屏桌面横幅用 85，其他图片继续使用 75 或 80。
+    qualities: [75, 80, 85],
     remotePatterns: [
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
       { protocol: 'https', hostname: 'i.ytimg.com' },

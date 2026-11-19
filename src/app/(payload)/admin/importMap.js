@@ -1,3 +1,4 @@
+import { TextStyleField as TextStyleField_54b291b1e743e51c38fe93e073d9d564 } from '@/admin/components/TextStyleField'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -28,7 +29,6 @@ import { ColorField as ColorField_c694b58ecee621392e18234068458600 } from '@/adm
 import { RangeField as RangeField_e33f2537908a939be0874a4ed31ac398 } from '@/admin/components/RangeField'
 import { SectionRowLabel as SectionRowLabel_282cf19e49988f43a779580002416b7b } from '@/admin/components/RowLabel'
 import { ModuleTitles as ModuleTitles_0583ba1b55de910160862b9ed88bf6c0 } from '@/admin/components/ModuleTitles'
-import { TextStyleField as TextStyleField_54b291b1e743e51c38fe93e073d9d564 } from '@/admin/components/TextStyleField'
 import { TitleRowLabel as TitleRowLabel_282cf19e49988f43a779580002416b7b } from '@/admin/components/RowLabel'
 import { SpecTableField as SpecTableField_f04e63ec0b7d713082e28210d22d25a0 } from '@/admin/components/SpecTableField'
 import { YouTubePreview as YouTubePreview_998cef8a113491eb803a8ee9903df0aa } from '@/admin/components/YouTubePreview'
@@ -51,6 +51,8 @@ import { ExportSaveButton as ExportSaveButton_cdf7e044479f899a31f804427d568b36 }
 import { ImportPreview as ImportPreview_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { ImportSaveButton as ImportSaveButton_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { NeverPublishedNote as NeverPublishedNote_a5279c9234d68752128c338495a339b6 } from '@/admin/components/NeverPublishedNote'
+import { HomeEditorOrder as HomeEditorOrder_29ed5655414ddf263884b418a8f8986a } from '@/admin/components/HomeEditorOrder'
+import { FullWidthHomePreview as FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9 } from '@/admin/components/FullWidthHomePreview'
 import { Nav as Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99 } from '@/admin/components/Nav'
 import { BeforeDashboard as BeforeDashboard_0caeb52961e5225418de7a16de968c6d } from '@/admin/components/BeforeDashboard'
 import { LocateProvider as LocateProvider_f723b9312a09cd75ce7de3f082a87b44 } from '@/admin/components/LocateProvider'
@@ -67,6 +69,7 @@ import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "@/admin/components/TextStyleField#TextStyleField": TextStyleField_54b291b1e743e51c38fe93e073d9d564,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -97,7 +100,6 @@ export const importMap = {
   "@/admin/components/RangeField#RangeField": RangeField_e33f2537908a939be0874a4ed31ac398,
   "@/admin/components/RowLabel#SectionRowLabel": SectionRowLabel_282cf19e49988f43a779580002416b7b,
   "@/admin/components/ModuleTitles#ModuleTitles": ModuleTitles_0583ba1b55de910160862b9ed88bf6c0,
-  "@/admin/components/TextStyleField#TextStyleField": TextStyleField_54b291b1e743e51c38fe93e073d9d564,
   "@/admin/components/RowLabel#TitleRowLabel": TitleRowLabel_282cf19e49988f43a779580002416b7b,
   "@/admin/components/SpecTableField#SpecTableField": SpecTableField_f04e63ec0b7d713082e28210d22d25a0,
   "@/admin/components/YouTubePreview#YouTubePreview": YouTubePreview_998cef8a113491eb803a8ee9903df0aa,
@@ -120,6 +122,8 @@ export const importMap = {
   "@payloadcms/plugin-import-export/rsc#ImportPreview": ImportPreview_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#ImportSaveButton": ImportSaveButton_cdf7e044479f899a31f804427d568b36,
   "@/admin/components/NeverPublishedNote#NeverPublishedNote": NeverPublishedNote_a5279c9234d68752128c338495a339b6,
+  "@/admin/components/HomeEditorOrder#HomeEditorOrder": HomeEditorOrder_29ed5655414ddf263884b418a8f8986a,
+  "@/admin/components/FullWidthHomePreview#FullWidthHomePreview": FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9,
   "@/admin/components/Nav#Nav": Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99,
   "@/admin/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_0caeb52961e5225418de7a16de968c6d,
   "@/admin/components/LocateProvider#LocateProvider": LocateProvider_f723b9312a09cd75ce7de3f082a87b44,

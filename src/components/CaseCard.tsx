@@ -18,6 +18,7 @@ type Props = {
   // 按钮文字所在字段的定位标注（各页面来源不同，由调用处传入）
   buttonAttrs?: LocateAttrs
   ratio: string
+  sizes?: string
   variant: 'featured' | 'list' | 'related'
   labels?: { country: string; equipment: string }
   photosLabel?: { text: string; attrs?: LocateAttrs }
@@ -26,7 +27,7 @@ type Props = {
   draft: boolean
 }
 
-export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, labels, photosLabel, zoomLabel, videoTexts, draft }: Props) {
+export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, sizes = '(max-width: 767px) 100vw, 400px', variant, labels, photosLabel, zoomLabel, videoTexts, draft }: Props) {
   const doc = collectionDoc('cases', item.id)
   const href = `/case-studies/${item.slug}/`
   const video = variant === 'featured' ? youtubeId(item.videoUrl) : null
@@ -53,7 +54,7 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, lab
           title={item.title}
           cover={cover?.url ? { url: cover.url, alt: cover.alt ?? '' } : null}
           texts={{ ...videoTexts, playAria: videoTexts.playAria.replace('{videoTitle}', item.title) }}
-          sizes="(max-width: 767px) 100vw, 400px"
+          sizes={sizes}
         />
       ) : (
         <Link href={href} tabIndex={-1} aria-hidden="true">
@@ -63,7 +64,7 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, variant, lab
             fit={configuredCover ? item.coverImageFit : photoCover?.fit}
             defaultRatio={ratio}
             defaultFit="cover"
-            sizes="(max-width: 767px) 100vw, 400px"
+            sizes={sizes}
             attrs={L(doc, !configuredCover && photoCover?.path ? `${photoCover.path}.image` : 'coverImage')}
           />
         </Link>

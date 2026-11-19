@@ -4618,9 +4618,6 @@ export interface Theme {
    * 前台位置：全站：屏幕不够宽时，内容离屏幕边缘至少留多少；手机上固定 5%
    */
   sideGutter?: ('standard' | 'wide' | 'wider') | null;
-  /**
-   * 前台位置：首页顶部横幅。电脑和平板上生效；手机上始终铺满
-   */
   bannerWidth?: ('content' | 'full') | null;
   /**
    * 按用途的默认比例；单个图片位置可在该位置另行设置
@@ -6805,8 +6802,8 @@ export interface HomePage {
           | 'companyStats'
           | 'aboutIntro'
           | 'factoryGallery'
-          | 'featuredCases'
           | 'services'
+          | 'featuredCases'
           | 'imageBanner'
           | 'imageGrid';
         visible?: boolean | null;
@@ -6918,7 +6915,7 @@ export interface HomePage {
       | {
           enabled?: boolean | null;
           /**
-           * 建议 1920×800 以上。所有横幅共用一个比例，在“主题 › 默认图框比例 › Banner”里设置，切换时高度不会跳
+           * 请选高清原图，建议 1920×800 px 以上。所有横幅共用一个比例，可在“主题 › 默认图框比例 › Banner”中设置。
            */
           desktopImage?: (number | null) | Media;
           /**
@@ -6926,7 +6923,7 @@ export interface HomePage {
            */
           mobileImage?: (number | null) | Media;
           /**
-           * 图片上盖一层深色，让白色标题更清楚；背景图本身带文字或颜色很亮时调深一点
+           * 调节文字所在区域的渐变遮罩。默认优先突出图片；图片较亮时可调深一点。
            */
           overlay?: number | null;
           kicker?: string | null;
@@ -7096,7 +7093,7 @@ export interface HomePage {
       | null;
   };
   /**
-   * 前台位置：首页 › 公司数据通栏。公司名自动取全站设置
+   * 前台位置：首页 › 公司数据通栏。可以为这里单独设置公司名或隐藏公司名
    */
   companyStats?: {
     /**
@@ -7105,6 +7102,20 @@ export interface HomePage {
     supplierLabel?: string | null;
     supplierLabelHidden?: boolean | null;
     supplierLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 留空时显示全站公司名。此项只影响首页数据通栏。
+     */
+    companyName?: string | null;
+    companyNameHidden?: boolean | null;
+    companyNameStyle?:
       | {
           [k: string]: unknown;
         }
@@ -7213,12 +7224,14 @@ export interface HomePage {
       url?: string | null;
       newTab?: boolean | null;
     };
+    tagsHidden?: boolean | null;
     /**
-     * 属宣传性表述，请确认属实后再用
+     * 逐条展开可隐藏；通过每行右侧的菜单可以删除。
      */
     tags?:
       | {
           label: string;
+          visible?: boolean | null;
           labelStyle?:
             | {
                 [k: string]: unknown;
@@ -9306,6 +9319,9 @@ export interface HomePageSelect<T extends boolean = true> {
         supplierLabel?: T;
         supplierLabelHidden?: T;
         supplierLabelStyle?: T;
+        companyName?: T;
+        companyNameHidden?: T;
+        companyNameStyle?: T;
         stats?:
           | T
           | {
@@ -9341,10 +9357,12 @@ export interface HomePageSelect<T extends boolean = true> {
               url?: T;
               newTab?: T;
             };
+        tagsHidden?: T;
         tags?:
           | T
           | {
               label?: T;
+              visible?: T;
               labelStyle?: T;
               id?: T;
             };

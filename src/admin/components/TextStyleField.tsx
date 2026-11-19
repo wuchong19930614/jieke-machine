@@ -69,7 +69,7 @@ export function TextStyleEditor({ path, target, opacity = true }: { path: string
             </select>
           </label>
           <label className="jk-ts__item">
-            <span>字重</span>
+            <span>字重（加粗）</span>
             <select value={style.weight ?? ''} onChange={(e) => set({ weight: e.target.value === '700' ? 700 : e.target.value === '400' ? 400 : undefined })}>
               <option value="">跟随主题</option>
               <option value="400">常规</option>

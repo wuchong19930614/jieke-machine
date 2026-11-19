@@ -1,5 +1,6 @@
 // 首页（技术方案 3.3、4.3）
 import {
+  ArrowRight,
   Award,
   ClipboardList,
   Factory,
@@ -41,6 +42,10 @@ const H = globalDoc('home-page')
 const S = globalDoc('site-settings')
 const U = globalDoc('ui-texts')
 
+function BannerButtonLabel({ text }: { text: string }) {
+  return <>{text.replace(/(?:\s*[→➜↗›»])+\s*$/u, '')}<ArrowRight size={16} aria-hidden /></>
+}
+
 const ICONS: Record<string, React.ComponentType<{ size?: number; 'aria-hidden'?: boolean }>> = {
   factory: Factory,
   settings: Gear,
@@ -74,8 +79,8 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
   const productText = !slide.productButtonTextHidden ? slide.productButtonText || (product ? ui.banner.productButton : ui.productList.viewDetails) : ''
   const common = { alt: desktop?.alt ?? '', fill: true, priority: first, loading: first ? undefined : ('lazy' as const) }
   // 桌面和手机分别使用各自的图片（技术方案 4.3 第 4 条）
-  const desk = desktop?.url ? getImageProps({ ...common, src: imageSrc(desktop.url), sizes: '100vw', quality: 80 }).props : null
-  const mob = mobile?.url ? getImageProps({ ...common, src: imageSrc(mobile.url), sizes: '100vw', quality: 75 }).props : null
+  const desk = desktop?.url ? getImageProps({ ...common, src: imageSrc(desktop.url), sizes: '100vw', quality: 85, unoptimized: Boolean(desktop.width && desktop.width < 768) }).props : null
+  const mob = mobile?.url ? getImageProps({ ...common, src: imageSrc(mobile.url), sizes: '100vw', quality: 75, unoptimized: Boolean(mobile.width && mobile.width < 768) }).props : null
   // 第 3 点：整张图可以设链接；第 4 点：遮罩深浅（0–90%，默认 50%）
   const link = linkHref(slide.link, draft)
   const overlay = typeof slide.overlay === 'number' ? Math.min(90, Math.max(0, slide.overlay)) / 100 : 0.5
@@ -84,7 +89,7 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
       {desk ? (
         <div className="lp-banner-slide" style={{ '--overlay': overlay } as React.CSSProperties} {...L(H, `${path}.desktopImage`)}>
           <picture>
-            {mob ? <source media="(max-width: 767px)" srcSet={mob.srcSet} /> : null}
+            {mob ? <source media="(max-width: 767px)" sizes="100vw" srcSet={mob.srcSet || mob.src} /> : null}
             {/* 焦点交给样式按屏幕宽度选用：桌面用桌面图的焦点，手机用手机图的焦点 */}
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <img
@@ -115,12 +120,12 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
           <div className="lp-actions">
             {productText ? (
               <LinkTo link={linkHref(slide.productLink, draft) ?? { href: product ? `/products/${product.slug}/` : '/products/', newTab: false }} className="lp-action" attrs={L(H, `${path}.productButtonText`)}>
-                {productText}
+                <BannerButtonLabel text={productText} />
               </LinkTo>
             ) : null}
             {quoteText ? (
               <LinkTo link={linkHref(slide.quoteLink, draft) ?? { href: product ? `/contact/?product=${encodeURIComponent(product.slug)}` : '/contact/', newTab: false }} className={productText ? 'lp-outline' : 'lp-action'} attrs={L(H, `${path}.quoteButtonText`)}>
-                {quoteText}
+                <BannerButtonLabel text={quoteText} />
               </LinkTo>
             ) : null}
           </div>
@@ -201,14 +206,17 @@ export default async function HomePageView() {
       }
       case 'companyStats': {
         const list = (home.companyStats?.stats ?? []).map((s, index) => ({ s, index })).filter(({ s }) => s.value && s.label)
-        if (!list.length && !settings.companyName) return null
+        const companyName = home.companyStats?.companyNameHidden ? '' : home.companyStats?.companyName?.trim() || settings.companyName
+        if (!list.length && !companyName && !stats.supplierLabel) return null
         const bg = backgroundProps(background, 'lp-bg-blue')
         return (
           <div key={module} className={`lp-store-company ${bg.className}`} style={bg.style}>
-            <div className="lp-store-brandline">
-              {stats.supplierLabel ? <span {...L(H, 'companyStats.supplierLabel')}>{stats.supplierLabel}</span> : null}
-              {settings.companyName ? <strong {...L(S, 'companyName')}>{settings.companyName}</strong> : null}
-            </div>
+            {companyName || stats.supplierLabel ? (
+              <div className="lp-store-brandline">
+                {stats.supplierLabel ? <span {...L(H, 'companyStats.supplierLabel')}>{stats.supplierLabel}</span> : null}
+                {companyName ? <strong {...L(S, 'companyName')} {...L(H, 'companyStats.companyName')}>{companyName}</strong> : null}
+              </div>
+            ) : null}
             {list.length ? (
               <ul className="lp-store-stats">
                 {list.map(({ s, index }) => (
@@ -223,7 +231,7 @@ export default async function HomePageView() {
         )
       }
       case 'aboutIntro': {
-        const tags = (home.aboutIntro?.tags ?? []).map((t, index) => ({ t, index })).filter(({ t }) => t.label)
+        const tags = home.aboutIntro?.tagsHidden ? [] : (home.aboutIntro?.tags ?? []).map((t, index) => ({ t, index })).filter(({ t }) => t.visible !== false && t.label)
         const companyTitle = fill(about.companyTitle, { companyName: settings.companyName })
         const useHomeImage = Boolean(mediaOf(home.aboutIntro?.image))
         const imageSource = useHomeImage ? home.aboutIntro : aboutPage.intro
@@ -323,7 +331,7 @@ export default async function HomePageView() {
         const list = (home.featuredCases?.cases ?? []).filter((c): c is Case => isVisibleDoc<Case>(c, draft)).slice(0, 3)
         if (!list.length) return null
         return (
-          <Section key={module} id="cases" background={background} className={list.length === 1 ? 'lp-home-cases lp-home-cases--single' : 'lp-home-cases'}>
+          <Section key={module} id="cases" background={background} className={`lp-home-cases${list.length === 1 ? ' lp-home-cases--single' : ''}`}>
             <div className="lp-home-cases-heading">
               <SectionTitle
                 kicker={{ text: cases.kicker, attrs: L(H, 'featuredCases.kicker') }}
@@ -331,7 +339,7 @@ export default async function HomePageView() {
                 subtitle={{ text: cases.subtitle, attrs: L(H, 'featuredCases.subtitle') }}
               />
               {cases.allButton ? (
-                <LinkTo link={linkHref(home.featuredCases?.allLink, draft) ?? { href: '/case-studies/', newTab: false }} className="lp-outline" attrs={L(H, 'featuredCases.allButton')}>
+                <LinkTo link={linkHref(home.featuredCases?.allLink, draft) ?? { href: '/case-studies/', newTab: false }} className="lp-link lp-home-cases-all" attrs={L(H, 'featuredCases.allButton')}>
                   {cases.allButton}
                 </LinkTo>
               ) : null}
@@ -345,6 +353,7 @@ export default async function HomePageView() {
                   buttonText={cases.cardButton}
                   buttonAttrs={L(H, 'featuredCases.cardButton')}
                   ratio={defaultRatio(theme, 'case')}
+                  sizes={list.length === 1 ? '(max-width: 1060px) 94vw, 960px' : undefined}
                   variant="featured"
                   labels={{ country: ui.caseList.countryLabel, equipment: ui.caseList.equipmentLabel }}
                   photosLabel={{ text: ui.caseDetail.photos || 'Project Photos', attrs: L(U, 'caseDetail.photos') }}
@@ -374,7 +383,7 @@ export default async function HomePageView() {
   // 没有 Banner 时给读屏一个 h1；Banner 只在电脑（或只在手机）显示时，另一类设备上也补一个
   const srTitle = !bannerSection ? 'sr-only' : bannerDevice === 'lp-only-desktop' ? 'sr-only lp-only-mobile' : bannerDevice === 'lp-only-mobile' ? 'sr-only lp-only-desktop' : null
   return (
-    <div className={`lp-home${theme.bannerWidth === 'full' ? ' lp-home-wide' : ''}`} data-home-topbar={home.showTopBar ? 'show' : 'hide'}>
+    <div className="lp-home" data-home-topbar={home.showTopBar ? 'show' : 'hide'}>
       {textStyles}
       {aboutPhotoStyles}
       {productStyles}
