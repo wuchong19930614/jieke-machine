@@ -571,6 +571,7 @@ a.lp-image-link:hover {
 }
 .lp-banner-arrow {
   position: absolute;
+  z-index: 2;
   top: 50%;
   transform: translateY(-50%);
   width: 38px;
@@ -590,6 +591,7 @@ a.lp-image-link:hover {
 }
 .lp-slider {
   position: absolute;
+  z-index: 2;
   bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
@@ -1991,7 +1993,9 @@ body.lp-locating [data-locate] {
 .lp-banner-copy {
   position: relative;
   z-index: 1;
+  pointer-events: none;
 }
+.lp-banner-copy :is(.lp-kicker, h1, .lp-h1, p, a) { pointer-events: auto; }
 
 /* ---------- 首页版式优化 ---------- */
 .lp-home {
@@ -2071,8 +2075,6 @@ body.lp-locating [data-locate] {
   overflow-wrap: anywhere;
 }
 .lp-home > .lp-home-services {
-  width: min(calc(100% - 2 * var(--lp-side-min, 5%)), var(--lp-content-width, 1180px));
-  margin-inline: auto;
   padding-inline: clamp(16px, 5vw, 48px);
   background: #f5f8f7;
 }
@@ -2214,9 +2216,6 @@ body.lp-locating [data-locate] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
-  .lp-home > .lp-home-services {
-    width: 100%;
-  }
   .lp-home .lp-store-service-grid li {
     min-height: 76px;
     gap: 10px;
@@ -2272,14 +2271,19 @@ body.lp-locating [data-locate] {
 }
 
 /* The home page uses a continuous canvas; CMS background overrides remain inline. */
+:root {
+  --lp-home-canvas: min(calc(100% - 2 * var(--lp-side-min, 5%)), var(--lp-content-width, 1180px));
+}
 .lp-home {
   --home-radius: clamp(24px, 4.2vw, 62px);
   --home-inset: clamp(20px, 6vw, 86px);
-  max-width: var(--lp-content-width, 1180px);
-  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--lp-home-canvas) minmax(0, 1fr);
   background: #fff;
 }
-.lp-home-wide { max-width: none; }
+.lp-home > * { grid-column: 2; min-width: 0; }
+.lp-home-wide > .lp-hero,
+.lp-home > .lp-image-module--full { grid-column: 1 / -1; }
 .lp-home .lp-hero {
   width: 100%;
   margin: 0;
@@ -2374,11 +2378,11 @@ body.lp-locating [data-locate] {
 .lp-home-cases:not(.lp-bg-custom) { background: #f5f8f7; }
 .lp-home-cases .lp-grid3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 255px), 1fr)); }
 .lp-home-cases .lp-grid3 > * { min-width: 0; border-radius: 22px; overflow: hidden; }
-.lp-home > .lp-home-services { margin-inline: 0; padding-inline: var(--home-inset); border-radius: var(--home-radius) var(--home-radius) 0 0; }
+.lp-home > .lp-home-services { padding-inline: var(--home-inset); border-radius: var(--home-radius) var(--home-radius) 0 0; }
 .lp-home .lp-store-service-grid li { background: transparent; border: 0; border-bottom: 1px solid #d0dfdc; }
 .lp-home .lp-store-service-grid li > span { min-width: 0; overflow-wrap: anywhere; }
 main:has(> .lp-home) + .lp-contact-band {
-  width: min(calc(100% - 2 * clamp(18px, 6vw, 86px)), var(--lp-content-width, 1180px));
+  width: var(--lp-home-canvas);
   margin: 0 auto clamp(24px, 5vw, 65px);
   padding: clamp(22px, 4vw, 42px);
   border-radius: clamp(22px, 4vw, 40px);
@@ -2386,11 +2390,14 @@ main:has(> .lp-home) + .lp-contact-band {
 }
 main:has(> .lp-home) + .lp-contact-band .lp-action { border-radius: 999px; }
 @media (max-width: 767px) {
+  :root { --lp-home-canvas: 100%; }
   .lp-home .lp-hero, .lp-home .lp-hero:not([data-ratio]) { min-height: clamp(460px, var(--banner-mobile-height, 470px), 600px); }
   .lp-home .lp-banner-slide::after { background: linear-gradient(180deg, rgb(14 40 58 / 10%), rgb(14 40 58 / var(--overlay, .5)) 46%, #0e283a 100%); }
   .lp-home .lp-banner-copy { padding-block: 130px 72px; }
   .lp-home .lp-banner-copy h1,
   .lp-home .lp-banner-copy .lp-h1 { font-size: clamp(1.95rem, 9vw, 2.7rem); overflow-wrap: anywhere; }
+  .lp-home .lp-banner-arrow { top: auto; bottom: 8px; width: 42px; transform: none; }
+  .lp-home .lp-slider { max-width: calc(100% - 104px); flex-wrap: wrap; justify-content: center; }
   .lp-home > .lp-home-production { padding-top: 26px; }
   .lp-production-heading { flex-wrap: wrap; }
   .lp-production-track { --slide-width: 88%; }
