@@ -66,8 +66,8 @@ export const HOME_SECTIONS = [
   { label: '公司数据通栏', value: 'companyStats' },
   { label: '公司简介', value: 'aboutIntro' },
   { label: '厂房展示', value: 'factoryGallery' },
-  { label: '客户案例', value: 'featuredCases' },
   { label: '需求与服务', value: 'services' },
+  { label: '客户案例', value: 'featuredCases' },
 ] as const
 export type HomeSectionKey = (typeof HOME_SECTIONS)[number]['value']
 

@@ -170,7 +170,7 @@ export const Theme = editableGlobal({
                 { label: '与内容同宽、两侧留白', value: 'content' },
                 { label: '铺满整个屏幕', value: 'full' },
               ],
-              admin: { width: '33%', description: at('首页顶部横幅', '电脑和平板上生效；手机上始终铺满') },
+              admin: { hidden: true },
             },
           ],
         },
