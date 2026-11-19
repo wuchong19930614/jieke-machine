@@ -62,12 +62,12 @@ export const MEDIA_USAGES = [
 // 首页模块（技术方案 3.3，默认顺序按需求书第二部分）
 export const HOME_SECTIONS = [
   { label: 'Banner 轮播', value: 'banners' },
-  { label: '需求与服务', value: 'services' },
+  { label: '核心生产线', value: 'productLines' },
   { label: '公司数据通栏', value: 'companyStats' },
   { label: '公司简介', value: 'aboutIntro' },
   { label: '厂房展示', value: 'factoryGallery' },
-  { label: '四类生产线', value: 'productLines' },
   { label: '客户案例', value: 'featuredCases' },
+  { label: '需求与服务', value: 'services' },
 ] as const
 export type HomeSectionKey = (typeof HOME_SECTIONS)[number]['value']
 

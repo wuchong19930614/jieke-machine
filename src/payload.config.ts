@@ -2,7 +2,8 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { EXPERIMENTAL_TableFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
+import { EXPERIMENTAL_TableFeature, lexicalEditor, LinkFeature, TextStateFeature } from '@payloadcms/richtext-lexical'
+import { richTextStyles } from './lib/richTextStyles'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { zh } from '@payloadcms/translations/languages/zh'
 import path from 'path'
@@ -124,6 +125,7 @@ export default buildConfig({
       ...defaultFeatures.filter((feature) => feature.key !== 'link'),
       LinkFeature({ enabledCollections: ['products', 'cases', 'pages'] }),
       EXPERIMENTAL_TableFeature(),
+      TextStateFeature({ state: richTextStyles }),
     ],
   }),
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },

@@ -26,6 +26,17 @@ type ImageFieldOptions = {
   documents?: boolean
 }
 
+const IMAGE_SIZE_HINTS: Record<string, string> = {
+  listImage: '1600×1000',
+  heroImage: '1920×1080',
+  overviewImage: '1600×1000',
+  flowImage: '1600×900',
+  detailImage: '1200×800',
+  coverImage: '1200×800',
+  videoCover: '1280×720',
+  contactImage: '1000×1200',
+}
+
 // 图片位置：媒体引用 + 本位置的图框比例 + 适配方式（技术方案 5.2）
 export function imageField({ name, label, location, required, hint, documents }: ImageFieldOptions): RowField {
   return {
@@ -38,7 +49,14 @@ export function imageField({ name, label, location, required, hint, documents }:
         label,
         required,
         filterOptions: documents ? { mimeType: { equals: 'application/pdf' } } : { mimeType: { contains: 'image' } },
-        admin: { description: at(location, hint), width: '50%' },
+        admin: {
+          description: at(location, documents ? hint : [
+            hint,
+            hint?.includes(' px') ? null : `建议尺寸：${IMAGE_SIZE_HINTS[name] ?? '1200×900'} px。`,
+            '选择「按原图比例」可随上传图片自动调整图框；手动比例优先。',
+          ].filter(Boolean).join(' ')),
+          width: '50%',
+        },
       },
       ...(documents ? [] : ratioFitFields(name, location)),
     ],
@@ -226,8 +244,8 @@ function imageModuleFields(location: string): Field[] {
       type: 'row',
       admin: { condition: isBanner },
       fields: [
-        upload('desktopImage', '电脑图', at(`${location} › 图片模块`, '建议宽 1920 以上；替代文字在媒体库里填写（英文，必填）')),
-        upload('mobileImage', '手机图（选填）', '手机上显示这张；不填时用电脑图，可以放一张竖版海报'),
+        upload('desktopImage', '电脑图', at(`${location} › 图片模块`, '建议 1920×800 px；替代文字在媒体库里填写（英文，必填）')),
+        upload('mobileImage', '手机图（选填）', '建议 1080×1440 px；不填时用电脑图。'),
       ],
     },
     {
@@ -389,7 +407,7 @@ export function sectionsField(
             relationTo: 'media',
             label: '背景图片（选填）',
             filterOptions: { mimeType: { contains: 'image' } },
-            admin: { width: '40%', description: '铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅' },
+            admin: { width: '40%', description: '建议 1920×1080 px。按照模块宽高覆盖，焦点在媒体库设置；可用右边的遮罩调深浅。' },
           },
           {
             name: 'backgroundOverlay',

@@ -2,7 +2,7 @@
 import type { CollectionAfterChangeHook, CollectionConfig } from 'payload'
 
 import { isLoggedIn, pagesEditAccess } from '@/access'
-import { at, seoGroup } from '@/fields'
+import { at, seoGroup, textStyleField } from '@/fields'
 import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 
@@ -51,7 +51,9 @@ export const Pages: CollectionConfig = {
       admin: { position: 'sidebar', description: at('选项里的网址；决定这条内容显示在哪个辅助页面') },
     },
     { name: 'title', type: 'text', label: '页面标题', required: true, admin: { description: at('页面主标题') } },
+    textStyleField('title', '页面标题'),
     { name: 'content', type: 'richText', label: '正文', admin: { description: at('页面正文') } },
+    textStyleField('content', '正文'),
     seoGroup('本页'),
   ],
 }

@@ -178,7 +178,8 @@ export const Products: CollectionConfig = {
             },
           ],
         },
-        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片', hint: '默认 4:3' }),
+        textStyleField('name', '英文名称'),
+        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片' }),
         linkField({ name: 'listLink', label: '点击列表图跳转', location: '首页生产线、产品列表里点击列表图时打开的页面', defaultLabel: '本产品详情页（默认）' }),
         {
           name: 'listSummary',
@@ -186,6 +187,7 @@ export const Products: CollectionConfig = {
           label: '列表简介',
           admin: { description: at('首页生产线、产品列表卡片里的简介', '建议 160 个字符以内') },
         },
+        textStyleField('listSummary', '列表简介'),
       ],
     },
     slugField('name', '网址 /products/{网址短名}/'),
@@ -206,6 +208,7 @@ export const Products: CollectionConfig = {
         },
         textStyleField('heroKicker', '小标题'),
         { name: 'heroSummary', type: 'textarea', label: '简介', admin: { description: at(`${D} › 横幅 › 简介`) } },
+        textStyleField('heroSummary', '横幅简介'),
       ],
     },
     {
@@ -221,8 +224,9 @@ export const Products: CollectionConfig = {
           labels: { singular: '成品', plural: '成品' },
           admin: { description: at(`${D} › 可生产成品`, '成品图 1:1，只展示图片和名称'), components: { RowLabel: titleRowLabel('name') } },
           fields: [
-            imageField({ name: 'image', label: '成品图', location: `${D} › 可生产成品 › 成品图`, hint: '“按用途默认”为 1:1' }),
+            imageField({ name: 'image', label: '成品图', location: `${D} › 可生产成品 › 成品图`, hint: '建议 900×900 px，主体靠中间。' }),
             { name: 'name', type: 'text', label: '成品名称', required: true, admin: { width: '50%' } },
+            textStyleField('name', '成品名称'),
             visibleField(),
           ],
         },
@@ -254,6 +258,7 @@ export const Products: CollectionConfig = {
         },
         textStyleField('proposalTitle', '报价入口标题'),
         { name: 'proposalText', type: 'textarea', label: '报价入口说明', admin: { description: at(`${D} › 报价入口 › 说明`) } },
+        textStyleField('proposalText', '报价入口说明'),
         {
           type: 'row',
           fields: [
@@ -319,6 +324,8 @@ export const Products: CollectionConfig = {
           fields: [
             { name: 'question', type: 'text', label: '问题', required: true },
             { name: 'answer', type: 'textarea', label: '答案', required: true },
+            textStyleField('question', '问题'),
+            textStyleField('answer', '答案'),
             visibleField(),
           ],
         },
@@ -353,6 +360,8 @@ export const Products: CollectionConfig = {
           fields: [
             { name: 'title', type: 'text', label: '优势标题', required: true },
             { name: 'description', type: 'textarea', label: '说明' },
+            textStyleField('title', '优势标题'),
+            textStyleField('description', '说明'),
             visibleField(),
           ],
         },
@@ -372,8 +381,10 @@ export const Products: CollectionConfig = {
           admin: { description: at(`${D} › Step-by-Step Process`, '步骤名称和数量按实际设备设置'), components: { RowLabel: titleRowLabel('title') } },
           fields: [
             { name: 'title', type: 'text', label: '步骤名称', required: true },
+            textStyleField('title', '步骤名称'),
             imageField({ name: 'image', label: '对应设备图', location: `${D} › Step-by-Step Process › 设备图` }),
             { name: 'description', type: 'textarea', label: '说明' },
+            textStyleField('description', '步骤说明'),
             visibleField(),
           ],
         },
@@ -426,6 +437,7 @@ export const Products: CollectionConfig = {
           ],
         },
         textStyleField('formTitle', '表单标题'),
+        textStyleField('formIntro', '表单说明'),
         {
           type: 'row',
           fields: [

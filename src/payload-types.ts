@@ -179,6 +179,15 @@ export interface Page {
    * 前台位置：页面主标题
    */
   title: string;
+  titleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：页面正文
    */
@@ -197,6 +206,15 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
+  contentStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 只影响本页在三个地方的显示：Google 搜索结果里的标题和摘要、浏览器标签页上的名字、把链接发到 WhatsApp / Facebook 时的预览卡片。不填会自动用页面标题和简介，一般不用改。
    */
@@ -293,8 +311,17 @@ export interface Product {
    * 前台位置：不在前台显示。首期只有生产线一类，前台不做分类筛选
    */
   category?: 'production-lines' | null;
+  nameStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
-   * 前台位置：首页生产线、产品列表、相关生产线卡片。默认 4:3
+   * 前台位置：首页生产线、产品列表、相关生产线卡片。建议尺寸：1600×1000 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   listImage?: (number | null) | Media;
   /**
@@ -324,6 +351,15 @@ export interface Product {
    * 前台位置：首页生产线、产品列表卡片里的简介。建议 160 个字符以内
    */
   listSummary?: string | null;
+  listSummaryStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：网址 /products/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址
    */
@@ -378,7 +414,7 @@ export interface Product {
          */
         backgroundColor?: string | null;
         /**
-         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         * 建议 1920×1080 px。按照模块宽高覆盖，焦点在媒体库设置；可用右边的遮罩调深浅。
          */
         backgroundImage?: (number | null) | Media;
         /**
@@ -389,7 +425,7 @@ export interface Product {
       }[]
     | null;
   /**
-   * 前台位置：产品详情 › 横幅。整条生产线或设备场景图
+   * 前台位置：产品详情 › 横幅。整条生产线或设备场景图 建议尺寸：1920×1080 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   heroImage?: (number | null) | Media;
   /**
@@ -422,13 +458,22 @@ export interface Product {
    * 前台位置：产品详情 › 横幅 › 简介
    */
   heroSummary?: string | null;
+  heroSummaryStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 可生产成品。成品图 1:1，只展示图片和名称
    */
   applications?:
     | {
         /**
-         * 前台位置：产品详情 › 可生产成品 › 成品图。“按用途默认”为 1:1
+         * 前台位置：产品详情 › 可生产成品 › 成品图。建议 900×900 px，主体靠中间。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
          */
         image?: (number | null) | Media;
         /**
@@ -445,6 +490,15 @@ export interface Product {
          */
         imageFit?: ('default' | 'contain' | 'cover') | null;
         name: string;
+        nameStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         /**
          * 前台是否显示该条目
          */
@@ -471,7 +525,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * 前台位置：产品详情 › Product Introduction › 全景图。可点击放大
+   * 前台位置：产品详情 › Product Introduction › 全景图。可点击放大 建议尺寸：1600×1000 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   overviewImage?: (number | null) | Media;
   /**
@@ -523,6 +577,15 @@ export interface Product {
    * 前台位置：产品详情 › 报价入口 › 说明
    */
   proposalText?: string | null;
+  proposalTextStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 报价入口 › 按钮。点击后滚动到页底询盘表单
    */
@@ -556,7 +619,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * 前台位置：产品详情 › Production Process › 流程图。默认保持原图比例，可点击放大
+   * 前台位置：产品详情 › Production Process › 流程图。默认保持原图比例，可点击放大 建议尺寸：1600×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   flowImage?: (number | null) | Media;
   /**
@@ -620,7 +683,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * 前台位置：产品详情 › 适用客户与项目支持下方
+   * 前台位置：产品详情 › 适用客户与项目支持下方。建议尺寸：1200×800 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   detailImage?: (number | null) | Media;
   /**
@@ -643,6 +706,24 @@ export interface Product {
     | {
         question: string;
         answer: string;
+        questionStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        answerStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         /**
          * 前台是否显示该条目
          */
@@ -669,7 +750,7 @@ export interface Product {
     | boolean
     | null;
   /**
-   * 前台位置：产品详情 › 视频封面。只能放图片，16:9；不填时用 YouTube 缩略图
+   * 前台位置：产品详情 › 视频封面。只能放图片，16:9；不填时用 YouTube 缩略图 建议尺寸：1280×720 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   videoCover?: (number | null) | Media;
   /**
@@ -692,6 +773,24 @@ export interface Product {
     | {
         title: string;
         description?: string | null;
+        titleStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        descriptionStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         /**
          * 前台是否显示该条目
          */
@@ -705,8 +804,17 @@ export interface Product {
   processSteps?:
     | {
         title: string;
+        titleStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         /**
-         * 前台位置：产品详情 › Step-by-Step Process › 设备图
+         * 前台位置：产品详情 › Step-by-Step Process › 设备图。建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
          */
         image?: (number | null) | Media;
         /**
@@ -723,6 +831,15 @@ export interface Product {
          */
         imageFit?: ('default' | 'contain' | 'cover') | null;
         description?: string | null;
+        descriptionStyle?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         /**
          * 前台是否显示该条目
          */
@@ -752,13 +869,22 @@ export interface Product {
     | number
     | boolean
     | null;
+  formIntroStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品详情 › 询盘区 › 说明
    */
   formIntro?: string | null;
   formIntroHidden?: boolean | null;
   /**
-   * 前台位置：产品详情 › 询盘区左侧
+   * 前台位置：产品详情 › 询盘区左侧。建议尺寸：1000×1200 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   contactImage?: (number | null) | Media;
   /**
@@ -1162,6 +1288,15 @@ export interface Case {
    * 前台位置：案例详情主标题、案例列表、首页精选案例
    */
   title: string;
+  titleStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例卡片和项目概况
    */
@@ -1423,7 +1558,7 @@ export interface Case {
    */
   capacity?: string | null;
   /**
-   * 前台位置：案例列表卡片、首页精选案例。默认 4:3
+   * 前台位置：案例列表卡片、首页精选案例。建议尺寸：1200×800 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   coverImage?: (number | null) | Media;
   /**
@@ -1443,6 +1578,24 @@ export interface Case {
    * 前台位置：首页案例卡片、产品详情的客户案例块。建议 160 个字符以内
    */
   summary?: string | null;
+  summaryStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  capacityStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：网址 /case-studies/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址
    */
@@ -1451,6 +1604,15 @@ export interface Case {
    * 前台位置：案例详情 › 项目概况 › Customer
    */
   customerName?: string | null;
+  customerNameStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 按客户允许公开的范围勾选
    */
@@ -1463,6 +1625,15 @@ export interface Case {
    * 前台位置：案例详情 › 项目概况 › Equipment Configuration
    */
   equipmentConfiguration?: string | null;
+  equipmentConfigurationStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：案例详情 › 项目概况 › Delivery Date。前台显示为 “March 2025”
    */
@@ -1522,7 +1693,7 @@ export interface Case {
     [k: string]: unknown;
   } | null;
   /**
-   * 前台位置：案例详情顶部。不填时用封面图
+   * 前台位置：案例详情顶部。不填时用封面图 建议尺寸：1920×1080 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   heroImage?: (number | null) | Media;
   /**
@@ -1538,7 +1709,7 @@ export interface Case {
    */
   heroImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：案例详情 › Project Photos。可点击放大；右边的比例和适配方式对这一组图片都生效
+   * 前台位置：案例详情 › Project Photos。建议 1200×900 px，可点击放大；选择原图比例后，每张图按自己的宽高调整。
    */
   gallery?: (number | Media)[] | null;
   /**
@@ -1558,7 +1729,7 @@ export interface Case {
    */
   videoUrl?: string | null;
   /**
-   * 前台位置：首页精选案例、案例视频。只能放图片，16:9；不填时用 YouTube 缩略图
+   * 前台位置：首页精选案例、案例视频。只能放图片，16:9；不填时用 YouTube 缩略图 建议尺寸：1280×720 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   videoCover?: (number | null) | Media;
   /**
@@ -2099,7 +2270,6 @@ export interface User {
     cases?: (number | Case)[] | null;
   };
   totpSecret?: string | null;
-  hasTotp?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -2449,7 +2619,9 @@ export interface PayloadMigration {
 export interface PagesSelect<T extends boolean = true> {
   slug?: T;
   title?: T;
+  titleStyle?: T;
   content?: T;
+  contentStyle?: T;
   seo?:
     | T
     | {
@@ -2472,6 +2644,7 @@ export interface ProductsSelect<T extends boolean = true> {
   nameZh?: T;
   productCode?: T;
   category?: T;
+  nameStyle?: T;
   listImage?: T;
   listImageRatio?: T;
   listImageRatioCustom?: T;
@@ -2487,6 +2660,7 @@ export interface ProductsSelect<T extends boolean = true> {
         newTab?: T;
       };
   listSummary?: T;
+  listSummaryStyle?: T;
   slug?: T;
   sections?:
     | T
@@ -2508,6 +2682,7 @@ export interface ProductsSelect<T extends boolean = true> {
   heroKickerHidden?: T;
   heroKickerStyle?: T;
   heroSummary?: T;
+  heroSummaryStyle?: T;
   applications?:
     | T
     | {
@@ -2516,6 +2691,7 @@ export interface ProductsSelect<T extends boolean = true> {
         imageRatioCustom?: T;
         imageFit?: T;
         name?: T;
+        nameStyle?: T;
         visible?: T;
         id?: T;
       };
@@ -2529,6 +2705,7 @@ export interface ProductsSelect<T extends boolean = true> {
   proposalTitleHidden?: T;
   proposalTitleStyle?: T;
   proposalText?: T;
+  proposalTextStyle?: T;
   proposalButtonText?: T;
   proposalButtonTextHidden?: T;
   proposalButtonTextStyle?: T;
@@ -2549,6 +2726,8 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         question?: T;
         answer?: T;
+        questionStyle?: T;
+        answerStyle?: T;
         visible?: T;
         id?: T;
       };
@@ -2565,6 +2744,8 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        titleStyle?: T;
+        descriptionStyle?: T;
         visible?: T;
         id?: T;
       };
@@ -2572,11 +2753,13 @@ export interface ProductsSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleStyle?: T;
         image?: T;
         imageRatio?: T;
         imageRatioCustom?: T;
         imageFit?: T;
         description?: T;
+        descriptionStyle?: T;
         visible?: T;
         id?: T;
       };
@@ -2585,6 +2768,7 @@ export interface ProductsSelect<T extends boolean = true> {
   formTitle?: T;
   formTitleHidden?: T;
   formTitleStyle?: T;
+  formIntroStyle?: T;
   formIntro?: T;
   formIntroHidden?: T;
   contactImage?: T;
@@ -2671,6 +2855,7 @@ export interface ProductsSelect<T extends boolean = true> {
 export interface CasesSelect<T extends boolean = true> {
   _order?: T;
   title?: T;
+  titleStyle?: T;
   country?: T;
   capacity?: T;
   coverImage?: T;
@@ -2678,11 +2863,15 @@ export interface CasesSelect<T extends boolean = true> {
   coverImageRatioCustom?: T;
   coverImageFit?: T;
   summary?: T;
+  summaryStyle?: T;
+  capacityStyle?: T;
   slug?: T;
   customerName?: T;
+  customerNameStyle?: T;
   showCustomerName?: T;
   products?: T;
   equipmentConfiguration?: T;
+  equipmentConfigurationStyle?: T;
   deliveryDate?: T;
   customerRequirements?: T;
   solution?: T;
@@ -2837,7 +3026,6 @@ export interface UsersSelect<T extends boolean = true> {
         cases?: T;
       };
   totpSecret?: T;
-  hasTotp?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -3040,6 +3228,15 @@ export interface SiteSetting {
    * 前台位置：页头 Logo 旁、页脚、首页公司数据通栏、邮件署名
    */
   companyName?: string | null;
+  companyNameStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：页头、页脚、蓝色在线沟通面板。建议透明背景 PNG，高度 80px 以上
    */
@@ -3048,10 +3245,28 @@ export interface SiteSetting {
    * 前台位置：页脚 › 品牌区
    */
   footerIntro?: string | null;
+  footerIntroStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：顶栏、页脚、联系页、邮箱弹层
    */
   email?: string | null;
+  emailStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：页脚、联系页、电话弹层。带国际区号，如 +86 138 0000 0000
    */
@@ -3068,6 +3283,42 @@ export interface SiteSetting {
    * 前台位置：联系页。建议注明时区，如 Mon–Sat, 9:00–18:00 (GMT+8)
    */
   officeHours?: string | null;
+  phoneStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  whatsappStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  addressStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  officeHoursStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：页脚 › Follow Us。留空则不显示该图标
    */
@@ -3096,22 +3347,67 @@ export interface SiteSetting {
      * 前台位置：页头导航和页脚 Quick Links（顺序固定） › 导航第 1 项
      */
     home?: string | null;
+    homeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页头导航和页脚 Quick Links（顺序固定） › 导航第 2 项
      */
     about?: string | null;
+    aboutStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页头导航和页脚 Quick Links（顺序固定） › 导航第 3 项
      */
     products?: string | null;
+    productsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页头导航和页脚 Quick Links（顺序固定） › 导航第 4 项
      */
     cases?: string | null;
+    casesStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页头导航和页脚 Quick Links（顺序固定） › 导航第 5 项
      */
     contact?: string | null;
+    contactStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：右侧悬浮栏的提示文字。留空时使用默认文案（输入框里的灰色提示）。
@@ -3121,38 +3417,119 @@ export interface SiteSetting {
      * 前台位置：右侧悬浮栏的提示文字 › 悬浮栏区域朗读名
      */
     region?: string | null;
+    regionStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 1（邮箱）
      */
     email?: string | null;
+    emailStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 2（电话）
      */
     phone?: string | null;
+    phoneStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 3（联系我们）
      */
     contact?: string | null;
+    contactStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 4（在线客服）
      */
     chat?: string | null;
+    chatStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 5（返回顶部）
      */
     top?: string | null;
+    topStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 按钮 6（在线沟通）
      */
     blue?: string | null;
+    blueStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 手机：展开按钮朗读。手机上六个按钮收起成一个，点开后展开
      */
     expand?: string | null;
+    expandStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：右侧悬浮栏的提示文字 › 手机：收起按钮朗读
      */
     collapse?: string | null;
+    collapseStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：所有页面的页脚上方。留空时使用默认文案（输入框里的灰色提示）。
@@ -3163,16 +3540,43 @@ export interface SiteSetting {
      */
     title?: string | null;
     titleHidden?: boolean | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有页面的页脚上方 › 说明
      */
     text?: string | null;
     textHidden?: boolean | null;
+    textStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有页面的页脚上方 › 按钮
      */
     buttonText?: string | null;
     buttonTextHidden?: boolean | null;
+    buttonTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单。留空时使用默认文案（输入框里的灰色提示）。
@@ -3182,162 +3586,522 @@ export interface SiteSetting {
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 必填说明
      */
     requiredNote?: string | null;
+    requiredNoteStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 姓名：字段名
      */
     nameLabel?: string | null;
+    nameLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 姓名：占位
      */
     namePlaceholder?: string | null;
+    namePlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 邮箱：字段名
      */
     emailLabel?: string | null;
+    emailLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 邮箱：占位
      */
     emailPlaceholder?: string | null;
+    emailPlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 国家：字段名
      */
     countryLabel?: string | null;
+    countryLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 国家：离线留言字段名
      */
     countryOptionalLabel?: string | null;
+    countryOptionalLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 国家：下拉首项
      */
     countryPlaceholder?: string | null;
+    countryPlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 电话：字段名
      */
     phoneLabel?: string | null;
+    phoneLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 电话：占位
      */
     phonePlaceholder?: string | null;
+    phonePlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 公司：字段名
      */
     companyLabel?: string | null;
+    companyLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 公司：占位
      */
     companyPlaceholder?: string | null;
+    companyPlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 产品/型号：字段名
      */
     productLabel?: string | null;
+    productLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 产品/型号：占位（联系页）
      */
     productPlaceholder?: string | null;
+    productPlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 产品/型号：占位（产品页）
      */
     productPagePlaceholder?: string | null;
+    productPagePlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 产品页自动带入提示
      */
     productPrefill?: string | null;
+    productPrefillStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 需求：字段名
      */
     requirementsLabel?: string | null;
+    requirementsLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 需求：占位
      */
     requirementsPlaceholder?: string | null;
+    requirementsPlaceholderStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 隐私说明
      */
     privacyNote?: string | null;
+    privacyNoteStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 隐私说明中的链接文字。隐私说明里与这几个字相同的部分会变成链接
      */
     privacyLinkText?: string | null;
+    privacyLinkTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 提交按钮（联系页、产品页、弹窗）
      */
     submitInquiry?: string | null;
+    submitInquiryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 提交按钮（离线留言）
      */
     submitMessage?: string | null;
+    submitMessageStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 提交中按钮
      */
     sending?: string | null;
+    sendingStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 校验失败总提示
      */
     errorSummary?: string | null;
+    errorSummaryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 姓名为空
      */
     errNameRequired?: string | null;
+    errNameRequiredStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 姓名超长
      */
     errNameTooLong?: string | null;
+    errNameTooLongStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 邮箱为空
      */
     errEmailRequired?: string | null;
+    errEmailRequiredStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 邮箱格式错误
      */
     errEmailInvalid?: string | null;
+    errEmailInvalidStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 国家未选
      */
     errCountryRequired?: string | null;
+    errCountryRequiredStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 电话超长
      */
     errPhoneTooLong?: string | null;
+    errPhoneTooLongStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 公司超长
      */
     errCompanyTooLong?: string | null;
+    errCompanyTooLongStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 产品/型号超长
      */
     errProductTooLong?: string | null;
+    errProductTooLongStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 需求为空
      */
     errRequirementsRequired?: string | null;
+    errRequirementsRequiredStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 需求超长
      */
     errRequirementsTooLong?: string | null;
+    errRequirementsTooLongStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 提交太频繁
      */
     errRateLimited?: string | null;
+    errRateLimitedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 服务器错误
      */
     errServer?: string | null;
+    errServerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 网络失败
      */
     errNetwork?: string | null;
+    errNetworkStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 人机验证提示（预留）
      */
     captchaPrompt?: string | null;
+    captchaPromptStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 人机验证失败（预留）
      */
     captchaFailed?: string | null;
+    captchaFailedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：联系页、产品页、联系弹窗和离线留言四种表单 › 隐藏陷阱字段的标签
      */
     honeypotLabel?: string | null;
+    honeypotLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：红色在线服务窗口、蓝色在线沟通面板接入的在线客服；不填时按离线处理。在 tawk.to 后台 Administration › Chat Widget 中查看
@@ -3355,50 +4119,158 @@ export interface SiteSetting {
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 标题栏标题
      */
     title?: string | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 欢迎语
      */
     welcome?: string | null;
+    welcomeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 连接中
      */
     connecting?: string | null;
+    connectingStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 在线：状态
      */
     onlineStatus?: string | null;
+    onlineStatusStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 在线：说明
      */
     onlineText?: string | null;
+    onlineTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 在线：按钮
      */
     startChat?: string | null;
+    startChatStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 在线：点击后打开前
      */
     opening?: string | null;
+    openingStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 在线：隐私说明
      */
     chatPrivacy?: string | null;
+    chatPrivacyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 离线：状态
      */
     offlineStatus?: string | null;
+    offlineStatusStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 离线：说明
      */
     offlineText?: string | null;
+    offlineTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 连接失败：说明
      */
     failedText?: string | null;
+    failedTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 4 个按钮打开的窗口 › 离线留言表单标题
      */
     formTitle?: string | null;
+    formTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板。留空时使用默认文案（输入框里的灰色提示）。
@@ -3408,34 +4280,106 @@ export interface SiteSetting {
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 面板朗读名
      */
     ariaLabel?: string | null;
+    ariaLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 关闭按钮朗读
      */
     closeLabel?: string | null;
+    closeLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 欢迎语
      */
     welcome?: string | null;
+    welcomeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 进入按钮
      */
     enterChat?: string | null;
+    enterChatStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 进入按钮连接中
      */
     connecting?: string | null;
+    connectingStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 隐私说明
      */
     privacy?: string | null;
+    privacyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 连接失败说明
      */
     failedText?: string | null;
+    failedTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：悬浮栏第 6 个按钮打开的欢迎面板 › 连接失败按钮
      */
     failedButton?: string | null;
+    failedButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：点击 WhatsApp 链接时预填的第一句话（不含客户信息）。留空时使用默认文案（输入框里的灰色提示）。
@@ -3639,7 +4583,7 @@ export interface Theme {
      */
     videoCover?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
     /**
-     * 前台位置：首页 › Banner。原图比例 = 保持原设计的高度；选具体比例时只在桌面按比例定高度，手机保持原高度
+     * 前台位置：首页 › Banner。按原图：以第一张有效横幅的宽高为准，轮播时高度不跳。手动比例在桌面生效。
      */
     banner?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
   };
@@ -3663,110 +4607,353 @@ export interface UiText {
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 跳到正文链接
      */
     skipToContent?: string | null;
+    skipToContentStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 菜单按钮朗读（收起时）
      */
     menuOpen?: string | null;
+    menuOpenStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 菜单按钮朗读（展开时）
      */
     menuClose?: string | null;
+    menuCloseStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 菜单按钮
      */
     menu?: string | null;
+    menuStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 导航区域朗读名
      */
     mainNav?: string | null;
+    mainNavStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › Logo 朗读
      */
     logoAlt?: string | null;
+    logoAltStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 面包屑区域朗读名
      */
     breadcrumb?: string | null;
+    breadcrumbStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 新窗口提示（隐藏文字）
      */
     opensNewTab?: string | null;
+    opensNewTabStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 关闭按钮朗读
      */
     close?: string | null;
+    closeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 视频播放按钮朗读
      */
     playVideo?: string | null;
+    playVideoStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 视频播放按钮朗读（无标题）
      */
     playVideoGeneric?: string | null;
+    playVideoGenericStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 视频播放失败提示
      */
     videoError?: string | null;
+    videoErrorStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 视频播放失败链接
      */
     watchOnYouTube?: string | null;
+    watchOnYouTubeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 视频播放失败按钮
      */
     contactUs?: string | null;
+    contactUsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 图片放大提示
      */
     clickToEnlarge?: string | null;
+    clickToEnlargeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 放大层上一张
      */
     prevImage?: string | null;
+    prevImageStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 放大层下一张
      */
     nextImage?: string | null;
+    nextImageStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 放大层计数
      */
     imageCount?: string | null;
+    imageCountStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 邮箱弹层标题
      */
     emailTitle?: string | null;
+    emailTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 电话弹层标题
      */
     phoneTitle?: string | null;
+    phoneTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 邮箱弹层按钮
      */
     sendEmail?: string | null;
+    sendEmailStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 电话弹层按钮
      */
     callNow?: string | null;
+    callNowStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 复制按钮
      */
     copy?: string | null;
+    copyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 复制成功提示
      */
     copied?: string | null;
+    copiedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 复制失败提示。浏览器不允许复制时显示，同时选中文字方便访客手动复制
      */
     copyFailed?: string | null;
+    copyFailedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › WhatsApp 链接朗读
      */
     whatsappAria?: string | null;
+    whatsappAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：全站通用的按钮、提示和无障碍朗读名 › 面包屑首页
      */
     home?: string | null;
+    homeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：页面最上方的深色细条。留空时使用默认文案（输入框里的灰色提示）。
@@ -3777,14 +4964,41 @@ export interface UiText {
      */
     tagline?: string | null;
     taglineHidden?: boolean | null;
+    taglineStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页面最上方的深色细条 › 顶栏邮箱
      */
     email?: string | null;
+    emailStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页面最上方的深色细条 › 顶栏 WhatsApp
      */
     whatsapp?: string | null;
+    whatsappStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：页脚。留空时使用默认文案（输入框里的灰色提示）。
@@ -3794,46 +5008,145 @@ export interface UiText {
      * 前台位置：页脚 › 导航栏目标题
      */
     quickLinks?: string | null;
+    quickLinksStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 联系栏目标题
      */
     contact?: string | null;
+    contactStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 邮箱
      */
     email?: string | null;
+    emailStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 电话
      */
     phone?: string | null;
+    phoneStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › WhatsApp
      */
     whatsapp?: string | null;
+    whatsappStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 地址
      */
     address?: string | null;
+    addressStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 社交媒体栏目标题
      */
     followUs?: string | null;
+    followUsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 法律链接 1
      */
     privacyPolicy?: string | null;
+    privacyPolicyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 法律链接 2
      */
     cookieNotice?: string | null;
+    cookieNoticeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 法律链接 3
      */
     cookieSettings?: string | null;
+    cookieSettingsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 › 版权行
      */
     copyright?: string | null;
+    copyrightStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：手机底部按钮条（宽度小于 768px 时显示）。留空时使用默认文案（输入框里的灰色提示）。
@@ -3843,10 +5156,28 @@ export interface UiText {
      * 前台位置：手机底部按钮条（宽度小于 768px 时显示） › 底部按钮 1
      */
     quote?: string | null;
+    quoteStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：手机底部按钮条（宽度小于 768px 时显示） › 底部按钮 2
      */
     whatsapp?: string | null;
+    whatsappStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：首页 Banner 轮播的按钮和控件。留空时使用默认文案（输入框里的灰色提示）。
@@ -3856,58 +5187,184 @@ export interface UiText {
      * 前台位置：首页 Banner 轮播的按钮和控件 › 小标题默认值
      */
     kickerDefault?: string | null;
+    kickerDefaultStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 报价按钮默认值
      */
     quoteButton?: string | null;
+    quoteButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 产品按钮默认值
      */
     productButton?: string | null;
+    productButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 上一张按钮朗读
      */
     prev?: string | null;
+    prevStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 下一张按钮朗读
      */
     next?: string | null;
+    nextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 轮播区域朗读名
      */
     region?: string | null;
+    regionStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 每张幻灯片朗读
      */
     slide?: string | null;
+    slideStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 控制区朗读名
      */
     controls?: string | null;
+    controlsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 圆点朗读
      */
     goTo?: string | null;
+    goToStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 计数
      */
     count?: string | null;
+    countStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 暂停按钮文字
      */
     pause?: string | null;
+    pauseStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 播放按钮文字
      */
     play?: string | null;
+    playStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 暂停按钮朗读
      */
     pauseAria?: string | null;
+    pauseAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：首页 Banner 轮播的按钮和控件 › 播放按钮朗读
      */
     playAria?: string | null;
+    playAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：产品列表页。留空时使用默认文案（输入框里的灰色提示）。
@@ -3918,14 +5375,41 @@ export interface UiText {
      */
     viewDetails?: string | null;
     viewDetailsHidden?: boolean | null;
+    viewDetailsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：产品列表页 › 无已发布产品时的提示
      */
     emptyText?: string | null;
+    emptyTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：产品列表页 › 提示下方按钮
      */
     emptyButton?: string | null;
+    emptyButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改）。留空时使用默认文案（输入框里的灰色提示）。
@@ -3936,173 +5420,506 @@ export interface UiText {
      */
     heroKicker?: string | null;
     heroKickerHidden?: boolean | null;
+    heroKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 横幅按钮
      */
     heroButton?: string | null;
     heroButtonHidden?: boolean | null;
+    heroButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 手册下载按钮
      */
     brochureButton?: string | null;
+    brochureButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 手册文件说明
      */
     brochureMeta?: string | null;
+    brochureMetaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：标题
      */
     applicationsTitle?: string | null;
     applicationsTitleHidden?: boolean | null;
+    applicationsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：副标题
      */
     applicationsSubtitle?: string | null;
+    applicationsSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 可生产成品：区域朗读名
      */
     applicationsAria?: string | null;
+    applicationsAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 图文介绍：小标题
      */
     introKicker?: string | null;
     introKickerHidden?: boolean | null;
+    introKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 图文介绍：标题
      */
     introTitle?: string | null;
     introTitleHidden?: boolean | null;
+    introTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备特点：标题
      */
     featuresTitle?: string | null;
     featuresTitleHidden?: boolean | null;
+    featuresTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 报价入口：标题
      */
     proposalTitle?: string | null;
     proposalTitleHidden?: boolean | null;
+    proposalTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 报价入口：按钮
      */
     proposalButton?: string | null;
     proposalButtonHidden?: boolean | null;
+    proposalButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺流程：标题
      */
     processTitle?: string | null;
     processTitleHidden?: boolean | null;
+    processTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：标题
      */
     specsTitle?: string | null;
     specsTitleHidden?: boolean | null;
+    specsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：表头第一格
      */
     specsModel?: string | null;
+    specsModelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：手机横滑提示
      */
     specsSwipe?: string | null;
+    specsSwipeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 参数表：空单元格
      */
     specsEmpty?: string | null;
+    specsEmptyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 适用客户：标题
      */
     audienceTitle?: string | null;
     audienceTitleHidden?: boolean | null;
+    audienceTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 项目支持：标题
      */
     supportTitle?: string | null;
     supportTitleHidden?: boolean | null;
+    supportTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › FAQ：标题
      */
     faqTitle?: string | null;
     faqTitleHidden?: boolean | null;
+    faqTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 运行视频：标题
      */
     videoTitle?: string | null;
     videoTitleHidden?: boolean | null;
+    videoTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备优势：标题
      */
     advantagesTitle?: string | null;
     advantagesTitleHidden?: boolean | null;
+    advantagesTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 设备优势：副标题
      */
     advantagesSubtitle?: string | null;
+    advantagesSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：小标题
      */
     stepsKicker?: string | null;
     stepsKickerHidden?: boolean | null;
+    stepsKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：标题
      */
     stepsTitle?: string | null;
     stepsTitleHidden?: boolean | null;
+    stepsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：副标题
      */
     stepsSubtitle?: string | null;
+    stepsSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：列表朗读名
      */
     stepsAria?: string | null;
+    stepsAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 工艺步骤：按钮朗读
      */
     stepAria?: string | null;
+    stepAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：标题
      */
     relatedTitle?: string | null;
     relatedTitleHidden?: boolean | null;
+    relatedTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：副标题
      */
     relatedSubtitle?: string | null;
+    relatedSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 相关生产线：卡片按钮
      */
     relatedButton?: string | null;
     relatedButtonHidden?: boolean | null;
+    relatedButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：标题
      */
     casesTitle?: string | null;
     casesTitleHidden?: boolean | null;
+    casesTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：副标题
      */
     casesSubtitle?: string | null;
+    casesSubtitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 客户案例：卡片按钮
      */
     casesButton?: string | null;
     casesButtonHidden?: boolean | null;
+    casesButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：小标题
      */
     inquiryKicker?: string | null;
     inquiryKickerHidden?: boolean | null;
+    inquiryKickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：标题
      */
     inquiryTitle?: string | null;
     inquiryTitleHidden?: boolean | null;
+    inquiryTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有产品详情页（单个产品在产品编辑页各模块最上面的“本模块标题和按钮文字”里改） › 询盘区：说明
      */
     inquiryIntro?: string | null;
     inquiryIntroHidden?: boolean | null;
+    inquiryIntroStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：案例列表页。留空时使用默认文案（输入框里的灰色提示）。
@@ -4112,43 +5929,133 @@ export interface UiText {
      * 前台位置：案例列表页 › 卡片国家标签
      */
     countryLabel?: string | null;
+    countryLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 卡片设备标签
      */
     equipmentLabel?: string | null;
+    equipmentLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 卡片链接
      */
     viewCase?: string | null;
     viewCaseHidden?: boolean | null;
+    viewCaseStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 分页区域朗读名
      */
     pagination?: string | null;
+    paginationStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 上一页
      */
     previous?: string | null;
+    previousStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 下一页
      */
     next?: string | null;
+    nextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 页码朗读
      */
     pageAria?: string | null;
+    pageAriaStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 页码说明
      */
     pageOf?: string | null;
+    pageOfStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 无已发布案例时的提示
      */
     emptyText?: string | null;
+    emptyTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：案例列表页 › 提示下方按钮
      */
     emptyButton?: string | null;
+    emptyButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改）。留空时使用默认文案（输入框里的灰色提示）。
@@ -4159,76 +6066,220 @@ export interface UiText {
      */
     back?: string | null;
     backHidden?: boolean | null;
+    backStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 项目概况：标题
      */
     overviewTitle?: string | null;
     overviewTitleHidden?: boolean | null;
+    overviewTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 行：客户
      */
     customer?: string | null;
+    customerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 行：国家 / 地区
      */
     country?: string | null;
+    countryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 行：设备配置
      */
     configuration?: string | null;
+    configurationStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 行：产能
      */
     capacity?: string | null;
+    capacityStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 行：交付日期
      */
     deliveryDate?: string | null;
+    deliveryDateStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 正文小节 1
      */
     requirements?: string | null;
     requirementsHidden?: boolean | null;
+    requirementsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 正文小节 2
      */
     solution?: string | null;
     solutionHidden?: boolean | null;
+    solutionStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 正文小节 3
      */
     delivery?: string | null;
     deliveryHidden?: boolean | null;
+    deliveryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 现场图片标题
      */
     photos?: string | null;
     photosHidden?: boolean | null;
+    photosStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 视频标题
      */
     video?: string | null;
     videoHidden?: boolean | null;
+    videoStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 所用生产线标题
      */
     linesUsed?: string | null;
     linesUsedHidden?: boolean | null;
+    linesUsedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 所用生产线链接
      */
     linesButton?: string | null;
     linesButtonHidden?: boolean | null;
+    linesButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 主按钮
      */
     primaryButton?: string | null;
     primaryButtonHidden?: boolean | null;
+    primaryButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：所有案例详情页（单个案例可在“模块文案覆盖”里改） › 次按钮
      */
     secondaryButton?: string | null;
     secondaryButtonHidden?: boolean | null;
+    secondaryButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：页脚 Cookie Settings 打开的弹窗。留空时使用默认文案（输入框里的灰色提示）。
@@ -4238,70 +6289,223 @@ export interface UiText {
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 弹窗标题
      */
     title?: string | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 说明
      */
     intro?: string | null;
+    introStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 1：标题
      */
     necessaryTitle?: string | null;
+    necessaryTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 1：状态
      */
     necessaryStatus?: string | null;
+    necessaryStatusStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 1：说明
      */
     necessaryText?: string | null;
+    necessaryTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 2：标题
      */
     analyticsTitle?: string | null;
+    analyticsTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 2：开关朗读
      */
     analyticsToggle?: string | null;
+    analyticsToggleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 2：说明
      */
     analyticsText?: string | null;
+    analyticsTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 开关：开
      */
     on?: string | null;
+    onStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 开关：关
      */
     off?: string | null;
+    offStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 3：标题
      */
     chatTitle?: string | null;
+    chatTitleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 3：状态
      */
     chatStatus?: string | null;
+    chatStatusStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 类别 3：说明
      */
     chatText?: string | null;
+    chatTextStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 说明链接
      */
     noticeLink?: string | null;
+    noticeLinkStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 保存按钮
      */
     save?: string | null;
+    saveStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 取消按钮
      */
     cancel?: string | null;
+    cancelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页脚 Cookie Settings 打开的弹窗 › 保存成功提示
      */
     saved?: string | null;
+    savedStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：/thank-you/ 页面的按钮和提示。留空时使用默认文案（输入框里的灰色提示）。
@@ -4312,29 +6516,83 @@ export interface UiText {
      */
     kicker?: string | null;
     kickerHidden?: boolean | null;
+    kickerStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：/thank-you/ 页面的按钮和提示 › 确认邮件提示
      */
     confirmation?: string | null;
+    confirmationStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：/thank-you/ 页面的按钮和提示 › WhatsApp 引导
      */
     whatsappHint?: string | null;
     whatsappHintHidden?: boolean | null;
+    whatsappHintStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：/thank-you/ 页面的按钮和提示 › WhatsApp 按钮
      */
     whatsappButton?: string | null;
+    whatsappButtonStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：/thank-you/ 页面的按钮和提示 › 按钮 1
      */
     backHome?: string | null;
     backHomeHidden?: boolean | null;
+    backHomeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：/thank-you/ 页面的按钮和提示 › 按钮 2
      */
     exploreProducts?: string | null;
     exploreProductsHidden?: boolean | null;
+    exploreProductsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：404 页面的按钮。留空时使用默认文案（输入框里的灰色提示）。
@@ -4344,21 +6602,57 @@ export interface UiText {
      * 前台位置：404 页面的按钮 › 大号数字
      */
     code?: string | null;
+    codeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：404 页面的按钮 › 按钮 1
      */
     backHome?: string | null;
     backHomeHidden?: boolean | null;
+    backHomeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：404 页面的按钮 › 按钮 2
      */
     exploreProducts?: string | null;
     exploreProductsHidden?: boolean | null;
+    exploreProductsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：404 页面的按钮 › 按钮 3
      */
     contactUs?: string | null;
     contactUsHidden?: boolean | null;
+    contactUsStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：页面出错时显示。留空时使用默认文案（输入框里的灰色提示）。
@@ -4368,18 +6662,54 @@ export interface UiText {
      * 前台位置：页面出错时显示 › 主标题
      */
     title?: string | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页面出错时显示 › 正文
      */
     text?: string | null;
+    textStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页面出错时显示 › 按钮 1
      */
     retry?: string | null;
+    retryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 前台位置：页面出错时显示 › 按钮 2
      */
     backHome?: string | null;
+    backHomeStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * 前台位置：浏览器标签标题。留空时使用默认文案（输入框里的灰色提示）。
@@ -4407,12 +6737,12 @@ export interface HomePage {
     | {
         module:
           | 'banners'
-          | 'services'
+          | 'productLines'
           | 'companyStats'
           | 'aboutIntro'
           | 'factoryGallery'
-          | 'productLines'
           | 'featuredCases'
+          | 'services'
           | 'imageBanner'
           | 'imageGrid';
         visible?: boolean | null;
@@ -4445,7 +6775,7 @@ export interface HomePage {
          */
         backgroundColor?: string | null;
         /**
-         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         * 建议 1920×1080 px。按照模块宽高覆盖，焦点在媒体库设置；可用右边的遮罩调深浅。
          */
         backgroundImage?: (number | null) | Media;
         /**
@@ -4453,11 +6783,11 @@ export interface HomePage {
          */
         backgroundOverlay?: number | null;
         /**
-         * 前台位置：首页 › 图片模块。建议宽 1920 以上；替代文字在媒体库里填写（英文，必填）
+         * 前台位置：首页 › 图片模块。建议 1920×800 px；替代文字在媒体库里填写（英文，必填）
          */
         desktopImage?: (number | null) | Media;
         /**
-         * 手机上显示这张；不填时用电脑图，可以放一张竖版海报
+         * 建议 1080×1440 px；不填时用电脑图。
          */
         mobileImage?: (number | null) | Media;
         columns?: ('2' | '3' | '4') | null;
@@ -4524,7 +6854,7 @@ export interface HomePage {
            */
           desktopImage?: (number | null) | Media;
           /**
-           * 不填时用桌面图按焦点裁切
+           * 建议 1080×1440 px，主体靠中间；不填时用桌面图按焦点裁切。
            */
           mobileImage?: (number | null) | Media;
           /**
@@ -4577,7 +6907,7 @@ export interface HomePage {
             | boolean
             | null;
           /**
-           * 进入关联产品详情
+           * 进入关联产品详情；没有已发布的关联产品时进入产品列表。
            */
           productButtonText?: string | null;
           productButtonTextHidden?: boolean | null;
@@ -4662,6 +6992,15 @@ export interface HomePage {
               )
             | null;
           name: string;
+          nameStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           id?: string | null;
         }[]
       | null;
@@ -4675,6 +7014,15 @@ export interface HomePage {
      */
     supplierLabel?: string | null;
     supplierLabelHidden?: boolean | null;
+    supplierLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
      * 最多 5 组，例如 15+ / Years in Business
      */
@@ -4682,6 +7030,24 @@ export interface HomePage {
       | {
           value: string;
           label: string;
+          valueStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          labelStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           id?: string | null;
         }[]
       | null;
@@ -4752,6 +7118,15 @@ export interface HomePage {
     tags?:
       | {
           label: string;
+          labelStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           id?: string | null;
         }[]
       | null;
@@ -4773,6 +7148,31 @@ export interface HomePage {
       };
       [k: string]: unknown;
     } | null;
+    bodyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：首页 › 公司简介。建议 1200×800 px；留空时使用「关于我们 › 公司介绍」配图。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+     */
+    image?: (number | null) | Media;
+    /**
+     * 前台位置：首页 › 公司简介。“按用途默认”取主题里的默认比例
+     */
+    imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imageRatioCustom?: string | null;
+    /**
+     * 前台位置：首页 › 公司简介
+     */
+    imageFit?: ('default' | 'contain' | 'cover') | null;
   };
   /**
    * 前台位置：首页 › Factory & Workshop。初始 6 张，桌面 3 列 2 行
@@ -4837,7 +7237,7 @@ export interface HomePage {
     items?:
       | {
           /**
-           * 前台位置：首页 › 厂房展示
+           * 前台位置：首页 › 厂房展示。建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
            */
           image: number | Media;
           /**
@@ -4869,7 +7269,7 @@ export interface HomePage {
       | null;
   };
   /**
-   * 前台位置：首页 › 生产线。选中顺序即显示顺序
+   * 前台位置：首页 › 生产线。选中顺序即轮播顺序；大图来自各产品的列表图。
    */
   productLines?: {
     /**
@@ -5072,7 +7472,7 @@ export interface AboutPage {
          */
         backgroundColor?: string | null;
         /**
-         * 铺满整个模块；上传后文字变成白色，可用右边的遮罩调深浅
+         * 建议 1920×1080 px。按照模块宽高覆盖，焦点在媒体库设置；可用右边的遮罩调深浅。
          */
         backgroundImage?: (number | null) | Media;
         /**
@@ -5143,8 +7543,17 @@ export interface AboutPage {
       };
       [k: string]: unknown;
     } | null;
+    bodyStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
     /**
-     * 前台位置：关于我们 › 公司介绍右侧
+     * 前台位置：关于我们 › 公司介绍右侧。建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
      */
     image?: (number | null) | Media;
     /**
@@ -5211,7 +7620,7 @@ export interface AboutPage {
     items?:
       | {
           /**
-           * 前台位置：关于我们 › 生产场景与团队 › 卡片图片
+           * 前台位置：关于我们 › 生产场景与团队 › 卡片图片。建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
            */
           image?: (number | null) | Media;
           /**
@@ -5235,6 +7644,24 @@ export interface AboutPage {
            * 前台位置：关于我们 › 生产场景与团队 › 卡片说明。纯图片方式下不显示
            */
           description?: string | null;
+          titleStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          descriptionStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           /**
            * 前台位置：关于我们 › 生产场景与团队 › 点击图片跳转
            */
@@ -5301,7 +7728,7 @@ export interface AboutPage {
     items?:
       | {
           /**
-           * 前台位置：关于我们 › 供应能力与服务支持 › 条目图片。图文卡片方式下显示在标题上方；纯图片方式下必须上传
+           * 前台位置：关于我们 › 供应能力与服务支持 › 条目图片。图文卡片方式下显示在标题上方；纯图片方式下必须上传 建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
            */
           image?: (number | null) | Media;
           /**
@@ -5325,6 +7752,24 @@ export interface AboutPage {
            * 前台位置：关于我们 › 供应能力与服务支持 › 条目说明。纯图片方式下不显示
            */
           description?: string | null;
+          titleStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          descriptionStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
           /**
            * 前台位置：关于我们 › 供应能力与服务支持 › 点击图片跳转
            */
@@ -5404,6 +7849,15 @@ export interface ProductsPage {
    * 前台位置：产品列表 › 页头 › 简介
    */
   intro?: string | null;
+  introStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：产品列表 › 每个产品的列表图（单个产品另选了比例时以产品为准）。“按用途默认”取主题里的默认比例
    */
@@ -5593,6 +8047,15 @@ export interface ContactPage {
    * 前台位置：联系我们 › 简介
    */
   intro?: string | null;
+  introStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 表单标题
    */
@@ -5611,28 +8074,82 @@ export interface ContactPage {
    * 前台位置：联系我们 › 联系项：邮箱
    */
   emailLabel?: string | null;
+  emailLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：电话
    */
   phoneLabel?: string | null;
+  phoneLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：WhatsApp
    */
   whatsappLabel?: string | null;
+  whatsappLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：电话与 WhatsApp 相同时
    */
   phoneWhatsappLabel?: string | null;
+  phoneWhatsappLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：地址
    */
   addressLabel?: string | null;
+  addressLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：联系我们 › 联系项：办公时间
    */
   hoursLabel?: string | null;
+  hoursLabelStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
-   * 前台位置：联系我们 › 联系方式下方
+   * 前台位置：联系我们 › 联系方式下方。建议尺寸：1200×900 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   image?: (number | null) | Media;
   /**
@@ -5678,13 +8195,20 @@ export interface ContactPage {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   companyName?: T;
+  companyNameStyle?: T;
   logo?: T;
   footerIntro?: T;
+  footerIntroStyle?: T;
   email?: T;
+  emailStyle?: T;
   phone?: T;
   whatsapp?: T;
   address?: T;
   officeHours?: T;
+  phoneStyle?: T;
+  whatsappStyle?: T;
+  addressStyle?: T;
+  officeHoursStyle?: T;
   facebook?: T;
   instagram?: T;
   tiktok?: T;
@@ -5694,77 +8218,134 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | T
     | {
         home?: T;
+        homeStyle?: T;
         about?: T;
+        aboutStyle?: T;
         products?: T;
+        productsStyle?: T;
         cases?: T;
+        casesStyle?: T;
         contact?: T;
+        contactStyle?: T;
       };
   floatingTools?:
     | T
     | {
         region?: T;
+        regionStyle?: T;
         email?: T;
+        emailStyle?: T;
         phone?: T;
+        phoneStyle?: T;
         contact?: T;
+        contactStyle?: T;
         chat?: T;
+        chatStyle?: T;
         top?: T;
+        topStyle?: T;
         blue?: T;
+        blueStyle?: T;
         expand?: T;
+        expandStyle?: T;
         collapse?: T;
+        collapseStyle?: T;
       };
   contactBand?:
     | T
     | {
         title?: T;
         titleHidden?: T;
+        titleStyle?: T;
         text?: T;
         textHidden?: T;
+        textStyle?: T;
         buttonText?: T;
         buttonTextHidden?: T;
+        buttonTextStyle?: T;
       };
   formTexts?:
     | T
     | {
         requiredNote?: T;
+        requiredNoteStyle?: T;
         nameLabel?: T;
+        nameLabelStyle?: T;
         namePlaceholder?: T;
+        namePlaceholderStyle?: T;
         emailLabel?: T;
+        emailLabelStyle?: T;
         emailPlaceholder?: T;
+        emailPlaceholderStyle?: T;
         countryLabel?: T;
+        countryLabelStyle?: T;
         countryOptionalLabel?: T;
+        countryOptionalLabelStyle?: T;
         countryPlaceholder?: T;
+        countryPlaceholderStyle?: T;
         phoneLabel?: T;
+        phoneLabelStyle?: T;
         phonePlaceholder?: T;
+        phonePlaceholderStyle?: T;
         companyLabel?: T;
+        companyLabelStyle?: T;
         companyPlaceholder?: T;
+        companyPlaceholderStyle?: T;
         productLabel?: T;
+        productLabelStyle?: T;
         productPlaceholder?: T;
+        productPlaceholderStyle?: T;
         productPagePlaceholder?: T;
+        productPagePlaceholderStyle?: T;
         productPrefill?: T;
+        productPrefillStyle?: T;
         requirementsLabel?: T;
+        requirementsLabelStyle?: T;
         requirementsPlaceholder?: T;
+        requirementsPlaceholderStyle?: T;
         privacyNote?: T;
+        privacyNoteStyle?: T;
         privacyLinkText?: T;
+        privacyLinkTextStyle?: T;
         submitInquiry?: T;
+        submitInquiryStyle?: T;
         submitMessage?: T;
+        submitMessageStyle?: T;
         sending?: T;
+        sendingStyle?: T;
         errorSummary?: T;
+        errorSummaryStyle?: T;
         errNameRequired?: T;
+        errNameRequiredStyle?: T;
         errNameTooLong?: T;
+        errNameTooLongStyle?: T;
         errEmailRequired?: T;
+        errEmailRequiredStyle?: T;
         errEmailInvalid?: T;
+        errEmailInvalidStyle?: T;
         errCountryRequired?: T;
+        errCountryRequiredStyle?: T;
         errPhoneTooLong?: T;
+        errPhoneTooLongStyle?: T;
         errCompanyTooLong?: T;
+        errCompanyTooLongStyle?: T;
         errProductTooLong?: T;
+        errProductTooLongStyle?: T;
         errRequirementsRequired?: T;
+        errRequirementsRequiredStyle?: T;
         errRequirementsTooLong?: T;
+        errRequirementsTooLongStyle?: T;
         errRateLimited?: T;
+        errRateLimitedStyle?: T;
         errServer?: T;
+        errServerStyle?: T;
         errNetwork?: T;
+        errNetworkStyle?: T;
         captchaPrompt?: T;
+        captchaPromptStyle?: T;
         captchaFailed?: T;
+        captchaFailedStyle?: T;
         honeypotLabel?: T;
+        honeypotLabelStyle?: T;
       };
   tawkPropertyId?: T;
   tawkWidgetId?: T;
@@ -5772,29 +8353,49 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleStyle?: T;
         welcome?: T;
+        welcomeStyle?: T;
         connecting?: T;
+        connectingStyle?: T;
         onlineStatus?: T;
+        onlineStatusStyle?: T;
         onlineText?: T;
+        onlineTextStyle?: T;
         startChat?: T;
+        startChatStyle?: T;
         opening?: T;
+        openingStyle?: T;
         chatPrivacy?: T;
+        chatPrivacyStyle?: T;
         offlineStatus?: T;
+        offlineStatusStyle?: T;
         offlineText?: T;
+        offlineTextStyle?: T;
         failedText?: T;
+        failedTextStyle?: T;
         formTitle?: T;
+        formTitleStyle?: T;
       };
   bluePanel?:
     | T
     | {
         ariaLabel?: T;
+        ariaLabelStyle?: T;
         closeLabel?: T;
+        closeLabelStyle?: T;
         welcome?: T;
+        welcomeStyle?: T;
         enterChat?: T;
+        enterChatStyle?: T;
         connecting?: T;
+        connectingStyle?: T;
         privacy?: T;
+        privacyStyle?: T;
         failedText?: T;
+        failedTextStyle?: T;
         failedButton?: T;
+        failedButtonStyle?: T;
       };
   whatsappTexts?:
     | T
@@ -5876,252 +8477,406 @@ export interface UiTextsSelect<T extends boolean = true> {
     | T
     | {
         skipToContent?: T;
+        skipToContentStyle?: T;
         menuOpen?: T;
+        menuOpenStyle?: T;
         menuClose?: T;
+        menuCloseStyle?: T;
         menu?: T;
+        menuStyle?: T;
         mainNav?: T;
+        mainNavStyle?: T;
         logoAlt?: T;
+        logoAltStyle?: T;
         breadcrumb?: T;
+        breadcrumbStyle?: T;
         opensNewTab?: T;
+        opensNewTabStyle?: T;
         close?: T;
+        closeStyle?: T;
         playVideo?: T;
+        playVideoStyle?: T;
         playVideoGeneric?: T;
+        playVideoGenericStyle?: T;
         videoError?: T;
+        videoErrorStyle?: T;
         watchOnYouTube?: T;
+        watchOnYouTubeStyle?: T;
         contactUs?: T;
+        contactUsStyle?: T;
         clickToEnlarge?: T;
+        clickToEnlargeStyle?: T;
         prevImage?: T;
+        prevImageStyle?: T;
         nextImage?: T;
+        nextImageStyle?: T;
         imageCount?: T;
+        imageCountStyle?: T;
         emailTitle?: T;
+        emailTitleStyle?: T;
         phoneTitle?: T;
+        phoneTitleStyle?: T;
         sendEmail?: T;
+        sendEmailStyle?: T;
         callNow?: T;
+        callNowStyle?: T;
         copy?: T;
+        copyStyle?: T;
         copied?: T;
+        copiedStyle?: T;
         copyFailed?: T;
+        copyFailedStyle?: T;
         whatsappAria?: T;
+        whatsappAriaStyle?: T;
         home?: T;
+        homeStyle?: T;
       };
   topBar?:
     | T
     | {
         tagline?: T;
         taglineHidden?: T;
+        taglineStyle?: T;
         email?: T;
+        emailStyle?: T;
         whatsapp?: T;
+        whatsappStyle?: T;
       };
   footer?:
     | T
     | {
         quickLinks?: T;
+        quickLinksStyle?: T;
         contact?: T;
+        contactStyle?: T;
         email?: T;
+        emailStyle?: T;
         phone?: T;
+        phoneStyle?: T;
         whatsapp?: T;
+        whatsappStyle?: T;
         address?: T;
+        addressStyle?: T;
         followUs?: T;
+        followUsStyle?: T;
         privacyPolicy?: T;
+        privacyPolicyStyle?: T;
         cookieNotice?: T;
+        cookieNoticeStyle?: T;
         cookieSettings?: T;
+        cookieSettingsStyle?: T;
         copyright?: T;
+        copyrightStyle?: T;
       };
   mobileBar?:
     | T
     | {
         quote?: T;
+        quoteStyle?: T;
         whatsapp?: T;
+        whatsappStyle?: T;
       };
   banner?:
     | T
     | {
         kickerDefault?: T;
+        kickerDefaultStyle?: T;
         quoteButton?: T;
+        quoteButtonStyle?: T;
         productButton?: T;
+        productButtonStyle?: T;
         prev?: T;
+        prevStyle?: T;
         next?: T;
+        nextStyle?: T;
         region?: T;
+        regionStyle?: T;
         slide?: T;
+        slideStyle?: T;
         controls?: T;
+        controlsStyle?: T;
         goTo?: T;
+        goToStyle?: T;
         count?: T;
+        countStyle?: T;
         pause?: T;
+        pauseStyle?: T;
         play?: T;
+        playStyle?: T;
         pauseAria?: T;
+        pauseAriaStyle?: T;
         playAria?: T;
+        playAriaStyle?: T;
       };
   productList?:
     | T
     | {
         viewDetails?: T;
         viewDetailsHidden?: T;
+        viewDetailsStyle?: T;
         emptyText?: T;
+        emptyTextStyle?: T;
         emptyButton?: T;
+        emptyButtonStyle?: T;
       };
   product?:
     | T
     | {
         heroKicker?: T;
         heroKickerHidden?: T;
+        heroKickerStyle?: T;
         heroButton?: T;
         heroButtonHidden?: T;
+        heroButtonStyle?: T;
         brochureButton?: T;
+        brochureButtonStyle?: T;
         brochureMeta?: T;
+        brochureMetaStyle?: T;
         applicationsTitle?: T;
         applicationsTitleHidden?: T;
+        applicationsTitleStyle?: T;
         applicationsSubtitle?: T;
+        applicationsSubtitleStyle?: T;
         applicationsAria?: T;
+        applicationsAriaStyle?: T;
         introKicker?: T;
         introKickerHidden?: T;
+        introKickerStyle?: T;
         introTitle?: T;
         introTitleHidden?: T;
+        introTitleStyle?: T;
         featuresTitle?: T;
         featuresTitleHidden?: T;
+        featuresTitleStyle?: T;
         proposalTitle?: T;
         proposalTitleHidden?: T;
+        proposalTitleStyle?: T;
         proposalButton?: T;
         proposalButtonHidden?: T;
+        proposalButtonStyle?: T;
         processTitle?: T;
         processTitleHidden?: T;
+        processTitleStyle?: T;
         specsTitle?: T;
         specsTitleHidden?: T;
+        specsTitleStyle?: T;
         specsModel?: T;
+        specsModelStyle?: T;
         specsSwipe?: T;
+        specsSwipeStyle?: T;
         specsEmpty?: T;
+        specsEmptyStyle?: T;
         audienceTitle?: T;
         audienceTitleHidden?: T;
+        audienceTitleStyle?: T;
         supportTitle?: T;
         supportTitleHidden?: T;
+        supportTitleStyle?: T;
         faqTitle?: T;
         faqTitleHidden?: T;
+        faqTitleStyle?: T;
         videoTitle?: T;
         videoTitleHidden?: T;
+        videoTitleStyle?: T;
         advantagesTitle?: T;
         advantagesTitleHidden?: T;
+        advantagesTitleStyle?: T;
         advantagesSubtitle?: T;
+        advantagesSubtitleStyle?: T;
         stepsKicker?: T;
         stepsKickerHidden?: T;
+        stepsKickerStyle?: T;
         stepsTitle?: T;
         stepsTitleHidden?: T;
+        stepsTitleStyle?: T;
         stepsSubtitle?: T;
+        stepsSubtitleStyle?: T;
         stepsAria?: T;
+        stepsAriaStyle?: T;
         stepAria?: T;
+        stepAriaStyle?: T;
         relatedTitle?: T;
         relatedTitleHidden?: T;
+        relatedTitleStyle?: T;
         relatedSubtitle?: T;
+        relatedSubtitleStyle?: T;
         relatedButton?: T;
         relatedButtonHidden?: T;
+        relatedButtonStyle?: T;
         casesTitle?: T;
         casesTitleHidden?: T;
+        casesTitleStyle?: T;
         casesSubtitle?: T;
+        casesSubtitleStyle?: T;
         casesButton?: T;
         casesButtonHidden?: T;
+        casesButtonStyle?: T;
         inquiryKicker?: T;
         inquiryKickerHidden?: T;
+        inquiryKickerStyle?: T;
         inquiryTitle?: T;
         inquiryTitleHidden?: T;
+        inquiryTitleStyle?: T;
         inquiryIntro?: T;
         inquiryIntroHidden?: T;
+        inquiryIntroStyle?: T;
       };
   caseList?:
     | T
     | {
         countryLabel?: T;
+        countryLabelStyle?: T;
         equipmentLabel?: T;
+        equipmentLabelStyle?: T;
         viewCase?: T;
         viewCaseHidden?: T;
+        viewCaseStyle?: T;
         pagination?: T;
+        paginationStyle?: T;
         previous?: T;
+        previousStyle?: T;
         next?: T;
+        nextStyle?: T;
         pageAria?: T;
+        pageAriaStyle?: T;
         pageOf?: T;
+        pageOfStyle?: T;
         emptyText?: T;
+        emptyTextStyle?: T;
         emptyButton?: T;
+        emptyButtonStyle?: T;
       };
   caseDetail?:
     | T
     | {
         back?: T;
         backHidden?: T;
+        backStyle?: T;
         overviewTitle?: T;
         overviewTitleHidden?: T;
+        overviewTitleStyle?: T;
         customer?: T;
+        customerStyle?: T;
         country?: T;
+        countryStyle?: T;
         configuration?: T;
+        configurationStyle?: T;
         capacity?: T;
+        capacityStyle?: T;
         deliveryDate?: T;
+        deliveryDateStyle?: T;
         requirements?: T;
         requirementsHidden?: T;
+        requirementsStyle?: T;
         solution?: T;
         solutionHidden?: T;
+        solutionStyle?: T;
         delivery?: T;
         deliveryHidden?: T;
+        deliveryStyle?: T;
         photos?: T;
         photosHidden?: T;
+        photosStyle?: T;
         video?: T;
         videoHidden?: T;
+        videoStyle?: T;
         linesUsed?: T;
         linesUsedHidden?: T;
+        linesUsedStyle?: T;
         linesButton?: T;
         linesButtonHidden?: T;
+        linesButtonStyle?: T;
         primaryButton?: T;
         primaryButtonHidden?: T;
+        primaryButtonStyle?: T;
         secondaryButton?: T;
         secondaryButtonHidden?: T;
+        secondaryButtonStyle?: T;
       };
   cookie?:
     | T
     | {
         title?: T;
+        titleStyle?: T;
         intro?: T;
+        introStyle?: T;
         necessaryTitle?: T;
+        necessaryTitleStyle?: T;
         necessaryStatus?: T;
+        necessaryStatusStyle?: T;
         necessaryText?: T;
+        necessaryTextStyle?: T;
         analyticsTitle?: T;
+        analyticsTitleStyle?: T;
         analyticsToggle?: T;
+        analyticsToggleStyle?: T;
         analyticsText?: T;
+        analyticsTextStyle?: T;
         on?: T;
+        onStyle?: T;
         off?: T;
+        offStyle?: T;
         chatTitle?: T;
+        chatTitleStyle?: T;
         chatStatus?: T;
+        chatStatusStyle?: T;
         chatText?: T;
+        chatTextStyle?: T;
         noticeLink?: T;
+        noticeLinkStyle?: T;
         save?: T;
+        saveStyle?: T;
         cancel?: T;
+        cancelStyle?: T;
         saved?: T;
+        savedStyle?: T;
       };
   thankYou?:
     | T
     | {
         kicker?: T;
         kickerHidden?: T;
+        kickerStyle?: T;
         confirmation?: T;
+        confirmationStyle?: T;
         whatsappHint?: T;
         whatsappHintHidden?: T;
+        whatsappHintStyle?: T;
         whatsappButton?: T;
+        whatsappButtonStyle?: T;
         backHome?: T;
         backHomeHidden?: T;
+        backHomeStyle?: T;
         exploreProducts?: T;
         exploreProductsHidden?: T;
+        exploreProductsStyle?: T;
       };
   notFound?:
     | T
     | {
         code?: T;
+        codeStyle?: T;
         backHome?: T;
         backHomeHidden?: T;
+        backHomeStyle?: T;
         exploreProducts?: T;
         exploreProductsHidden?: T;
+        exploreProductsStyle?: T;
         contactUs?: T;
         contactUsHidden?: T;
+        contactUsStyle?: T;
       };
   error?:
     | T
     | {
         title?: T;
+        titleStyle?: T;
         text?: T;
+        textStyle?: T;
         retry?: T;
+        retryStyle?: T;
         backHome?: T;
+        backHomeStyle?: T;
       };
   pageTitles?:
     | T
@@ -6234,6 +8989,7 @@ export interface HomePageSelect<T extends boolean = true> {
           | {
               icon?: T;
               name?: T;
+              nameStyle?: T;
               id?: T;
             };
       };
@@ -6242,11 +8998,14 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         supplierLabel?: T;
         supplierLabelHidden?: T;
+        supplierLabelStyle?: T;
         stats?:
           | T
           | {
               value?: T;
               label?: T;
+              valueStyle?: T;
+              labelStyle?: T;
               id?: T;
             };
       };
@@ -6269,9 +9028,15 @@ export interface HomePageSelect<T extends boolean = true> {
           | T
           | {
               label?: T;
+              labelStyle?: T;
               id?: T;
             };
         body?: T;
+        bodyStyle?: T;
+        image?: T;
+        imageRatio?: T;
+        imageRatioCustom?: T;
+        imageFit?: T;
       };
   factoryGallery?:
     | T
@@ -6388,6 +9153,7 @@ export interface AboutPageSelect<T extends boolean = true> {
         buttonTextHidden?: T;
         buttonTextStyle?: T;
         body?: T;
+        bodyStyle?: T;
         image?: T;
         imageRatio?: T;
         imageRatioCustom?: T;
@@ -6415,6 +9181,8 @@ export interface AboutPageSelect<T extends boolean = true> {
               imageFit?: T;
               title?: T;
               description?: T;
+              titleStyle?: T;
+              descriptionStyle?: T;
               link?:
                 | T
                 | {
@@ -6450,6 +9218,8 @@ export interface AboutPageSelect<T extends boolean = true> {
               imageFit?: T;
               title?: T;
               description?: T;
+              titleStyle?: T;
+              descriptionStyle?: T;
               link?:
                 | T
                 | {
@@ -6487,6 +9257,7 @@ export interface ProductsPageSelect<T extends boolean = true> {
   subtitleHidden?: T;
   subtitleStyle?: T;
   intro?: T;
+  introStyle?: T;
   listImageRatio?: T;
   listImageRatioCustom?: T;
   listImageFit?: T;
@@ -6548,15 +9319,22 @@ export interface ContactPageSelect<T extends boolean = true> {
   headingHidden?: T;
   headingStyle?: T;
   intro?: T;
+  introStyle?: T;
   formTitle?: T;
   formTitleHidden?: T;
   formTitleStyle?: T;
   emailLabel?: T;
+  emailLabelStyle?: T;
   phoneLabel?: T;
+  phoneLabelStyle?: T;
   whatsappLabel?: T;
+  whatsappLabelStyle?: T;
   phoneWhatsappLabel?: T;
+  phoneWhatsappLabelStyle?: T;
   addressLabel?: T;
+  addressLabelStyle?: T;
   hoursLabel?: T;
+  hoursLabelStyle?: T;
   image?: T;
   imageRatio?: T;
   imageRatioCustom?: T;

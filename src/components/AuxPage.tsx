@@ -7,13 +7,15 @@ import { AUX_PAGES } from '@/collections/Pages'
 import { PAGE_DEFAULTS, type AuxPageSlug } from '@/content/texts'
 import { getAuxPage, getSettings } from '@/lib/data'
 import { collectionDoc, newDoc } from '@/lib/locate'
-import type { LocateAttrs, Locator } from '@/lib/locator'
+import { textStyleSheet, type LocateAttrs, type Locator } from '@/lib/locator'
 import { templateTitle } from '@/lib/seo'
 import type { Page } from '@/payload-types'
 
 export function auxTitle(slug: AuxPageSlug, page: Page | null): string {
   return page?.title || PAGE_DEFAULTS[slug].title
 }
+
+export const auxTextStyles = (page: Page | null) => page ? textStyleSheet(collectionDoc('pages', page.id), page) : null
 
 // 浏览器标签里的页面名：感谢页、404 页用固定的短名（Thank You、Page Not Found），其余用页面标题
 export function auxPageName(slug: AuxPageSlug, page: Page | null): string {

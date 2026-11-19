@@ -33,13 +33,17 @@ export function BannerCarousel({
   texts,
   locate = {},
   ratio = 'original',
+  mediaRatio,
+  mobileMediaRatio,
   className,
 }: {
   slides: React.ReactNode[]
   texts: Texts
   locate?: Partial<Record<keyof Texts, LocateAttrs>>
-  // 主题设置“默认图框比例 › Banner”：original 保持原设计的高度，其他比例只在桌面生效
+  // 自动比例取第一张有效图片，换页时保持高度稳定；固定比例只在桌面生效
   ratio?: string
+  mediaRatio?: number
+  mobileMediaRatio?: number
   // 模块“显示在”对应的 class（第 2 点）
   className?: string
 }) {
@@ -100,9 +104,12 @@ export function BannerCarousel({
     <section
       ref={rootRef}
       className={className ? `lp-hero ${className}` : 'lp-hero'}
-      {...(ratio && ratio !== 'original'
-        ? { 'data-ratio': ratio, style: { '--banner-ratio': ratio.replace('/', ' / ') } as React.CSSProperties }
-        : {})}
+      data-ratio={ratio !== 'original' ? ratio : undefined}
+      style={{
+        '--banner-ratio': ratio !== 'original' ? ratio.replace('/', ' / ') : undefined,
+        '--banner-auto-height': mediaRatio ? `${100 / mediaRatio}vw` : undefined,
+        '--banner-mobile-height': mobileMediaRatio ? `${100 / mobileMediaRatio}vw` : undefined,
+      } as React.CSSProperties}
       aria-roledescription="carousel"
       aria-label={texts.region}
       onMouseEnter={() => setHovering(true)}

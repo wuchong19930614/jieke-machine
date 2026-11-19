@@ -7,6 +7,10 @@ import * as migration_20261101_144924_media_storage_prefix from './20261101_1449
 import * as migration_20261109_064929_first_batch_image_ratio_brochure from './20261109_064929_first_batch_image_ratio_brochure';
 import * as migration_20261109_071931_second_batch_layout_background_links from './20261109_071931_second_batch_layout_background_links';
 import * as migration_20261109_074654_third_batch_image_modules_text_styles from './20261109_074654_third_batch_image_modules_text_styles';
+import * as migration_20261119_032025_homepage_v4_cms from './20261119_032025_homepage_v4_cms';
+import * as migration_20261119_032553_content_styles_and_auto_images from './20261119_032553_content_styles_and_auto_images';
+import * as migration_20261119_033105_public_ui_text_styles from './20261119_033105_public_ui_text_styles';
+import * as migration_20261119_035448_contact_and_auxiliary_text_styles from './20261119_035448_contact_and_auxiliary_text_styles';
 
 export const migrations = [
   {
@@ -52,6 +56,26 @@ export const migrations = [
   {
     up: migration_20261109_074654_third_batch_image_modules_text_styles.up,
     down: migration_20261109_074654_third_batch_image_modules_text_styles.down,
-    name: '20261109_074654_third_batch_image_modules_text_styles'
+    name: '20261109_074654_third_batch_image_modules_text_styles',
+  },
+  {
+    up: migration_20261119_032025_homepage_v4_cms.up,
+    down: migration_20261119_032025_homepage_v4_cms.down,
+    name: '20261119_032025_homepage_v4_cms',
+  },
+  {
+    up: migration_20261119_032553_content_styles_and_auto_images.up,
+    down: migration_20261119_032553_content_styles_and_auto_images.down,
+    name: '20261119_032553_content_styles_and_auto_images',
+  },
+  {
+    up: migration_20261119_033105_public_ui_text_styles.up,
+    down: migration_20261119_033105_public_ui_text_styles.down,
+    name: '20261119_033105_public_ui_text_styles',
+  },
+  {
+    up: migration_20261119_035448_contact_and_auxiliary_text_styles.up,
+    down: migration_20261119_035448_contact_and_auxiliary_text_styles.down,
+    name: '20261119_035448_contact_and_auxiliary_text_styles'
   },
 ];

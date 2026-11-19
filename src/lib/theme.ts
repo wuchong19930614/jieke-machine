@@ -42,7 +42,7 @@ export function defaultRatio(theme: Theme | null | undefined, usage: keyof NonNu
   const ratios = theme?.defaultRatios
   const value = ratios?.[usage]
   if (value) return value
-  return { equipment: '4/3', factory: '4/3', case: '4/3', application: '1/1', videoCover: '16/9', banner: 'original' }[usage] ?? '4/3'
+  return usage === 'videoCover' ? '16/9' : 'original'
 }
 
 // 主题 › 文字级别（第 4 点）→ 一段 CSS。前缀 :root:root:root 把优先级抬到 (0,3,x)，

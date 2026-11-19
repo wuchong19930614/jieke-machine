@@ -12,7 +12,7 @@ import { UiProvider } from '@/components/client/UiProvider'
 import { ContactBand, MobileBar, SiteFooter, SiteHeader, TopBar } from '@/components/SiteChrome'
 import { getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
-import { getLocator } from '@/lib/locator'
+import { getLocator, textStyleSheet } from '@/lib/locator'
 import { siteUrl } from '@/lib/previewPath'
 import { indexingAllowed, JsonLd, organizationJsonLd } from '@/lib/seo'
 import { FONT_VARS } from '@/lib/textStyle'
@@ -44,12 +44,16 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   const draft = await isDraft()
   const [settings, ui, theme, L] = await Promise.all([getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
   const textCss = themeTextCss(theme)
+  const siteTextStyles = textStyleSheet(globalDoc('site-settings'), settings.raw)
+  const uiTextStyles = textStyleSheet(globalDoc('ui-texts'), ui.raw)
 
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable} ${openSans.variable}`} style={themeStyle(theme, FONT_VARS)}>
       <body>
         {/* 主题 › 文字级别；内容来自清洗后的数字、色号和内置字体名（lib/textStyle.ts） */}
         {textCss ? <style data-theme-text dangerouslySetInnerHTML={{ __html: textCss }} /> : null}
+        {siteTextStyles}
+        {uiTextStyles}
         <UiProvider>
           <LightboxProvider texts={ui.common}>
             <a className="skip-link" href="#main" {...L(globalDoc('ui-texts'), 'common.skipToContent')}>
