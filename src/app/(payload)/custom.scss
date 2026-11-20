@@ -1056,3 +1056,30 @@ body,
   font-size: 0.875rem;
   color: var(--theme-warning-750);
 }
+
+.jk-font-size-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    padding: 5px 10px;
+    color: var(--theme-text);
+    background: var(--theme-elevation-50);
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  output {
+    min-width: 4ch;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -10,6 +10,7 @@ import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
 import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
+import { groupProducts } from '@/lib/productCategories'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 
@@ -53,21 +54,25 @@ export default async function ProductsListPage() {
         ) : null}
       </PageBanner>
       {products.length ? (
-        <Section background="blue" className="lp-store-lines">
-          {products.map((product, index) => (
-            <ProductLineCard
-              key={product.id}
-              product={product}
-              index={index}
-              buttonText={ui.productList.viewDetails}
-              buttonAttrs={L(U, 'productList.viewDetails')}
-              L={L}
-              ratio={defaultRatio(theme, 'equipment')}
-              layout={{ ratio: pickRatio(page, 'listImage'), fit: page.listImageFit, width: page.listImageWidth, position: page.listImagePosition }}
-              draft={draft}
-            />
-          ))}
-        </Section>
+        groupProducts(products).map(({ value, label, products: entries }) => (
+          <Section key={value} id={value} className="lp-store-lines">
+            <h2 className="lp-catalog-heading">{label}</h2>
+            {entries.map((product, index) => (
+              <ProductLineCard
+                key={product.id}
+                product={product}
+                index={index}
+                headingLevel="h3"
+                buttonText={ui.productList.viewDetails}
+                buttonAttrs={L(U, 'productList.viewDetails')}
+                L={L}
+                ratio={defaultRatio(theme, 'equipment')}
+                layout={{ ratio: pickRatio(page, 'listImage'), fit: page.listImageFit, width: page.listImageWidth, position: page.listImagePosition ?? 'left' }}
+                draft={draft}
+              />
+            ))}
+          </Section>
+        ))
       ) : (
         <Section>
           <div className="lp-empty">

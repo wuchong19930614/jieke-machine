@@ -57,13 +57,13 @@ const fontFamily = (key: string): string => (key !== 'system' && FONT_VARS[key] 
 // 一条样式 → 电脑端声明和手机端声明（手机只放字号）
 export function textStyleDeclarations(style: TextStyle, { opacity = true } = {}): { desktop: string; mobile: string } {
   const desktop: string[] = []
-  if (style.size) desktop.push(`font-size:${style.size}px`)
+  if (style.size) desktop.push(`font-size:max(8px, calc(${style.size}px + var(--font-size-adjustment, 0px)))`)
   if (style.font) desktop.push(`font-family:${fontFamily(style.font)}`)
   if (style.color) desktop.push(`color:${style.color}`)
   if (style.weight) desktop.push(`font-weight:${style.weight}`)
   if (opacity && style.opacity) desktop.push(`opacity:${style.opacity / 100}`)
   const mobileSize = style.sizeMobile ?? (style.size ? Math.max(TEXT_SIZE_MIN, Math.round(style.size * MOBILE_SCALE)) : undefined)
-  return { desktop: desktop.join(';'), mobile: mobileSize ? `font-size:${mobileSize}px` : '' }
+  return { desktop: desktop.join(';'), mobile: mobileSize ? `font-size:max(8px, calc(${mobileSize}px + var(--font-size-adjustment, 0px)))` : '' }
 }
 
 export function textStyleCss(selector: string, style: TextStyle, options?: { opacity?: boolean }): string {

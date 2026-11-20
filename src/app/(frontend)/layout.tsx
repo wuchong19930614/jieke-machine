@@ -10,7 +10,7 @@ import { LightboxProvider } from '@/components/client/Lightbox'
 import { PreviewTools } from '@/components/client/PreviewTools'
 import { UiProvider } from '@/components/client/UiProvider'
 import { ContactBand, MobileBar, SiteFooter, SiteHeader, TopBar } from '@/components/SiteChrome'
-import { getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
+import { getProducts, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
 import { siteUrl } from '@/lib/previewPath'
@@ -42,7 +42,7 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   const draft = await isDraft()
-  const [settings, ui, theme, L] = await Promise.all([getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
+  const [settings, ui, theme, L, products] = await Promise.all([getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator(), getProducts(draft)])
   const textCss = themeTextCss(theme)
   const siteTextStyles = textStyleSheet(globalDoc('site-settings'), settings.raw)
   const uiTextStyles = textStyleSheet(globalDoc('ui-texts'), ui.raw)
@@ -60,7 +60,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
               {ui.common.skipToContent}
             </a>
             <TopBar settings={settings} ui={ui} L={L} />
-            <SiteHeader settings={settings} ui={ui} L={L} />
+            <SiteHeader settings={settings} ui={ui} L={L} products={products} />
             <main id="main" tabIndex={-1}>
               <ErrorTextsProvider texts={ui.error}>{children}</ErrorTextsProvider>
             </main>

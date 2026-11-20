@@ -31,11 +31,12 @@ import { backgroundProps, type BackgroundSpec, deviceClass, orderedSections, Sec
 import { fill, withDefaults } from '@/content/defineTexts'
 import * as T from '@/content/texts'
 import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS, IMAGE_SECTION_MODULES, isImageSectionModule } from '@/lib/constants'
-import { getAboutPage, getHomePage, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
+import { getAboutPage, getHomePage, getProducts, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, locateGroup, type Locator, textStyleSheet } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
+import { productCategory } from '@/lib/productCategories'
 import type { Case, HomePage, Media, Product } from '@/payload-types'
 
 const H = globalDoc('home-page')
@@ -134,11 +135,12 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
 
 export default async function HomePageView() {
   const draft = await isDraft()
-  const [home, aboutPage, settings, ui, theme, L] = await Promise.all([getHomePage(draft), getAboutPage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator()])
+  const [home, aboutPage, settings, ui, theme, L, catalog] = await Promise.all([getHomePage(draft), getAboutPage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator(), getProducts(draft)])
+  const featuredLines = catalog.filter((product) => productCategory(product.category).value === 'production-lines' && mediaOf(product.listImage)).slice(0, 2)
   // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
   const textStyles = textStyleSheet(H, home)
   const aboutPhotoStyles = textStyleSheet(globalDoc('about-page'), aboutPage)
-  const productStyles = (home.productLines?.products ?? []).filter((product): product is Product => isVisibleDoc<Product>(product, draft)).map((product) => textStyleSheet(collectionDoc('products', product.id), product))
+  const productStyles = featuredLines.map((product) => textStyleSheet(collectionDoc('products', product.id), product))
   const caseStyles = (home.featuredCases?.cases ?? []).filter((item): item is Case => isVisibleDoc<Case>(item, draft)).map((item) => textStyleSheet(collectionDoc('cases', item.id), item))
 
   const services = withDefaults(T.HOME_SERVICES_TEXTS, home.services)
@@ -292,7 +294,7 @@ export default async function HomePageView() {
         )
       }
       case 'productLines': {
-        const products = (home.productLines?.products ?? []).filter((p): p is Product => isVisibleDoc<Product>(p, draft))
+        const products = featuredLines
         if (!products.length) return null
         return (
           <Section key={module} id="lines" background={background} className="lp-home-production">
@@ -303,7 +305,7 @@ export default async function HomePageView() {
                 <article key={product.id} className="lp-production-slide">
                   {mediaOf(product.listImage) ? (
                     <LinkTo link={linkHref(product.listLink, draft) ?? { href, newTab: false }} className="lp-production-image" label={product.name}>
-                      <Img media={product.listImage} ratio={pickRatio(product, 'listImage')} fit={product.listImageFit} defaultRatio="12/5" defaultFit="cover" sizes="(max-width: 767px) 90vw, 900px" attrs={L(doc, 'listImage')} />
+                      <Img media={product.listImage} defaultRatio="original" defaultFit="cover" sizes="(max-width: 767px) 90vw, 80vw" attrs={L(doc, 'listImage')} />
                     </LinkTo>
                   ) : null}
                   <div className="lp-production-caption">
