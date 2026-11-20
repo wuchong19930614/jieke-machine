@@ -53,6 +53,7 @@ import { ImportSaveButton as ImportSaveButton_cdf7e044479f899a31f804427d568b36 }
 import { NeverPublishedNote as NeverPublishedNote_a5279c9234d68752128c338495a339b6 } from '@/admin/components/NeverPublishedNote'
 import { HomeEditorOrder as HomeEditorOrder_29ed5655414ddf263884b418a8f8986a } from '@/admin/components/HomeEditorOrder'
 import { FullWidthHomePreview as FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9 } from '@/admin/components/FullWidthHomePreview'
+import { FullWidthHomePreviewWindow as FullWidthHomePreviewWindow_28bb59e0aa65ba6c8f3c91d2e1f2ecc9 } from '@/admin/components/FullWidthHomePreview'
 import { Nav as Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99 } from '@/admin/components/Nav'
 import { BeforeDashboard as BeforeDashboard_0caeb52961e5225418de7a16de968c6d } from '@/admin/components/BeforeDashboard'
 import { LocateProvider as LocateProvider_f723b9312a09cd75ce7de3f082a87b44 } from '@/admin/components/LocateProvider'
@@ -124,6 +125,7 @@ export const importMap = {
   "@/admin/components/NeverPublishedNote#NeverPublishedNote": NeverPublishedNote_a5279c9234d68752128c338495a339b6,
   "@/admin/components/HomeEditorOrder#HomeEditorOrder": HomeEditorOrder_29ed5655414ddf263884b418a8f8986a,
   "@/admin/components/FullWidthHomePreview#FullWidthHomePreview": FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9,
+  "@/admin/components/FullWidthHomePreview#FullWidthHomePreviewWindow": FullWidthHomePreviewWindow_28bb59e0aa65ba6c8f3c91d2e1f2ecc9,
   "@/admin/components/Nav#Nav": Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99,
   "@/admin/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_0caeb52961e5225418de7a16de968c6d,
   "@/admin/components/LocateProvider#LocateProvider": LocateProvider_f723b9312a09cd75ce7de3f082a87b44,

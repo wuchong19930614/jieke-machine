@@ -13,6 +13,8 @@ import * as migration_20261119_033105_public_ui_text_styles from './20261119_033
 import * as migration_20261119_035448_contact_and_auxiliary_text_styles from './20261119_035448_contact_and_auxiliary_text_styles';
 import * as migration_20261119_064752_homepage_v4_editorial from './20261119_064752_homepage_v4_editorial';
 import * as migration_20261119_101633_homepage_review_feedback from './20261119_101633_homepage_review_feedback';
+import * as migration_20261119_150827_global_font_weight from './20261119_150827_global_font_weight';
+import * as migration_20261120_014653_header_layout from './20261120_014653_header_layout';
 
 export const migrations = [
   {
@@ -88,6 +90,16 @@ export const migrations = [
   {
     up: migration_20261119_101633_homepage_review_feedback.up,
     down: migration_20261119_101633_homepage_review_feedback.down,
-    name: '20261119_101633_homepage_review_feedback'
+    name: '20261119_101633_homepage_review_feedback',
+  },
+  {
+    up: migration_20261119_150827_global_font_weight.up,
+    down: migration_20261119_150827_global_font_weight.down,
+    name: '20261119_150827_global_font_weight',
+  },
+  {
+    up: migration_20261120_014653_header_layout.up,
+    down: migration_20261120_014653_header_layout.down,
+    name: '20261120_014653_header_layout'
   },
 ];

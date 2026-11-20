@@ -11,6 +11,7 @@ import {
   adminUrl,
   type DocKey,
   fieldDomKey,
+  HOME_PREVIEW_REVEAL_EVENT,
   isLocateMessage,
   LOCATE_SOURCE,
   pathFromDomKey,
@@ -300,6 +301,10 @@ export function LocateProvider({ children }: { children: React.ReactNode }) {
 
   const reveal = () => {
     if (!button || !currentDoc) return
+    if (currentDoc === 'global:home-page' && !window.dispatchEvent(new CustomEvent(HOME_PREVIEW_REVEAL_EVENT, {
+      cancelable: true,
+      detail: button.path,
+    }))) return
     const frame = previewFrame()
     if (!frame?.contentWindow) {
       toast.info('请先点击右上角的“实时预览”打开预览，再点“在前台定位”')

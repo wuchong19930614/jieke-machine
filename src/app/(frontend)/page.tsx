@@ -36,7 +36,7 @@ import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, locateGroup, type Locator, textStyleSheet } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
-import type { Case, HomePage, Product } from '@/payload-types'
+import type { Case, HomePage, Media, Product } from '@/payload-types'
 
 const H = globalDoc('home-page')
 const S = globalDoc('site-settings')
@@ -67,6 +67,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({ settings, path: '/', pageName: settings.companyName || 'Home', seo: home.seo, isHome: true })
 }
 
+function bannerImageProps(media: Media, first: boolean, quality: number) {
+  const src = imageSrc(media.url ?? '')
+  const common = { alt: media.alt ?? '', loading: first ? 'eager' as const : 'lazy' as const, fetchPriority: first ? 'high' as const : undefined }
+  // 旧素材缺少宽高时，由浏览器从原图取得实际比例。
+  if (!media.width || !media.height) return { ...common, src, width: undefined, height: undefined, srcSet: undefined }
+  return getImageProps({
+    ...common, src, width: media.width, height: media.height, sizes: '100vw',
+    quality, unoptimized: media.width < 768,
+  }).props
+}
+
 // index 是后台列表里的序号（用于定位字段）；first 表示显示出来的第一张：它的标题用 h1，图片优先加载
 function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable<NonNullable<HomePage['banners']>['slides']>[number]; index: number; first: boolean; ui: Awaited<ReturnType<typeof getUiTexts>>; L: Locator; draft: boolean }) {
   const desktop = mediaOf(slide.desktopImage) ?? mediaOf(slide.mobileImage)
@@ -77,10 +88,8 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
   const kicker = slide.kickerHidden ? '' : slide.kicker || ui.banner.kickerDefault
   const quoteText = slide.quoteButtonTextHidden ? '' : slide.quoteButtonText || ui.banner.quoteButton
   const productText = !slide.productButtonTextHidden ? slide.productButtonText || (product ? ui.banner.productButton : ui.productList.viewDetails) : ''
-  const common = { alt: desktop?.alt ?? '', fill: true, priority: first, loading: first ? undefined : ('lazy' as const) }
-  // 桌面和手机分别使用各自的图片（技术方案 4.3 第 4 条）
-  const desk = desktop?.url ? getImageProps({ ...common, src: imageSrc(desktop.url), sizes: '100vw', quality: 85, unoptimized: Boolean(desktop.width && desktop.width < 768) }).props : null
-  const mob = mobile?.url ? getImageProps({ ...common, src: imageSrc(mobile.url), sizes: '100vw', quality: 75, unoptimized: Boolean(mobile.width && mobile.width < 768) }).props : null
+  const desk = desktop ? bannerImageProps(desktop, first, 85) : null
+  const mob = mobile && mobile !== desktop ? bannerImageProps(mobile, first, 75) : null
   // 第 3 点：整张图可以设链接；第 4 点：遮罩深浅（0–90%，默认 50%）
   const link = linkHref(slide.link, draft)
   const overlay = typeof slide.overlay === 'number' ? Math.min(90, Math.max(0, slide.overlay)) / 100 : 0.5
@@ -89,25 +98,13 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
       {desk ? (
         <div className="lp-banner-slide" style={{ '--overlay': overlay } as React.CSSProperties} {...L(H, `${path}.desktopImage`)}>
           <picture>
-            {mob ? <source media="(max-width: 767px)" sizes="100vw" srcSet={mob.srcSet || mob.src} /> : null}
-            {/* 焦点交给样式按屏幕宽度选用：桌面用桌面图的焦点，手机用手机图的焦点 */}
+            {mob ? <source media="(max-width: 767px)" sizes="100vw" srcSet={mob.srcSet || mob.src} width={mob.width} height={mob.height} /> : null}
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <img
-              {...desk}
-              style={
-                {
-                  ...desk.style,
-                  objectFit: 'cover',
-                  '--focal': `${desktop?.focalX ?? 50}% ${desktop?.focalY ?? 50}%`,
-                  '--focal-mobile': `${mobile?.focalX ?? 50}% ${mobile?.focalY ?? 50}%`,
-                } as React.CSSProperties
-              }
-            />
+            <img {...desk} />
           </picture>
+          {link ? <LinkTo link={link} className="lp-banner-link" label={slide.title} /> : null}
         </div>
       ) : null}
-      {link ? <LinkTo link={link} className="lp-banner-link" label={slide.title} /> : null}
-      {/* 整图链接铺在文字下面：点文字以外的图片区域跳转，标题和副标题仍可以选中复制 */}
       <div className="lp-banner-copy">
         {kicker ? (
           <div className="lp-kicker" {...L(H, `${path}.kicker`)}>
@@ -158,8 +155,6 @@ export default async function HomePageView() {
 
   const sections = orderedSections(home.sections, HOME_SECTIONS, HOME_SECTION_DEFAULT_BACKGROUND, IMAGE_SECTION_MODULES.map((m) => m.value))
   const bannerSlides = (home.banners?.slides ?? []).map((slide, index) => ({ slide, index })).filter(({ slide }) => slide.enabled !== false && slide.title)
-  const firstDesktopImage = bannerSlides.map(({ slide }) => mediaOf(slide.desktopImage) ?? mediaOf(slide.mobileImage)).find(Boolean)
-  const firstMobileImage = bannerSlides.map(({ slide }) => mediaOf(slide.mobileImage)).find(Boolean)
   // 主标题 h1 在第一张 Banner 里；Banner 模块隐藏或没有可播放的 Banner 时另给一个读屏可见的 h1（技术方案 8.1）
   const bannerSection = bannerSlides.length > 0 ? sections.find(({ module }) => module === 'banners') : undefined
   // Banner 只在某一类设备上显示时，另一类设备也要有 h1
@@ -173,9 +168,6 @@ export default async function HomePageView() {
           <BannerCarousel
             key={module}
             className={deviceClass(background)}
-            ratio={defaultRatio(theme, 'banner')}
-            mediaRatio={firstDesktopImage?.width && firstDesktopImage.height ? firstDesktopImage.width / firstDesktopImage.height : undefined}
-            mobileMediaRatio={firstMobileImage?.width && firstMobileImage.height ? firstMobileImage.width / firstMobileImage.height : undefined}
             texts={ui.banner}
             locate={locateGroup(L, U, 'banner', T.UI_BANNER)}
             slides={bannerSlides.map(({ slide, index }, position) => (

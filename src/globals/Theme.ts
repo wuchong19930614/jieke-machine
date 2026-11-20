@@ -65,41 +65,59 @@ export const Theme = editableGlobal({
       ],
     },
     {
-      type: 'row',
+      type: 'collapsible',
+      label: '全局字体调整',
+      admin: { initCollapsed: false },
       fields: [
         {
-          name: 'headingFont',
+          name: 'fontWeight',
           type: 'select',
-          label: '标题字体',
-          defaultValue: 'system',
-          options: ['system', 'inter', 'montserrat'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-          admin: { width: '50%', description: at('全站：各级标题') },
+          label: '全站字重',
+          defaultValue: 'inherit',
+          options: [
+            { label: '跟随原样式', value: 'inherit' },
+            { label: '常规', value: 'regular' },
+            { label: '加粗', value: 'bold' },
+          ],
+          admin: { description: '单项文字样式和文字级别设置优先。' },
         },
         {
-          name: 'bodyFont',
+          name: 'fontScale',
           type: 'select',
-          label: '正文字体',
-          defaultValue: 'system',
-          options: ['system', 'inter', 'open-sans'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-          admin: { width: '50%', description: at('全站：正文文字') },
+          label: '全站字号',
+          defaultValue: 'standard',
+          options: [
+            { label: '缩小', value: 'small' },
+            { label: '标准', value: 'standard' },
+            { label: '放大', value: 'large' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'headingFont',
+              type: 'select',
+              label: '标题字体',
+              defaultValue: 'system',
+              options: ['system', 'inter', 'montserrat'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
+              admin: { width: '50%', description: at('全站：各级标题') },
+            },
+            {
+              name: 'bodyFont',
+              type: 'select',
+              label: '正文字体',
+              defaultValue: 'system',
+              options: ['system', 'inter', 'open-sans'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
+              admin: { width: '50%', description: at('全站：正文文字') },
+            },
+          ],
         },
       ],
     },
     {
       type: 'row',
       fields: [
-        {
-          name: 'fontScale',
-          type: 'select',
-          label: '字号',
-          defaultValue: 'standard',
-          options: [
-            { label: '偏小', value: 'small' },
-            { label: '标准', value: 'standard' },
-            { label: '偏大', value: 'large' },
-          ],
-          admin: { width: '50%', description: at('全站：文字大小') },
-        },
         {
           name: 'spacingScale',
           type: 'select',
@@ -195,7 +213,7 @@ export const Theme = editableGlobal({
           fields: [
             ratio('application', '成品', 'original', '产品详情 › 可生产成品'),
             ratio('videoCover', '视频封面', '16/9', '首页 › 视频模块封面'),
-            ratio('banner', 'Banner', 'original', '首页 › Banner', '按原图：以第一张有效横幅的宽高为准，轮播时高度不跳。手动比例在桌面生效。'),
+            { ...ratio('banner', 'Banner', 'original', '首页 › Banner'), admin: { hidden: true } },
           ],
         },
       ],

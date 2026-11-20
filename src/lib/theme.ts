@@ -64,11 +64,13 @@ const LEVEL_SELECTORS: Record<string, string[]> = {
 
 export function themeTextCss(theme: Theme | null | undefined): string {
   const levels = (theme as { textLevels?: Record<string, unknown> } | null | undefined)?.textLevels
-  if (!levels) return ''
-  return Object.entries(LEVEL_SELECTORS)
+  const weight = theme?.fontWeight === 'bold' ? 700 : theme?.fontWeight === 'regular' ? 400 : undefined
+  // Keep text links inside headings/paragraphs inheriting their parent's setting.
+  const defaults = weight ? `:root:root body :is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,figcaption,label,button,input,textarea,select,b,strong,.lp-kicker,.lp-logo,a):not(:where([data-ts] *,p a,li a,h1 a,h2 a,h3 a,h4 a,h5 a,h6 a,.lp-rich strong,.lp-rich b)){font-weight:${weight}}` : ''
+  return defaults + Object.entries(LEVEL_SELECTORS)
     .map(([level, selectors]) => {
       // 字段名是 级别 + Style（fields 里的 textStyleField 统一加的后缀）
-      const style = cleanTextStyle(levels[`${level}Style`])
+      const style = cleanTextStyle(levels?.[`${level}Style`])
       if (!style) return ''
       const { color, ...rest } = style
       const all = selectors.map((s) => `${R} ${s}`).join(',')

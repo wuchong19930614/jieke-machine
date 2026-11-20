@@ -23,6 +23,7 @@ export const HomePage = editableGlobal({
   label: '首页',
   group: '页面管理',
   beforeDocumentControls: ['@/admin/components/FullWidthHomePreview#FullWidthHomePreview'],
+  editViews: { livePreview: { Component: '@/admin/components/FullWidthHomePreview#FullWidthHomePreviewWindow' } },
   refresh: [PATHS.home],
   fields: [
     sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),
@@ -51,7 +52,7 @@ export const HomePage = editableGlobal({
                   relationTo: 'media',
                   label: '桌面图',
                   filterOptions: { mimeType: { contains: 'image' } },
-                  admin: { width: '50%', description: '请选高清原图，建议 1920×800 px 以上。所有横幅共用一个比例，可在“主题 › 默认图框比例 › Banner”中设置。' },
+                  admin: { width: '50%', description: '建议使用 1920×800 px 的高清原图。每张图会按自身比例完整铺满页面宽度，高度随图片变化。' },
                 },
                 {
                   name: 'mobileImage',
@@ -59,7 +60,7 @@ export const HomePage = editableGlobal({
                   relationTo: 'media',
                   label: '手机图',
                   filterOptions: { mimeType: { contains: 'image' } },
-                  admin: { width: '50%', description: '建议 1080×1440 px，主体靠中间；不填时用桌面图按焦点裁切。' },
+                  admin: { width: '50%', description: '建议 1080×1440 px。不填时使用桌面图。图片按原比例完整显示，图上放不下文字时，文字和按钮排到图片下方。' },
                 },
               ],
             },
