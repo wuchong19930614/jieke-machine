@@ -1,6 +1,6 @@
 'use client'
 // 首页 Banner 轮播（技术方案 4.3）：5 秒切换；悬停或键盘焦点时暂停；系统开启“减少动态效果”时不自动播放
-import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import { fill } from '@/content/defineTexts'
 import type { LocateAttrs } from '@/lib/locator'
@@ -32,23 +32,17 @@ export function BannerCarousel({
   slides,
   texts,
   locate = {},
-  ratio = 'original',
-  mediaRatio,
-  mobileMediaRatio,
   className,
 }: {
   slides: React.ReactNode[]
   texts: Texts
   locate?: Partial<Record<keyof Texts, LocateAttrs>>
-  // 自动比例取第一张有效图片，换页时保持高度稳定；固定比例只在桌面生效
-  ratio?: string
-  mediaRatio?: number
-  mobileMediaRatio?: number
   // 模块“显示在”对应的 class（第 2 点）
   className?: string
 }) {
   const total = slides.length
   const [index, setIndex] = useState(0)
+  const activeIndex = index % total || 0
   const [paused, setPaused] = useState(false)
   const [hovering, setHovering] = useState(false)
   const reducedMotion = useSyncExternalStore(
@@ -59,6 +53,28 @@ export function BannerCarousel({
   const rootRef = useRef<HTMLElement>(null)
 
   const go = useCallback((next: number) => setIndex(((next % total) + total) % total), [total])
+
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    const active = root?.querySelector(`[data-slide-index="${activeIndex}"]`)
+    const copy = active?.querySelector<HTMLElement>('.lp-banner-copy')
+    if (!root || !copy) return
+
+    const media = active?.querySelector<HTMLElement>('.lp-banner-slide')
+    const controls = root.querySelector<HTMLElement>('.lp-banner-controls')
+    const slider = controls?.querySelector<HTMLElement>('.lp-slider')
+    const update = () => {
+      // Keep the image in normal flow. Move the copy only if it and the controls need more room.
+      const controlSpace = controls ? Math.max(48, slider?.offsetHeight ?? 0) + 12 : 0
+      root.toggleAttribute('data-copy-below', !media || media.offsetHeight < copy.offsetHeight + 2 * controlSpace)
+    }
+    const observer = new ResizeObserver(update)
+    observer.observe(copy)
+    if (media) observer.observe(media)
+    if (slider) observer.observe(slider)
+    update()
+    return () => observer.disconnect()
+  }, [activeIndex, slides])
 
   useEffect(() => {
     if (total < 2 || paused || hovering || reducedMotion) return
@@ -104,12 +120,6 @@ export function BannerCarousel({
     <section
       ref={rootRef}
       className={className ? `lp-hero ${className}` : 'lp-hero'}
-      data-ratio={ratio !== 'original' ? ratio : undefined}
-      style={{
-        '--banner-ratio': ratio !== 'original' ? ratio.replace('/', ' / ') : undefined,
-        '--banner-auto-height': mediaRatio ? `${100 / mediaRatio}vw` : undefined,
-        '--banner-mobile-height': mobileMediaRatio ? `${100 / mobileMediaRatio}vw` : undefined,
-      } as React.CSSProperties}
       aria-roledescription="carousel"
       aria-label={texts.region}
       onMouseEnter={() => setHovering(true)}
@@ -119,8 +129,8 @@ export function BannerCarousel({
         if (!e.currentTarget.contains(e.relatedTarget as Node)) setHovering(false)
       }}
       onKeyDown={(e) => {
-        if (e.key === 'ArrowLeft') go(index - 1)
-        if (e.key === 'ArrowRight') go(index + 1)
+        if (e.key === 'ArrowLeft') go(activeIndex - 1)
+        if (e.key === 'ArrowRight') go(activeIndex + 1)
       }}
     >
       {slides.map((slide, i) => (
@@ -130,19 +140,19 @@ export function BannerCarousel({
           role="group"
           aria-roledescription="slide"
           aria-label={fill(texts.slide, { n: i + 1, total })}
-          aria-hidden={i !== index}
-          inert={i !== index ? true : undefined}
-          style={{ display: i === index ? 'contents' : 'none' }}
+          aria-hidden={i !== activeIndex}
+          inert={i !== activeIndex ? true : undefined}
+          style={{ display: i === activeIndex ? 'contents' : 'none' }}
         >
           {slide}
         </div>
       ))}
       {total > 1 ? (
         <div className="lp-banner-controls">
-          <button type="button" className="lp-banner-arrow lp-banner-prev" aria-label={texts.prev} onClick={() => go(index - 1)}>
+          <button type="button" className="lp-banner-arrow lp-banner-prev" aria-label={texts.prev} onClick={() => go(activeIndex - 1)}>
             ‹
           </button>
-          <button type="button" className="lp-banner-arrow lp-banner-next" aria-label={texts.next} onClick={() => go(index + 1)}>
+          <button type="button" className="lp-banner-arrow lp-banner-next" aria-label={texts.next} onClick={() => go(activeIndex + 1)}>
             ›
           </button>
           <div className="lp-slider" role="group" aria-label={texts.controls}>
@@ -152,12 +162,12 @@ export function BannerCarousel({
                 type="button"
                 className="lp-banner-dot"
                 aria-label={fill(texts.goTo, { n: i + 1 })}
-                aria-pressed={i === index}
+                aria-pressed={i === activeIndex}
                 onClick={() => go(i)}
               />
             ))}
             <span className="lp-banner-count" {...locate.count}>
-              {fill(texts.count, { n: index + 1, total })}
+              {fill(texts.count, { n: activeIndex + 1, total })}
             </span>
             <button
               type="button"

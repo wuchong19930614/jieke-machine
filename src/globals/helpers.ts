@@ -16,9 +16,10 @@ type Options = {
   refresh: RevalidateTarget[]
   description?: string
   beforeDocumentControls?: GlobalAdminElements['beforeDocumentControls']
+  editViews?: NonNullable<NonNullable<GlobalAdmin['components']>['views']>['edit']
 }
 
-export function editableGlobal({ slug, label, group, fields, refresh, description, beforeDocumentControls = [] }: Options): GlobalConfig {
+export function editableGlobal({ slug, label, group, fields, refresh, description, beforeDocumentControls = [], editViews }: Options): GlobalConfig {
   const afterChange: GlobalAfterChangeHook = ({ doc, previousDoc, req }) => {
     if (doc?._status === 'published' || previousDoc?._status === 'published') revalidate(req, refresh)
     return doc
@@ -30,7 +31,10 @@ export function editableGlobal({ slug, label, group, fields, refresh, descriptio
       group,
       description,
       // 从没发布过时在保存按钮前提示：前台正在用默认内容
-      components: { elements: { beforeDocumentControls: ['@/admin/components/NeverPublishedNote#NeverPublishedNote', ...beforeDocumentControls] } },
+      components: {
+        elements: { beforeDocumentControls: ['@/admin/components/NeverPublishedNote#NeverPublishedNote', ...beforeDocumentControls] },
+        ...(editViews && { views: { edit: editViews } }),
+      },
     },
     access: {
       read: isLoggedIn,

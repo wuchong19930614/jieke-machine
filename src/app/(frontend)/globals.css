@@ -226,11 +226,48 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 20px;
   padding: 20px 5%;
   border-bottom: 1px solid var(--lp-line);
   background: var(--lp-bg);
   position: relative;
+}
+.lp-header__brand,
+.lp-header__navigation {
+  min-width: 0;
+  max-width: 100%;
+}
+.lp-header[data-header-flow='reverse'] .lp-header__brand {
+  margin-inline-start: auto;
+  order: 1;
+}
+.lp-header[data-header-flow='stacked'] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.lp-header[data-header-flow='stacked'] .lp-header__brand,
+.lp-header[data-header-flow='stacked'] .lp-header__navigation {
+  display: grid;
+}
+.lp-header[data-header-flow='stacked'] .lp-header__brand {
+  grid-template-columns: minmax(0, var(--header-logo-start)) fit-content(100%) minmax(0, var(--header-logo-end));
+}
+.lp-header[data-header-flow='stacked'] .lp-header__navigation {
+  grid-template-columns: minmax(0, var(--header-nav-start)) fit-content(100%) minmax(0, var(--header-nav-end));
+}
+.lp-header[data-header-flow='stacked'] :is(.lp-logo, .lp-nav, .lp-menu) {
+  grid-column: 2;
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .lp-header[data-header-flow='stacked'][data-header-fits] > :is(.lp-header__brand, .lp-header__navigation) {
+    grid-area: 1 / 1;
+    pointer-events: none;
+  }
+  .lp-header[data-header-flow='stacked'][data-header-fits] :is(.lp-logo, .lp-nav) {
+    pointer-events: auto;
+  }
 }
 .lp-logo {
   display: flex;
@@ -241,14 +278,19 @@ p {
   letter-spacing: 2px;
   font-weight: 700;
   font-size: 1.36em;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .lp-logo img {
-  height: 44px;
+  height: var(--header-logo-height, 44px);
   width: auto;
+  min-width: 0;
+  max-width: 100%;
+  object-fit: contain;
 }
 .lp-nav ul {
   display: flex;
-  gap: 17px;
+  gap: var(--header-nav-gap, 17px);
   align-items: center;
   flex-wrap: wrap;
   list-style: none;
@@ -259,7 +301,8 @@ p {
   display: inline-block;
   padding: 7px 0;
   color: var(--lp-ink);
-  font-size: 0.86em;
+  font-size: var(--header-nav-size, 0.86em);
+  overflow-wrap: anywhere;
   text-decoration: none;
   border-bottom: 2px solid transparent;
 }
@@ -490,19 +533,22 @@ a.lp-image-link:hover {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  min-height: 430px;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  padding: 70px 6%;
-  text-align: center;
-  background: var(--lp-soft);
 }
 .lp-banner-slide {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  position: relative;
+  align-self: start;
   animation: lp-fade 0.6s ease;
+}
+.lp-banner-slide,
+.lp-banner-copy {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.lp-hero[data-copy-below] .lp-banner-copy {
+  grid-row: 2;
 }
 @keyframes lp-fade {
   from {
@@ -512,33 +558,17 @@ a.lp-image-link:hover {
     opacity: 1;
   }
 }
+.lp-banner-slide picture,
 .lp-banner-slide img {
-  object-fit: cover;
-  /* 桌面图和手机图各用自己的焦点 */
-  object-position: var(--focal, 50% 50%);
-}
-@media (max-width: 767px) {
-  .lp-banner-slide img {
-    object-position: var(--focal-mobile, var(--focal, 50% 50%));
-  }
-}
-/* 主题设置“页面宽度 › 首页横幅宽度”：默认与内容同宽、两侧留白，和下面的模块左右对齐；手机上始终铺满 */
-@media (min-width: 768px) {
-  .lp-hero {
-    margin: var(--lp-hero-top, 24px) var(--lp-hero-inset, var(--gutter)) 0;
-    border-radius: var(--lp-hero-radius, 8px);
-  }
-}
-/* 主题设置“默认图框比例 › Banner”选了具体比例时，桌面按比例定高度；原图比例 = 保持原设计的高度 */
-@media (min-width: 768px) {
-  .lp-hero[data-ratio] {
-    aspect-ratio: var(--banner-ratio);
-  }
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .lp-banner-slide::after {
   content: '';
   position: absolute;
   inset: 0;
+  pointer-events: none;
   /* 遮罩深浅可在每张 Banner 里调（--overlay，默认 0.5 = 原来的 45%→55% 渐变） */
   background: linear-gradient(180deg, rgb(10 25 40 / calc(var(--overlay, 0.5) - 0.05)), rgb(10 25 40 / calc(var(--overlay, 0.5) + 0.05)));
 }
@@ -1719,6 +1749,9 @@ body.lp-locating [data-locate] {
     padding: 12px 6%;
     gap: 14px;
   }
+  .lp-header:not([data-header-flow='stacked']) > :is(.lp-header__brand, .lp-header__navigation) {
+    display: contents;
+  }
   /* 手机页头保持一行：Logo 在上、公司名小字在下（同原型），菜单按钮在右侧 */
   .lp-logo {
     flex: 1 1 0;
@@ -1730,7 +1763,7 @@ body.lp-locating [data-locate] {
     letter-spacing: 0.3px;
   }
   .lp-logo img {
-    height: 32px;
+    height: var(--header-logo-mobile-height, 32px);
     max-width: 100%;
     object-fit: contain;
     object-position: left center;
@@ -1745,6 +1778,22 @@ body.lp-locating [data-locate] {
   .lp-menu {
     display: block;
     flex: none;
+    font-size: var(--header-nav-size, inherit);
+  }
+  .lp-header[data-header-flow='reverse'] .lp-logo {
+    order: 1;
+    align-items: flex-end;
+    text-align: end;
+  }
+  .lp-header[data-header-flow='reverse'] .lp-nav {
+    order: 2;
+  }
+  .lp-header[data-header-flow='stacked'] .lp-logo {
+    align-items: center;
+    text-align: center;
+  }
+  .lp-header[data-header-flow='stacked'] .lp-menu {
+    justify-self: center;
   }
   .lp-nav {
     display: none;
@@ -1756,7 +1805,7 @@ body.lp-locating [data-locate] {
   .lp-nav ul {
     flex-direction: column;
     align-items: stretch;
-    gap: 0;
+    gap: var(--header-nav-gap, 0px);
   }
   .lp-nav a {
     display: block;
@@ -1802,10 +1851,6 @@ body.lp-locating [data-locate] {
     display: inline-block;
     margin: 4px;
     padding: 5px 10px;
-  }
-  .lp-hero {
-    min-height: 390px;
-    padding: 65px 6% 55px;
   }
   .lp-banner-copy {
     padding: 0 15px;
@@ -2026,13 +2071,6 @@ body.lp-locating [data-locate] {
   margin: 12px auto 0;
   line-height: 1.75;
 }
-.lp-home .lp-hero {
-  width: min(calc(100% - 2 * var(--gutter)), var(--lp-content-width, 1180px));
-  min-height: clamp(430px, 46vw, 610px);
-  margin: var(--lp-hero-top, 24px) auto 0;
-  border-radius: 0;
-  overflow: hidden;
-}
 .lp-home .lp-banner-copy {
   max-width: 780px;
 }
@@ -2105,7 +2143,7 @@ body.lp-locating [data-locate] {
   text-align: center;
 }
 .lp-home .lp-store-brandline strong {
-  font-size: clamp(1.35em, 2vw, 1.8em);
+  font-size: clamp(1.35em, calc(2vw * var(--font-scale)), 1.8em);
 }
 .lp-home .lp-store-stats {
   width: 100%;
@@ -2126,7 +2164,7 @@ body.lp-locating [data-locate] {
 }
 .lp-home .lp-store-stats strong {
   color: #00ad91;
-  font-size: clamp(1.55em, 2.4vw, 2em);
+  font-size: clamp(1.55em, calc(2.4vw * var(--font-scale)), 2em);
   letter-spacing: -0.02em;
 }
 .lp-home .lp-store-stats span {
@@ -2146,7 +2184,7 @@ body.lp-locating [data-locate] {
 }
 .lp-home .lp-store-about aside h2 {
   margin: 8px 0 18px;
-  font-size: clamp(1.8em, 3vw, 2.45em);
+  font-size: clamp(1.8em, calc(3vw * var(--font-scale)), 2.45em);
   line-height: 1.2;
 }
 .lp-home .lp-store-about aside ul {
@@ -2205,14 +2243,9 @@ body.lp-locating [data-locate] {
   .lp-home > .lp-section > .lp-title {
     margin-bottom: 26px;
   }
-  .lp-home .lp-hero {
-    min-height: 420px;
-    width: 100%;
-    margin-top: 0;
-  }
   .lp-home .lp-banner-copy h1,
   .lp-home .lp-banner-copy .lp-h1 {
-    font-size: clamp(1.8em, 8vw, 2.15em);
+    font-size: clamp(1.8em, calc(8vw * var(--font-scale)), 2.15em);
     line-height: 1.2;
   }
   .lp-home .lp-store-service-grid {
@@ -2299,21 +2332,19 @@ body.lp-locating [data-locate] {
   background: #102b3d;
   padding: 0;
 }
-.lp-home .lp-hero:not([data-ratio]) { min-height: clamp(430px, var(--banner-auto-height, 46vw), 560px); }
 .lp-home .lp-banner-slide::after {
   background: linear-gradient(90deg, rgb(8 24 35 / clamp(.26, var(--overlay, .5), .85)), rgb(8 24 35 / calc(var(--overlay, .5) * .45)) 43%, transparent 76%);
 }
-.lp-home .lp-banner-slide picture { position: absolute; inset: 0; }
 .lp-home .lp-banner-copy {
   width: 100%;
   max-width: none;
-  padding: clamp(70px, 8vw, 120px) var(--home-inset);
+  padding: clamp(20px, 3vw, 56px) max(var(--home-inset), 58px);
   text-align: left;
 }
 .lp-home .lp-banner-copy h1,
 .lp-home .lp-banner-copy .lp-h1 {
   max-width: 850px;
-  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-size: calc(clamp(2.2rem, 4vw, 3rem) * var(--font-scale));
   line-height: 1.04;
   text-wrap: pretty;
   overflow-wrap: anywhere;
@@ -2331,7 +2362,7 @@ body:has(> main > .lp-home[data-home-topbar='hide']) > .lp-top,
 main:has(> .lp-home) + .lp-contact-band { display: none; }
 .lp-home .lp-title::after { content: none; }
 .lp-home .lp-title h2, .lp-home-story aside h2 {
-  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-size: calc(clamp(2rem, 3.6vw, 3rem) * var(--font-scale));
   letter-spacing: -.043em;
 }
 .lp-home .lp-title p { color: inherit; opacity: .84; }
@@ -2381,7 +2412,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 .lp-production-image { display: block; border-radius: clamp(16px, 3vw, 34px); overflow: hidden; background: #eaf1ef; }
 .lp-production-image .lp-frame { max-height: clamp(250px, 44vw, 530px); }
 .lp-production-caption { padding-block: 12px 4px; overflow-wrap: anywhere; }
-.lp-production-caption h3 { margin: 0 0 8px; font-size: clamp(1.15rem, 2.35vw, 1.85rem); }
+.lp-production-caption h3 { margin: 0 0 8px; font-size: calc(clamp(1.15rem, 2.35vw, 1.85rem) * var(--font-scale)); }
 .lp-production-caption h3 a { text-decoration: none; }
 .lp-production-tail { display: flex; justify-content: flex-end; padding: 16px var(--home-inset) 0; }
 .lp-home > .lp-home-story, .lp-home > .lp-home-cases {
@@ -2446,17 +2477,13 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 .lp-photo-gallery figcaption { margin-top: 8px; overflow-wrap: anywhere; white-space: pre-line; }
 .lp-photo-gallery--compact { padding: 0 clamp(14px, 2vw, 24px) clamp(14px, 2vw, 24px); font-size: .92em; }
 @media (max-width: 767px) {
-  .lp-home .lp-hero, .lp-home .lp-hero:not([data-ratio]) {
-    min-height: clamp(420px, var(--banner-mobile-height, 470px), 560px);
-    flex-direction: column;
-    justify-content: space-between;
-  }
   .lp-home .lp-banner-slide::after { background: linear-gradient(180deg, rgb(8 24 35 / 14%), rgb(8 24 35 / clamp(.25, var(--overlay, .5), .85)) 42%, rgb(8 24 35 / 80%) 100%); }
-  .lp-home .lp-banner-copy { margin-block: auto; padding-block: clamp(56px, 13svh, 118px) 16px; }
+  .lp-home .lp-banner-copy { padding: 20px var(--home-inset); }
   .lp-home .lp-banner-copy h1,
-  .lp-home .lp-banner-copy .lp-h1 { font-size: clamp(1.7rem, 7.5vw, 2.3rem); overflow-wrap: anywhere; }
+  .lp-home .lp-banner-copy .lp-h1 { font-size: calc(clamp(1.7rem, 7.5vw, 2.3rem) * var(--font-scale)); overflow-wrap: anywhere; }
   .lp-home .lp-banner-controls {
-    position: relative;
+    position: absolute;
+    inset: auto 0 0;
     z-index: 2;
     display: grid;
     grid-template-columns: 44px minmax(0, 1fr) 44px;
@@ -2464,9 +2491,10 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
     gap: 6px;
     width: 100%;
     padding: 0 var(--lp-float-space) 12px 12px;
+    pointer-events: none;
   }
   .lp-home .lp-banner-arrow,
-  .lp-home .lp-slider { position: static; transform: none; }
+  .lp-home .lp-slider { position: static; transform: none; pointer-events: auto; }
   .lp-home .lp-banner-arrow { width: 44px; }
   .lp-home .lp-banner-next { grid-column: 3; grid-row: 1; }
   .lp-home .lp-slider {
@@ -2491,9 +2519,32 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   .lp-production-tail { justify-content: flex-start; }
   .lp-photo-gallery { grid-template-columns: minmax(0, 1fr); }
 }
+.lp-hero[data-copy-below] .lp-banner-controls {
+  position: relative;
+  inset: auto;
+}
+@media (min-width: 768px) {
+  .lp-hero[data-copy-below] .lp-banner-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px 12px;
+  }
+  .lp-hero[data-copy-below] :is(.lp-banner-arrow, .lp-slider) {
+    position: static;
+    transform: none;
+  }
+  .lp-hero[data-copy-below] .lp-banner-next { order: 1; }
+  .lp-hero[data-copy-below] .lp-slider {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
 @media (max-width: 767px) and (max-height: 720px) {
-  .lp-home .lp-hero, .lp-home .lp-hero:not([data-ratio]) { min-height: 0; }
-  .lp-home .lp-banner-copy { padding-top: clamp(36px, 8svh, 56px); }
   .lp-home .lp-banner-copy .lp-actions { margin-top: 16px; }
 }
 @media (max-width: 767px) and (max-height: 600px) {

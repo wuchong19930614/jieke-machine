@@ -1,5 +1,5 @@
 // 全站设置（技术方案 3.2）：品牌、联系方式、社交媒体、公共组件文案、客服、邮件、统计和默认 SEO
-import type { TextFieldSingleValidation } from 'payload'
+import type { Field, TextFieldSingleValidation } from 'payload'
 
 import { textGroup } from '@/content/defineTexts'
 import {
@@ -36,6 +36,33 @@ const social = (name: string, label: string) => ({
   admin: { description: at('页脚 › Follow Us', '留空则不显示该图标') },
 })
 
+const headerPosition = (name: 'logo' | 'nav', defaultValue: 'left' | 'right'): Field[] => [
+  {
+    name: `${name}Align`,
+    type: 'select',
+    label: '横向位置',
+    defaultValue,
+    options: [
+      { label: '居左', value: 'left' },
+      { label: '居中', value: 'center' },
+      { label: '居右', value: 'right' },
+      { label: '自由位置', value: 'custom' },
+    ],
+  },
+  {
+    name: `${name}Position`,
+    type: 'number',
+    label: '自由位置（%）',
+    min: 0,
+    max: 100,
+    defaultValue: 50,
+    admin: {
+      condition: (_data, siblings) => siblings?.[`${name}Align`] === 'custom',
+      description: '0 靠左，50 居中，100 靠右。',
+    },
+  },
+]
+
 export const SiteSettings = editableGlobal({
   slug: 'site-settings',
   label: '全站设置',
@@ -59,6 +86,42 @@ export const SiteSettings = editableGlobal({
         },
         { name: 'footerIntro', type: 'textarea', label: '页脚简介', admin: { description: at('页脚 › 品牌区') } },
         textStyleField('footerIntro', '页脚简介'),
+      ],
+    },
+    {
+      name: 'headerLayout',
+      type: 'group',
+      label: '页眉布局',
+      admin: { description: '应用到全站页眉。不同位置的 Logo 与导航可能分行显示，手机端使用折叠菜单。' },
+      fields: [
+        {
+          type: 'collapsible',
+          label: 'Logo 位置与大小',
+          fields: [
+            ...headerPosition('logo', 'left'),
+            {
+              type: 'row',
+              fields: [
+                { name: 'logoHeight', type: 'number', label: '电脑端 Logo 高度（px）', min: 16, max: 160, admin: { description: '留空为 44 px，图片保持原比例。' } },
+                { name: 'logoMobileHeight', type: 'number', label: '手机端 Logo 高度（px）', min: 16, max: 96, admin: { description: '留空为 32 px，图片保持原比例。' } },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'collapsible',
+          label: '导航位置与大小',
+          fields: [
+            ...headerPosition('nav', 'right'),
+            {
+              type: 'row',
+              fields: [
+                { name: 'navFontSize', type: 'number', label: '导航字号（px）', min: 10, max: 36, admin: { description: '留空跟随主题。单个菜单项的文字样式优先。' } },
+                { name: 'navGap', type: 'number', label: '菜单项间距（px）', min: 0, max: 48, admin: { description: '留空使用桌面 17 px、手机 0 px。' } },
+              ],
+            },
+          ],
+        },
       ],
     },
     {

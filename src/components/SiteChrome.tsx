@@ -1,11 +1,13 @@
 // 全站公共组件：顶栏、页头、报价引导条、页脚、手机底部按钮条（技术方案 4.2）
 import { MessageCircle } from 'lucide-react'
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 
 import { fill } from '@/content/defineTexts'
 import type { Settings, UiTexts } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import type { Locator } from '@/lib/locator'
+import { HeaderLayout } from './client/HeaderLayout'
 import { OpenOverlayButton } from './client/UiProvider'
 import { WhatsAppLink } from './client/WhatsAppLink'
 import { SOCIAL_ICONS } from './SocialIcons'
@@ -15,6 +17,20 @@ const S = globalDoc('site-settings')
 const U = globalDoc('ui-texts')
 
 type ChromeProps = { settings: Settings; ui: UiTexts; L: Locator }
+
+function boundedNumber(value: number | null | undefined, min: number, max: number, fallback: number) {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.max(min, Math.min(max, value))
+    : fallback
+}
+
+function horizontalPosition(align: string | null | undefined, custom: number | null | undefined, fallback: number) {
+  if (align === 'left') return 0
+  if (align === 'center') return 50
+  if (align === 'right') return 100
+  if (align === 'custom') return boundedNumber(custom, 0, 100, 50)
+  return fallback
+}
 
 export function TopBar({ settings, ui, L }: ChromeProps) {
   const email = fill(ui.topBar.email, { businessEmail: settings.email })
@@ -50,6 +66,22 @@ export function TopBar({ settings, ui, L }: ChromeProps) {
 }
 
 export function SiteHeader({ settings, ui, L }: ChromeProps) {
+  const layout = settings.raw.headerLayout
+  const logoPosition = horizontalPosition(layout?.logoAlign, layout?.logoPosition, 0)
+  const navPosition = horizontalPosition(layout?.navAlign, layout?.navPosition, 100)
+  const flow = logoPosition === 0 && navPosition === 100 ? 'inline'
+    : logoPosition === 100 && navPosition === 0 ? 'reverse'
+    : 'stacked'
+  const style = {
+    '--header-logo-height': `${boundedNumber(layout?.logoHeight, 16, 160, 44)}px`,
+    '--header-logo-mobile-height': `${boundedNumber(layout?.logoMobileHeight, 16, 96, 32)}px`,
+    '--header-logo-start': `${logoPosition}fr`,
+    '--header-logo-end': `${100 - logoPosition}fr`,
+    '--header-nav-start': `${navPosition}fr`,
+    '--header-nav-end': `${100 - navPosition}fr`,
+    '--header-nav-size': layout?.navFontSize == null ? undefined : `${boundedNumber(layout.navFontSize, 10, 36, 14)}px`,
+    '--header-nav-gap': layout?.navGap == null ? undefined : `${boundedNumber(layout.navGap, 0, 48, 17)}px`,
+  } as CSSProperties
   const items = [
     { href: '/', key: 'home' as const },
     { href: '/products/', key: 'products' as const },
@@ -58,17 +90,20 @@ export function SiteHeader({ settings, ui, L }: ChromeProps) {
     { href: '/contact/', key: 'contact' as const },
   ].map((item) => ({ href: item.href, label: settings.nav[item.key], locate: L(S, `navLabels.${item.key}`) }))
   return (
-    <header className="lp-header">
-      <Link href="/" className="lp-logo" aria-label={fill(ui.common.logoAlt, { companyName: settings.companyName }) || 'Home'} {...L(S, 'logo')}>
-        {settings.logo?.url ? (
-          // Logo 按原始比例显示，不需要图片优化
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={settings.logo.url} alt="" width={settings.logo.width ?? undefined} height={settings.logo.height ?? undefined} />
-        ) : null}
-        {settings.companyName ? <span {...L(S, 'companyName')}>{settings.companyName}</span> : null}
-      </Link>
-      <SiteNav items={items} texts={ui.common} menuLocate={L(U, 'common.menu')} />
-    </header>
+    <HeaderLayout flow={flow} style={style}>
+      <div className="lp-header__brand">
+        <Link href="/" className="lp-logo" aria-label={fill(ui.common.logoAlt, { companyName: settings.companyName }) || 'Home'} {...L(S, 'logo')}>
+          {settings.logo?.url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={settings.logo.url} alt="" width={settings.logo.width ?? undefined} height={settings.logo.height ?? undefined} />
+          ) : null}
+          {settings.companyName ? <span {...L(S, 'companyName')}>{settings.companyName}</span> : null}
+        </Link>
+      </div>
+      <div className="lp-header__navigation">
+        <SiteNav items={items} texts={ui.common} menuLocate={L(U, 'common.menu')} />
+      </div>
+    </HeaderLayout>
   )
 }
 

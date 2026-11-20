@@ -2321,6 +2321,7 @@ export interface User {
     cases?: (number | Case)[] | null;
   };
   totpSecret?: string | null;
+  hasTotp?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -3090,6 +3091,7 @@ export interface UsersSelect<T extends boolean = true> {
         cases?: T;
       };
   totpSecret?: T;
+  hasTotp?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -3318,6 +3320,37 @@ export interface SiteSetting {
     | number
     | boolean
     | null;
+  /**
+   * 应用到全站页眉。不同位置的 Logo 与导航可能分行显示，手机端使用折叠菜单。
+   */
+  headerLayout?: {
+    logoAlign?: ('left' | 'center' | 'right' | 'custom') | null;
+    /**
+     * 0 靠左，50 居中，100 靠右。
+     */
+    logoPosition?: number | null;
+    /**
+     * 留空为 44 px，图片保持原比例。
+     */
+    logoHeight?: number | null;
+    /**
+     * 留空为 32 px，图片保持原比例。
+     */
+    logoMobileHeight?: number | null;
+    navAlign?: ('left' | 'center' | 'right' | 'custom') | null;
+    /**
+     * 0 靠左，50 居中，100 靠右。
+     */
+    navPosition?: number | null;
+    /**
+     * 留空跟随主题。单个菜单项的文字样式优先。
+     */
+    navFontSize?: number | null;
+    /**
+     * 留空使用桌面 17 px、手机 0 px。
+     */
+    navGap?: number | null;
+  };
   /**
    * 前台位置：顶栏、页脚、联系页、邮箱弹层
    */
@@ -4545,6 +4578,11 @@ export interface Theme {
    */
   quoteButtonColor?: ('orange' | 'amber' | 'rust') | null;
   /**
+   * 单项文字样式和文字级别设置优先。
+   */
+  fontWeight?: ('inherit' | 'regular' | 'bold') | null;
+  fontScale?: ('small' | 'standard' | 'large') | null;
+  /**
    * 前台位置：全站：各级标题
    */
   headingFont?: ('system' | 'inter' | 'montserrat') | null;
@@ -4552,10 +4590,6 @@ export interface Theme {
    * 前台位置：全站：正文文字
    */
   bodyFont?: ('system' | 'inter' | 'open-sans') | null;
-  /**
-   * 前台位置：全站：文字大小
-   */
-  fontScale?: ('small' | 'standard' | 'large') | null;
   /**
    * 前台位置：全站：各模块上下留白
    */
@@ -8498,6 +8532,18 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   logo?: T;
   footerIntro?: T;
   footerIntroStyle?: T;
+  headerLayout?:
+    | T
+    | {
+        logoAlign?: T;
+        logoPosition?: T;
+        logoHeight?: T;
+        logoMobileHeight?: T;
+        navAlign?: T;
+        navPosition?: T;
+        navFontSize?: T;
+        navGap?: T;
+      };
   email?: T;
   emailStyle?: T;
   phone?: T;
@@ -8736,9 +8782,10 @@ export interface SiteSettingsSelect<T extends boolean = true> {
 export interface ThemeSelect<T extends boolean = true> {
   palette?: T;
   quoteButtonColor?: T;
+  fontWeight?: T;
+  fontScale?: T;
   headingFont?: T;
   bodyFont?: T;
-  fontScale?: T;
   spacingScale?: T;
   textLevels?:
     | T
