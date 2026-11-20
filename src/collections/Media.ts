@@ -77,6 +77,7 @@ export const Media: CollectionConfig = {
     beforeDelete: [blockReferencedMediaDelete],
   },
   fields: [
+    { name: 'mediaResolutionNotice', type: 'ui', admin: { components: { Field: '@/admin/components/MediaResolutionNotice#MediaResolutionNotice' } } },
     {
       name: 'alt',
       type: 'text',

@@ -11,7 +11,7 @@ import {
   adminUrl,
   type DocKey,
   fieldDomKey,
-  HOME_PREVIEW_REVEAL_EVENT,
+  PREVIEW_REVEAL_EVENT,
   isLocateMessage,
   LOCATE_SOURCE,
   pathFromDomKey,
@@ -203,7 +203,7 @@ function pathFromElement(target: Element | null): string | null {
 
 // 实时预览窗口里的 iframe（Payload 3.91 的类名是 iframe-loader__iframe，按外层容器查找，不依赖内部类名）
 function previewFrame(): HTMLIFrameElement | null {
-  return document.querySelector<HTMLIFrameElement>('.live-preview-window iframe')
+  return document.querySelector<HTMLIFrameElement>('.live-preview-window--is-live-previewing iframe')
 }
 
 export function LocateProvider({ children }: { children: React.ReactNode }) {
@@ -301,9 +301,9 @@ export function LocateProvider({ children }: { children: React.ReactNode }) {
 
   const reveal = () => {
     if (!button || !currentDoc) return
-    if (currentDoc === 'global:home-page' && !window.dispatchEvent(new CustomEvent(HOME_PREVIEW_REVEAL_EVENT, {
+    if (!previewFrame() && !window.dispatchEvent(new CustomEvent(PREVIEW_REVEAL_EVENT, {
       cancelable: true,
-      detail: button.path,
+      detail: { doc: currentDoc, path: button.path },
     }))) return
     const frame = previewFrame()
     if (!frame?.contentWindow) {

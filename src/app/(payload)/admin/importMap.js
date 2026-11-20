@@ -34,6 +34,8 @@ import { SpecTableField as SpecTableField_f04e63ec0b7d713082e28210d22d25a0 } fro
 import { YouTubePreview as YouTubePreview_998cef8a113491eb803a8ee9903df0aa } from '@/admin/components/YouTubePreview'
 import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { ImportListMenuItem as ImportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
+import { FittedLivePreview as FittedLivePreview_cd4cf7f6430c13512a691551bbfbdcb4 } from '@/admin/components/FittedLivePreview'
+import { MediaResolutionNotice as MediaResolutionNotice_574e3582000b75f69e7046ede797ec83 } from '@/admin/components/MediaResolutionNotice'
 import { ResendButton as ResendButton_76a5609888ac9bb5949868db4ca385ba } from '@/admin/components/ResendButton'
 import { TOTPField as TOTPField_4eaf6cb33cfb75be01716613e3c9a512 } from 'payload-totp/rsc'
 import { BackupDownloadField as BackupDownloadField_65de0ae5386419a90ce68b1d72e01420 } from '@/admin/components/BackupDownload'
@@ -52,8 +54,6 @@ import { ImportPreview as ImportPreview_cdf7e044479f899a31f804427d568b36 } from 
 import { ImportSaveButton as ImportSaveButton_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { NeverPublishedNote as NeverPublishedNote_a5279c9234d68752128c338495a339b6 } from '@/admin/components/NeverPublishedNote'
 import { HomeEditorOrder as HomeEditorOrder_29ed5655414ddf263884b418a8f8986a } from '@/admin/components/HomeEditorOrder'
-import { FullWidthHomePreview as FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9 } from '@/admin/components/FullWidthHomePreview'
-import { FullWidthHomePreviewWindow as FullWidthHomePreviewWindow_28bb59e0aa65ba6c8f3c91d2e1f2ecc9 } from '@/admin/components/FullWidthHomePreview'
 import { Nav as Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99 } from '@/admin/components/Nav'
 import { BeforeDashboard as BeforeDashboard_0caeb52961e5225418de7a16de968c6d } from '@/admin/components/BeforeDashboard'
 import { LocateProvider as LocateProvider_f723b9312a09cd75ce7de3f082a87b44 } from '@/admin/components/LocateProvider'
@@ -106,6 +106,8 @@ export const importMap = {
   "@/admin/components/YouTubePreview#YouTubePreview": YouTubePreview_998cef8a113491eb803a8ee9903df0aa,
   "@payloadcms/plugin-import-export/rsc#ExportListMenuItem": ExportListMenuItem_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#ImportListMenuItem": ImportListMenuItem_cdf7e044479f899a31f804427d568b36,
+  "@/admin/components/FittedLivePreview#FittedLivePreview": FittedLivePreview_cd4cf7f6430c13512a691551bbfbdcb4,
+  "@/admin/components/MediaResolutionNotice#MediaResolutionNotice": MediaResolutionNotice_574e3582000b75f69e7046ede797ec83,
   "@/admin/components/ResendButton#ResendButton": ResendButton_76a5609888ac9bb5949868db4ca385ba,
   "payload-totp/rsc#TOTPField": TOTPField_4eaf6cb33cfb75be01716613e3c9a512,
   "@/admin/components/BackupDownload#BackupDownloadField": BackupDownloadField_65de0ae5386419a90ce68b1d72e01420,
@@ -124,8 +126,6 @@ export const importMap = {
   "@payloadcms/plugin-import-export/rsc#ImportSaveButton": ImportSaveButton_cdf7e044479f899a31f804427d568b36,
   "@/admin/components/NeverPublishedNote#NeverPublishedNote": NeverPublishedNote_a5279c9234d68752128c338495a339b6,
   "@/admin/components/HomeEditorOrder#HomeEditorOrder": HomeEditorOrder_29ed5655414ddf263884b418a8f8986a,
-  "@/admin/components/FullWidthHomePreview#FullWidthHomePreview": FullWidthHomePreview_28bb59e0aa65ba6c8f3c91d2e1f2ecc9,
-  "@/admin/components/FullWidthHomePreview#FullWidthHomePreviewWindow": FullWidthHomePreviewWindow_28bb59e0aa65ba6c8f3c91d2e1f2ecc9,
   "@/admin/components/Nav#Nav": Nav_c19b5b672d3a7bb4ff0bbaab4aa0da99,
   "@/admin/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_0caeb52961e5225418de7a16de968c6d,
   "@/admin/components/LocateProvider#LocateProvider": LocateProvider_f723b9312a09cd75ce7de3f082a87b44,

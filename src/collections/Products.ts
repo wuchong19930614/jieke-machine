@@ -107,6 +107,7 @@ export const Products: CollectionConfig = {
   orderable: true,
   admin: {
     group: '产品管理',
+    components: { views: { edit: { livePreview: { Component: '@/admin/components/FittedLivePreview#FittedLivePreview' } } } },
     useAsTitle: 'name',
     defaultColumns: ['name', 'nameZh', 'productCode', '_status', 'updatedAt'],
     listSearchableFields: ['name', 'nameZh', 'productCode', 'slug'],

@@ -66,38 +66,33 @@ index 9b9fb76..c5425ca 100644
      };
  
 diff --git a/node_modules/@payloadcms/storage-vercel-blob/dist/adapter.js b/node_modules/@payloadcms/storage-vercel-blob/dist/adapter.js
-index 63af210..2215120 100644
 --- a/node_modules/@payloadcms/storage-vercel-blob/dist/adapter.js
 +++ b/node_modules/@payloadcms/storage-vercel-blob/dist/adapter.js
-@@ -19,7 +19,11 @@ export function createVercelBlobAdapter({ access, addRandomSuffix, baseUrl, cach
+@@ -19,7 +19,10 @@ export function createVercelBlobAdapter({ access, addRandomSuffix, baseUrl, cach
                      storageFilePath,
                      token
                  }),
 -            handleUpload: async ({ data, file: { buffer, mimeType }, storageFilePath })=>{
 +            handleUpload: async ({ data, file: { buffer, filename, mimeType }, storageFilePath })=>{
-+                // Generated sizes share the upload's metadata with the original file.
-+                // Match before awaiting: the original upload can replace data.filename.
++                // The browser may have uploaded the original already. A thumbnail can only update its own metadata.
 +                const isOriginal = filename === data.filename;
-+                const generatedSize = isOriginal ? undefined : Object.keys(data.sizes ?? {}).find((name)=>data.sizes[name]?.filename === filename);
++                const size = isOriginal ? undefined : Object.values(data.sizes ?? {}).find((entry)=>entry?.filename === filename);
                  const result = await uploadFile({
                      access,
                      addRandomSuffix,
-@@ -30,7 +34,17 @@ export function createVercelBlobAdapter({ access, addRandomSuffix, baseUrl, cach
+@@ -30,9 +33,12 @@ export function createVercelBlobAdapter({ access, addRandomSuffix, baseUrl, cach
                      token
                  });
-                 if (result.filename) {
+-                if (result.filename) {
 -                    data.filename = result.filename;
-+                    if (isOriginal) {
-+                        data.filename = result.filename;
-+                    } else if (generatedSize) {
-+                        data.sizes = {
-+                            ...data.sizes,
-+                            [generatedSize]: {
-+                                ...data.sizes[generatedSize],
-+                                filename: result.filename
-+                            }
-+                        };
-+                    }
++                if (isOriginal && result.filename) {
++                    return { filename: result.filename };
                  }
-                 return data;
+-                return data;
++                if (size && result.filename) {
++                    size.filename = result.filename;
++                    return { sizes: data.sizes };
++                }
              },
+             staticHandler: (req, { doc, headers, params: { clientUploadContext, filename } })=>getFile({
+                     baseUrl,

@@ -9,6 +9,7 @@ import { editableGlobal } from './helpers'
 
 export const ProductsPage = editableGlobal({
   slug: 'products-page',
+  editViews: { livePreview: { Component: '@/admin/components/FittedLivePreview#FittedLivePreview' } },
   label: '产品列表页',
   group: '页面管理',
   refresh: [PATHS.productList],
