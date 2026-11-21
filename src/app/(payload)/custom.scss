@@ -539,7 +539,16 @@
 }
 .jk-range__row input[type='range'] {
   flex: 1;
+  min-width: 0;
   accent-color: var(--theme-success-500);
+}
+.jk-range__number {
+  width: 5.5rem;
+  padding: 6px 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: var(--theme-input-bg);
+  color: var(--theme-text);
 }
 .jk-range__row output {
   min-width: 3em;

@@ -72,7 +72,7 @@ export const HomePage = editableGlobal({
               defaultValue: 50,
               admin: {
                 step: 5,
-                description: '调节文字所在区域的渐变遮罩。默认优先突出图片；图片较亮时可调深一点。',
+                description: '设为 0% 可关闭渐变遮罩。图片较亮、文字不易读时可调深一点。',
                 components: { Field: '@/admin/components/RangeField#RangeField' },
               },
             },
