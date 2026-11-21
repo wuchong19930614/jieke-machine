@@ -9,6 +9,7 @@ import { rejectChineseOnPublish } from '@/hooks/publishChecks'
 import { PATHS, revalidate } from '@/hooks/revalidate'
 import { rememberPublishedSlug, slugRedirectHook } from '@/hooks/slugRedirect'
 import { PRODUCT_SECTION_DEFAULT_BACKGROUND, PRODUCT_SECTIONS } from '@/lib/constants'
+import { PRODUCT_CATEGORIES } from '@/lib/productCategories'
 import { defaultSpecTable, normalizeSpecTable, validateSpecTable } from '@/lib/specTable'
 import { validateYoutubeUrl } from '@/lib/youtube'
 
@@ -81,15 +82,7 @@ const moduleTitles = (module: keyof typeof MODULE_TITLE_KEYS): Field => {
 const refresh: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
   if (doc?._status === 'published' || previousDoc?._status === 'published') {
     revalidate(req, [
-      PATHS.home,
-      // 关于我们的图片可以设“跳到某个产品”，产品撤下或改名时一起刷新
-      PATHS.about,
-      PATHS.productList,
-      PATHS.productDetails,
-      PATHS.caseList,
-      PATHS.casePages,
-      PATHS.caseDetails,
-      PATHS.contact,
+      PATHS.everything,
       PATHS.sitemap,
     ])
   }
@@ -97,7 +90,7 @@ const refresh: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
 }
 
 const refreshAfterDelete: CollectionAfterDeleteHook = ({ doc, req }) => {
-  revalidate(req, [PATHS.home, PATHS.about, PATHS.productList, PATHS.productDetails, PATHS.caseList, PATHS.casePages, PATHS.caseDetails, PATHS.contact, PATHS.sitemap])
+  revalidate(req, [PATHS.everything, PATHS.sitemap])
   return doc
 }
 
@@ -107,6 +100,7 @@ export const Products: CollectionConfig = {
   orderable: true,
   admin: {
     group: '产品管理',
+    components: { views: { edit: { livePreview: { Component: '@/admin/components/FittedLivePreview#FittedLivePreview' } } } },
     useAsTitle: 'name',
     defaultColumns: ['name', 'nameZh', 'productCode', '_status', 'updatedAt'],
     listSearchableFields: ['name', 'nameZh', 'productCode', 'slug'],
@@ -173,8 +167,8 @@ export const Products: CollectionConfig = {
               type: 'select',
               label: '产品归属',
               defaultValue: 'production-lines',
-              options: [{ label: 'Production Lines（生产线）', value: 'production-lines' }],
-              admin: { width: '50%', description: at('不在前台显示', '首期只有生产线一类，前台不做分类筛选') },
+              options: PRODUCT_CATEGORIES.map(({ value, adminLabel: label }) => ({ value, label })),
+              admin: { width: '50%', description: at('产品导航和产品列表', '首页只展示有列表图的生产线') },
             },
           ],
         },

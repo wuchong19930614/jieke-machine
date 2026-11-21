@@ -7,6 +7,8 @@ import { fill } from '@/content/defineTexts'
 import type { Settings, UiTexts } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import type { Locator } from '@/lib/locator'
+import { groupProducts } from '@/lib/productCategories'
+import type { Product } from '@/payload-types'
 import { HeaderLayout } from './client/HeaderLayout'
 import { OpenOverlayButton } from './client/UiProvider'
 import { WhatsAppLink } from './client/WhatsAppLink'
@@ -65,7 +67,7 @@ export function TopBar({ settings, ui, L }: ChromeProps) {
   )
 }
 
-export function SiteHeader({ settings, ui, L }: ChromeProps) {
+export function SiteHeader({ settings, ui, L, products }: ChromeProps & { products: Product[] }) {
   const layout = settings.raw.headerLayout
   const logoPosition = horizontalPosition(layout?.logoAlign, layout?.logoPosition, 0)
   const navPosition = horizontalPosition(layout?.navAlign, layout?.navPosition, 100)
@@ -89,6 +91,11 @@ export function SiteHeader({ settings, ui, L }: ChromeProps) {
     { href: '/case-studies/', key: 'cases' as const },
     { href: '/contact/', key: 'contact' as const },
   ].map((item) => ({ href: item.href, label: settings.nav[item.key], locate: L(S, `navLabels.${item.key}`) }))
+  const productGroups = groupProducts(products).map(({ value, label, products: entries }) => ({
+    label,
+    href: `/products/#${value}`,
+    products: entries.map(({ slug, name }) => ({ href: `/products/${slug}/`, label: name })),
+  }))
   return (
     <HeaderLayout flow={flow} style={style}>
       <div className="lp-header__brand">
@@ -101,7 +108,7 @@ export function SiteHeader({ settings, ui, L }: ChromeProps) {
         </Link>
       </div>
       <div className="lp-header__navigation">
-        <SiteNav items={items} texts={ui.common} menuLocate={L(U, 'common.menu')} />
+        <SiteNav items={items} productGroups={productGroups} texts={ui.common} menuLocate={L(U, 'common.menu')} />
       </div>
     </HeaderLayout>
   )

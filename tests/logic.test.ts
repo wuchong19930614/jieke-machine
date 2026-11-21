@@ -512,8 +512,8 @@ describe('第三批：文字样式', async () => {
 
   it('生成 CSS：手机字号没填时按电脑字号的 85%；没有不安全内容', () => {
     const css = textStyleCss('[data-ts="x"]', { size: 40, color: '#FFFFFF', opacity: 60 })
-    expect(css).toBe('[data-ts="x"]{font-size:40px;color:#FFFFFF;opacity:0.6}@media (max-width:767px){[data-ts="x"]{font-size:34px}}')
-    expect(textStyleCss('a', { sizeMobile: 20 })).toBe('@media (max-width:767px){a{font-size:20px}}')
+    expect(css).toBe('[data-ts="x"]{font-size:max(8px, calc(40px + var(--font-size-adjustment, 0px)));color:#FFFFFF;opacity:0.6}@media (max-width:767px){[data-ts="x"]{font-size:max(8px, calc(34px + var(--font-size-adjustment, 0px)))}}')
+    expect(textStyleCss('a', { sizeMobile: 20 })).toBe('@media (max-width:767px){a{font-size:max(8px, calc(20px + var(--font-size-adjustment, 0px)))}}')
     expect(textStyleId('global:home-page#banners.slides.0.title')).toBe(textStyleId('global:home-page#banners.slides.0.title'))
   })
 
@@ -530,7 +530,7 @@ describe('第三批：文字样式', async () => {
   it('主题文字级别：颜色只作用在浅色背景上，深色背景仍为白字', () => {
     expect(themeTextCss(null)).toBe('')
     const css = themeTextCss({ textLevels: { sectionTitleStyle: { size: 32, color: '#123456' } } } as never)
-    expect(css).toContain(':root:root:root main h2:not(.lp-store-line *),:root:root:root main .lp-article h3:not(.lp-rich *),:root:root:root .lp-contact-band h2{font-size:32px}')
+    expect(css).toContain(':root:root:root main h2:not(.lp-store-line *),:root:root:root main .lp-article h3:not(.lp-rich *),:root:root:root .lp-contact-band h2{font-size:max(8px, calc(32px + var(--font-size-adjustment, 0px)))}')
     expect(css).toContain(':root:root:root main h2:not(.lp-store-line *):not(:is(.lp-bg-dark, .lp-bg-blue, .lp-hero, .lp-contact-band) *)')
     expect(css).toContain('{color:#123456}')
   })

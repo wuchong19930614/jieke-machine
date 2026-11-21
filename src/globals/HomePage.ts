@@ -22,8 +22,7 @@ export const HomePage = editableGlobal({
   slug: 'home-page',
   label: '首页',
   group: '页面管理',
-  beforeDocumentControls: ['@/admin/components/FullWidthHomePreview#FullWidthHomePreview'],
-  editViews: { livePreview: { Component: '@/admin/components/FullWidthHomePreview#FullWidthHomePreviewWindow' } },
+  editViews: { livePreview: { Component: '@/admin/components/FittedLivePreview#FittedLivePreview' } },
   refresh: [PATHS.home],
   fields: [
     sectionsField(HOME_SECTIONS, H, HOME_SECTION_DEFAULT_BACKGROUND, { imageModules: true }),
@@ -242,11 +241,11 @@ export const HomePage = editableGlobal({
       name: 'productLines',
       type: 'group',
       label: '核心生产线',
-      admin: { description: at(`${H} › 生产线`, '选中顺序即轮播顺序；大图来自各产品的列表图。') },
+      admin: { description: at(`${H} › 生产线`, '自动按产品管理顺序展示最多两条有列表图的生产线。') },
       fields: [
         ...textFields(HOME_LINES_TEXTS, `${H} › 生产线`, { styled: true }),
         linkField({ name: 'inquiryLink', label: '生产线咨询按钮跳转', location: `${H} › 生产线 › 咨询按钮`, defaultLabel: '联系页' }),
-        { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: '生产线' },
+        { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: '旧版手动选取', admin: { hidden: true } },
       ],
     },
     {

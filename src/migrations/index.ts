@@ -16,6 +16,8 @@ import * as migration_20261119_101633_homepage_review_feedback from './20261119_
 import * as migration_20261119_150827_global_font_weight from './20261119_150827_global_font_weight';
 import * as migration_20261120_014653_header_layout from './20261120_014653_header_layout';
 
+import * as migration_20261120_101500_theme_font_size from './20261120_101500_theme_font_size';
+
 export const migrations = [
   {
     up: migration_20261021_153138_initial.up,
@@ -101,5 +103,10 @@ export const migrations = [
     up: migration_20261120_014653_header_layout.up,
     down: migration_20261120_014653_header_layout.down,
     name: '20261120_014653_header_layout'
+  },
+  {
+    up: migration_20261120_101500_theme_font_size.up,
+    down: migration_20261120_101500_theme_font_size.down,
+    name: '20261120_101500_theme_font_size',
   },
 ];

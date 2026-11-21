@@ -308,9 +308,9 @@ export interface Product {
    */
   productCode?: string | null;
   /**
-   * 前台位置：不在前台显示。首期只有生产线一类，前台不做分类筛选
+   * 前台位置：产品导航和产品列表。首页只展示有列表图的生产线
    */
-  category?: 'production-lines' | null;
+  category?: ('production-lines' | 'standalone-machine') | null;
   nameStyle?:
     | {
         [k: string]: unknown;
@@ -4583,6 +4583,11 @@ export interface Theme {
   fontWeight?: ('inherit' | 'regular' | 'bold') | null;
   fontScale?: ('small' | 'standard' | 'large') | null;
   /**
+   * 每次调整 1 px 基准字号。全站文字随之调整，已有标题和正文的字号层级会保留。
+   */
+  baseFontSize?: number | null;
+  previousBaseFontSize?: number | null;
+  /**
    * 前台位置：全站：各级标题
    */
   headingFont?: ('system' | 'inter' | 'montserrat') | null;
@@ -4677,9 +4682,6 @@ export interface Theme {
      * 前台位置：首页 › 视频模块封面
      */
     videoCover?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
-    /**
-     * 前台位置：首页 › Banner。按原图：以第一张有效横幅的宽高为准，轮播时高度不跳。手动比例在桌面生效。
-     */
     banner?: ('4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'original') | null;
   };
   _status?: ('draft' | 'published') | null;
@@ -6949,11 +6951,11 @@ export interface HomePage {
       | {
           enabled?: boolean | null;
           /**
-           * 请选高清原图，建议 1920×800 px 以上。所有横幅共用一个比例，可在“主题 › 默认图框比例 › Banner”中设置。
+           * 建议使用 1920×800 px 的高清原图。每张图会按自身比例完整铺满页面宽度，高度随图片变化。
            */
           desktopImage?: (number | null) | Media;
           /**
-           * 建议 1080×1440 px，主体靠中间；不填时用桌面图按焦点裁切。
+           * 建议 1080×1440 px。不填时使用桌面图。图片按原比例完整显示，图上放不下文字时，文字和按钮排到图片下方。
            */
           mobileImage?: (number | null) | Media;
           /**
@@ -7455,7 +7457,7 @@ export interface HomePage {
       | null;
   };
   /**
-   * 前台位置：首页 › 生产线。选中顺序即轮播顺序；大图来自各产品的列表图。
+   * 前台位置：首页 › 生产线。自动按产品管理顺序展示最多两条有列表图的生产线。
    */
   productLines?: {
     /**
@@ -8144,7 +8146,7 @@ export interface AboutPage {
   createdAt?: string | null;
 }
 /**
- * 列表按“产品管理”里拖动的顺序显示全部已发布产品
+ * 列表按产品归属分区，每组沿用“产品管理”里的拖拽顺序
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products-page".
@@ -8784,6 +8786,8 @@ export interface ThemeSelect<T extends boolean = true> {
   quoteButtonColor?: T;
   fontWeight?: T;
   fontScale?: T;
+  baseFontSize?: T;
+  previousBaseFontSize?: T;
   headingFont?: T;
   bodyFont?: T;
   spacingScale?: T;

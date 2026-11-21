@@ -6,7 +6,7 @@ import { collectionDoc } from '@/lib/locate'
 import type { LocateAttrs, Locator } from '@/lib/locator'
 import type { Product } from '@/payload-types'
 
-import { Img, ownOrGroupFit, ownOrGroupRatio } from './Img'
+import { Img, mediaOf, ownOrGroupFit, ownOrGroupRatio } from './Img'
 import { linkHref, LinkTo } from './LinkTo'
 
 // 产品列表页“列表图片设置”（第 9 点）；首页生产线不传，保持原样
@@ -44,7 +44,8 @@ export function ProductLineCard({
   const href = `/products/${product.slug}/`
   const Heading = headingLevel
   // 图片在右边 = 交换两列：左右交替时单数行交换，“全部在右边”每行都交换
-  const reverse = layout?.position === 'right' || ((layout?.position ?? 'alternate') === 'alternate' && index % 2 === 1)
+  const hasImage = Boolean(mediaOf(product.listImage))
+  const reverse = hasImage && (layout?.position === 'right' || (layout?.position === 'alternate' && index % 2 === 1))
   const width = ['40', '50', '60'].includes(layout?.width ?? '') ? Number(layout?.width) : null
   // 产品自己选了比例 / 适配方式时以产品为准，否则用列表页的统一设置
   const image = (
@@ -61,10 +62,10 @@ export function ProductLineCard({
   const custom = linkHref(product.listLink, draft)
   return (
     <article
-      className={`lp-store-line${reverse ? ' lp-store-reverse' : ''}`}
+      className={`lp-store-line${reverse ? ' lp-store-reverse' : ''}${hasImage ? '' : ' lp-store-line--text-only'}`}
       {...(width ? { 'data-image-width': width, style: { '--line-img': `${width}fr`, '--line-txt': `${100 - width}fr` } as React.CSSProperties } : {})}
     >
-      {custom ? (
+      {!hasImage ? null : custom ? (
         <LinkTo link={custom} className="lp-image-link" label={product.name}>
           {image}
         </LinkTo>

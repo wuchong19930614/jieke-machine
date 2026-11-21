@@ -1,6 +1,6 @@
 // 前台定位（技术方案 5.3 第 6 点）的消息协议：后台编辑页与预览页通过 postMessage 互相通知
 export const LOCATE_SOURCE = 'jieke-locate'
-export const HOME_PREVIEW_REVEAL_EVENT = 'jieke:home-preview-reveal'
+export const PREVIEW_REVEAL_EVENT = 'jieke:preview-reveal'
 
 // 文档标识：集合记录为 “集合:编号”，全局配置为 “global:配置名”
 export type DocKey = `${string}:${string}`

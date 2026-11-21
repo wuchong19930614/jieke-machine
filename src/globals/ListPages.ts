@@ -9,16 +9,17 @@ import { editableGlobal } from './helpers'
 
 export const ProductsPage = editableGlobal({
   slug: 'products-page',
+  editViews: { livePreview: { Component: '@/admin/components/FittedLivePreview#FittedLivePreview' } },
   label: '产品列表页',
   group: '页面管理',
   refresh: [PATHS.productList],
-  description: '列表按“产品管理”里拖动的顺序显示全部已发布产品',
+  description: '列表按产品归属分区，每组沿用“产品管理”里的拖拽顺序',
   fields: [
     ...textFields(PRODUCTS_PAGE_TEXTS, '产品列表 › 页头', { styled: true }),
     {
       type: 'collapsible',
       label: '列表图片设置',
-      admin: { description: '一行一个产品、左图右文的排版不变，这里统一调整列表里图片的比例、宽度和位置；每个产品点图片跳到哪里在“产品管理 › 基本信息 › 点击列表图跳转”里设置' },
+      admin: { description: '一行一个产品，卡片高度随图片和文字调整。这里可以统一设置图片的比例、宽度和位置；每个产品点图片跳到哪里在“产品管理 › 基本信息 › 点击列表图跳转”里设置' },
       fields: [
         {
           type: 'row',

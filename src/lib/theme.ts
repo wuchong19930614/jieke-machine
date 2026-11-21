@@ -4,9 +4,9 @@ import type { CSSProperties } from 'react'
 import { FONTS, PALETTES, QUOTE_COLORS } from '@/globals/Theme'
 import type { Theme } from '@/payload-types'
 
+import { baseFontSize, DEFAULT_BASE_FONT_SIZE, fontScale } from './fontSize'
 import { cleanTextStyle, textStyleCss } from './textStyle'
 
-const FONT_SCALE = { small: 0.93, standard: 1, large: 1.08 } as const
 const SPACE_SCALE = { compact: 0.8, standard: 1, relaxed: 1.25 } as const
 const SYSTEM = "Arial, 'Helvetica Neue', Helvetica, sans-serif"
 // 页面宽度（主题设置 › 页面宽度）
@@ -17,6 +17,7 @@ export function themeStyle(theme: Theme | null | undefined, fontVars: Record<str
   const palette = PALETTES[(theme?.palette ?? 'industrial-blue') as keyof typeof PALETTES] ?? PALETTES['industrial-blue']
   const accent = QUOTE_COLORS[(theme?.quoteButtonColor ?? 'orange') as keyof typeof QUOTE_COLORS]?.value ?? QUOTE_COLORS.orange.value
   const font = (key: string | null | undefined) => (key && key !== 'system' && key in FONTS && fontVars[key] ? `var(${fontVars[key]}), ${SYSTEM}` : SYSTEM)
+  const scale = fontScale(theme?.baseFontSize, theme?.fontScale)
   return {
     '--lp-dark': palette.dark,
     '--lp-ink': palette.ink,
@@ -28,7 +29,8 @@ export function themeStyle(theme: Theme | null | undefined, fontVars: Record<str
     '--lp-accent': accent,
     '--font-heading': font(theme?.headingFont),
     '--font-body': font(theme?.bodyFont),
-    '--font-scale': String(FONT_SCALE[(theme?.fontScale ?? 'standard') as keyof typeof FONT_SCALE] ?? 1),
+    '--font-scale': String(scale),
+    '--font-size-adjustment': theme?.baseFontSize == null ? '0px' : `${baseFontSize(theme.baseFontSize, theme.fontScale) - DEFAULT_BASE_FONT_SIZE}px`,
     '--space-scale': String(SPACE_SCALE[(theme?.spacingScale ?? 'standard') as keyof typeof SPACE_SCALE] ?? 1),
     '--lp-content-width': `${CONTENT_WIDTHS.find((w) => w === theme?.contentWidth) ?? '1180'}px`,
     '--lp-side-min': SIDE_MIN[(theme?.sideGutter ?? 'standard') as keyof typeof SIDE_MIN] ?? SIDE_MIN.standard,

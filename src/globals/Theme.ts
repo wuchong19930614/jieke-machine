@@ -2,6 +2,7 @@
 import { at, textStyleField } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
 import { IMAGE_RATIOS } from '@/lib/constants'
+import { baseFontSize, MAX_BASE_FONT_SIZE, MIN_BASE_FONT_SIZE } from '@/lib/fontSize'
 
 import { editableGlobal } from './helpers'
 
@@ -41,6 +42,16 @@ export const Theme = editableGlobal({
   label: '主题',
   group: '全站设置',
   refresh: [PATHS.everything],
+  beforeChange: [
+    ({ data, originalDoc }) => {
+      const previous = baseFontSize(originalDoc?.baseFontSize, originalDoc?.fontScale)
+      const next = baseFontSize(data.baseFontSize === undefined ? originalDoc?.baseFontSize : data.baseFontSize, data.fontScale ?? originalDoc?.fontScale)
+      return {
+        ...data,
+        previousBaseFontSize: next !== previous ? previous : (originalDoc?.previousBaseFontSize ?? null),
+      }
+    },
+  ],
   description: '切换配色、字体、字号、间距、文字级别、页面宽度和默认图框比例；悬浮栏红色和在线沟通蓝色按需求书固定',
   fields: [
     {
@@ -84,7 +95,8 @@ export const Theme = editableGlobal({
         {
           name: 'fontScale',
           type: 'select',
-          label: '全站字号',
+          label: '旧版字号档位',
+          admin: { hidden: true },
           defaultValue: 'standard',
           options: [
             { label: '缩小', value: 'small' },
@@ -92,6 +104,20 @@ export const Theme = editableGlobal({
             { label: '放大', value: 'large' },
           ],
         },
+        {
+          name: 'baseFontSize',
+          type: 'number',
+          label: '全站字号',
+          min: MIN_BASE_FONT_SIZE,
+          max: MAX_BASE_FONT_SIZE,
+          admin: {
+            step: 1,
+            description: '每次调整 1 px 基准字号。全站文字随之调整，已有标题和正文的字号层级会保留。',
+            components: { Field: '@/admin/components/FontSizeField#FontSizeField' },
+          },
+          validate: (value: number | null | undefined) => value == null || (Number.isInteger(value) && value >= MIN_BASE_FONT_SIZE && value <= MAX_BASE_FONT_SIZE) || '请选择范围内的整数字号。',
+        },
+        { name: 'previousBaseFontSize', type: 'number', admin: { hidden: true, readOnly: true } },
         {
           type: 'row',
           fields: [

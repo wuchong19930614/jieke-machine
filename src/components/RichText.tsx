@@ -22,7 +22,7 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
     const fontFamily = preset('fontFamily')?.['font-family']
     const convert = TextJSXConverter.text
     const content = typeof convert === 'function' ? convert(args) : args.node.text
-    return color || fontSize || fontFamily ? <span style={{ color, fontSize, fontFamily }}>{content}</span> : content
+    return color || fontSize || fontFamily ? <span style={{ color, fontSize: fontSize ? `max(8px, calc(${fontSize} + var(--font-size-adjustment, 0px)))` : undefined, fontFamily }}>{content}</span> : content
   },
   ...LinkJSXConverter({
     internalDocToHref: ({ linkNode }) => {
