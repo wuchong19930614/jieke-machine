@@ -69,6 +69,11 @@ export function TopBar({ settings, ui, L }: ChromeProps) {
 
 export function SiteHeader({ settings, ui, L, products }: ChromeProps & { products: Product[] }) {
   const layout = settings.raw.headerLayout
+  const logoZoom = boundedNumber(layout?.logoZoom, 100, 400, 100) / 100
+  const logoImage = settings.logo?.url ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={settings.logo.url} alt="" width={settings.logo.width ?? undefined} height={settings.logo.height ?? undefined} />
+  ) : null
   const logoPosition = horizontalPosition(layout?.logoAlign, layout?.logoPosition, 0)
   const navPosition = horizontalPosition(layout?.navAlign, layout?.navPosition, 100)
   const flow = logoPosition === 0 && navPosition === 100 ? 'inline'
@@ -77,6 +82,7 @@ export function SiteHeader({ settings, ui, L, products }: ChromeProps & { produc
   const style = {
     '--header-logo-height': `${boundedNumber(layout?.logoHeight, 16, 160, 44)}px`,
     '--header-logo-mobile-height': `${boundedNumber(layout?.logoMobileHeight, 16, 96, 32)}px`,
+    '--header-logo-zoom': logoZoom,
     '--header-logo-start': `${logoPosition}fr`,
     '--header-logo-end': `${100 - logoPosition}fr`,
     '--header-nav-start': `${navPosition}fr`,
@@ -100,10 +106,7 @@ export function SiteHeader({ settings, ui, L, products }: ChromeProps & { produc
     <HeaderLayout flow={flow} style={style}>
       <div className="lp-header__brand">
         <Link href="/" className="lp-logo" aria-label={fill(ui.common.logoAlt, { companyName: settings.companyName }) || 'Home'} {...L(S, 'logo')}>
-          {settings.logo?.url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={settings.logo.url} alt="" width={settings.logo.width ?? undefined} height={settings.logo.height ?? undefined} />
-          ) : null}
+          {logoImage && logoZoom > 1 ? <div className="lp-logo__crop">{logoImage}</div> : logoImage}
           {settings.companyName ? <span {...L(S, 'companyName')}>{settings.companyName}</span> : null}
         </Link>
       </div>

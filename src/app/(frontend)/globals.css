@@ -289,6 +289,20 @@ p {
   max-width: 100%;
   object-fit: contain;
 }
+.lp-logo__crop {
+  --logo-frame-height: var(--header-logo-height, 44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--logo-frame-height);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.lp-logo .lp-logo__crop img {
+  height: calc(var(--logo-frame-height) * var(--header-logo-zoom));
+  object-position: center;
+}
 .lp-nav > ul {
   display: flex;
   gap: var(--header-nav-gap, 17px);
@@ -1772,6 +1786,7 @@ body.lp-locating [data-locate] {
     object-fit: contain;
     object-position: left center;
   }
+  .lp-logo__crop { --logo-frame-height: var(--header-logo-mobile-height, 32px); }
   .lp-logo span {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -2337,6 +2352,8 @@ body.lp-locating [data-locate] {
   padding: 0;
 }
 .lp-home .lp-banner-slide::after {
+  /* 0% 关闭遮罩，滑块从 5% 起沿用原有渐变。 */
+  opacity: clamp(0, calc(var(--overlay, .5) * 20), 1);
   background: linear-gradient(90deg, rgb(8 24 35 / clamp(.26, var(--overlay, .5), .85)), rgb(8 24 35 / calc(var(--overlay, .5) * .45)) 43%, transparent 76%);
 }
 .lp-home .lp-banner-copy {

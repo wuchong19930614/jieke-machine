@@ -1,5 +1,5 @@
 // 全站设置（技术方案 3.2）：品牌、联系方式、社交媒体、公共组件文案、客服、邮件、统计和默认 SEO
-import type { Field, TextFieldSingleValidation } from 'payload'
+import type { Field, NumberField, TextFieldSingleValidation } from 'payload'
 
 import { textGroup } from '@/content/defineTexts'
 import {
@@ -63,6 +63,12 @@ const headerPosition = (name: 'logo' | 'nav', defaultValue: 'left' | 'right'): F
   },
 ]
 
+const logoSizeControl = (fallback: number, description: string): NumberField['admin'] => ({
+  description,
+  custom: { rangeNumberInput: true, rangeFallback: fallback },
+  components: { Field: '@/admin/components/RangeField#RangeField' },
+})
+
 export const SiteSettings = editableGlobal({
   slug: 'site-settings',
   label: '全站设置',
@@ -72,7 +78,7 @@ export const SiteSettings = editableGlobal({
   fields: [
     {
       type: 'collapsible',
-      label: '品牌',
+      label: '品牌与页眉',
       fields: [
         { name: 'companyName', type: 'text', label: '公司英文名', admin: { description: at('页头 Logo 旁、页脚、首页公司数据通栏、邮件署名') } },
         textStyleField('companyName', '公司英文名'),
@@ -82,46 +88,48 @@ export const SiteSettings = editableGlobal({
           relationTo: 'media',
           label: 'Logo',
           filterOptions: { mimeType: { contains: 'image' } },
-          admin: { description: at('页头、页脚、蓝色在线沟通面板', '建议透明背景 PNG，高度 80px 以上') },
+          admin: { description: at('页头、页脚、蓝色在线沟通面板', '横版 Logo 建议透明 PNG，主体约 450 × 135 px，四周少留空白。已上传的图片可在下方调整显示大小。') },
+        },
+        {
+          name: 'headerLayout',
+          type: 'group',
+          label: '页眉 Logo 大小与布局',
+          admin: { description: '应用到全站页眉。建议电脑图案约 150 × 45 px、手机约 110 × 33 px，可通过右侧实时预览检查。' },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'logoHeight', type: 'number', label: '电脑端 Logo 高度（px）', min: 16, max: 160, admin: logoSizeControl(44, '留空为 44 px。') },
+                { name: 'logoMobileHeight', type: 'number', label: '手机端 Logo 高度（px）', min: 16, max: 96, admin: logoSizeControl(32, '留空为 32 px。') },
+              ],
+            },
+            {
+              name: 'logoZoom',
+              type: 'number',
+              label: '放大 Logo 图案（%）',
+              min: 100,
+              max: 400,
+              admin: logoSizeControl(100, '留空为 100%。当前带留白的 Logo 可试 245%，电脑高度 52 px、手机高度 38 px。放大后图片居中，超出设定高度的部分会裁去。'),
+            },
+            { type: 'collapsible', label: 'Logo 位置', fields: headerPosition('logo', 'left') },
+            {
+              type: 'collapsible',
+              label: '导航位置与大小',
+              fields: [
+                ...headerPosition('nav', 'right'),
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'navFontSize', type: 'number', label: '导航字号（px）', min: 10, max: 36, admin: { description: '留空跟随主题。单个菜单项的文字样式优先。' } },
+                    { name: 'navGap', type: 'number', label: '菜单项间距（px）', min: 0, max: 48, admin: { description: '留空使用桌面 17 px、手机 0 px。' } },
+                  ],
+                },
+              ],
+            },
+          ],
         },
         { name: 'footerIntro', type: 'textarea', label: '页脚简介', admin: { description: at('页脚 › 品牌区') } },
         textStyleField('footerIntro', '页脚简介'),
-      ],
-    },
-    {
-      name: 'headerLayout',
-      type: 'group',
-      label: '页眉布局',
-      admin: { description: '应用到全站页眉。不同位置的 Logo 与导航可能分行显示，手机端使用折叠菜单。' },
-      fields: [
-        {
-          type: 'collapsible',
-          label: 'Logo 位置与大小',
-          fields: [
-            ...headerPosition('logo', 'left'),
-            {
-              type: 'row',
-              fields: [
-                { name: 'logoHeight', type: 'number', label: '电脑端 Logo 高度（px）', min: 16, max: 160, admin: { description: '留空为 44 px，图片保持原比例。' } },
-                { name: 'logoMobileHeight', type: 'number', label: '手机端 Logo 高度（px）', min: 16, max: 96, admin: { description: '留空为 32 px，图片保持原比例。' } },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'collapsible',
-          label: '导航位置与大小',
-          fields: [
-            ...headerPosition('nav', 'right'),
-            {
-              type: 'row',
-              fields: [
-                { name: 'navFontSize', type: 'number', label: '导航字号（px）', min: 10, max: 36, admin: { description: '留空跟随主题。单个菜单项的文字样式优先。' } },
-                { name: 'navGap', type: 'number', label: '菜单项间距（px）', min: 0, max: 48, admin: { description: '留空使用桌面 17 px、手机 0 px。' } },
-              ],
-            },
-          ],
-        },
       ],
     },
     {
