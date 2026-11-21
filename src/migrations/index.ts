@@ -17,6 +17,7 @@ import * as migration_20261119_150827_global_font_weight from './20261119_150827
 import * as migration_20261120_014653_header_layout from './20261120_014653_header_layout';
 
 import * as migration_20261120_101500_theme_font_size from './20261120_101500_theme_font_size';
+import * as migration_20261121_120000_header_logo_zoom from './20261121_120000_header_logo_zoom';
 
 export const migrations = [
   {
@@ -108,5 +109,10 @@ export const migrations = [
     up: migration_20261120_101500_theme_font_size.up,
     down: migration_20261120_101500_theme_font_size.down,
     name: '20261120_101500_theme_font_size',
+  },
+  {
+    up: migration_20261121_120000_header_logo_zoom.up,
+    down: migration_20261121_120000_header_logo_zoom.down,
+    name: '20261121_120000_header_logo_zoom',
   },
 ];
