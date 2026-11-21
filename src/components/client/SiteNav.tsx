@@ -2,12 +2,22 @@
 
 import Link from 'next/link'
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { LocateAttrs } from '@/lib/locator'
 
 type Item = { href: string; label: string; locate?: LocateAttrs }
 type ProductGroup = Item & { products: Item[] }
+
+function positionDropdown(anchor: HTMLElement | null) {
+  if (!anchor) return
+  const viewport = document.documentElement.clientWidth
+  const gutter = 12
+  const width = Number.parseFloat(getComputedStyle(anchor).getPropertyValue('--product-menu-width'))
+  const left = anchor.getBoundingClientRect().left
+  const offset = Math.max(gutter - left, Math.min(0, viewport - width - gutter - left))
+  anchor.style.setProperty('--product-menu-left', `${offset}px`)
+}
 
 export function SiteNav({
   items,
@@ -36,17 +46,16 @@ export function SiteNav({
   }
   const dropdownOpen = hovered || expanded
 
+  useEffect(() => {
+    if (!dropdownOpen) return
+    const reposition = () => positionDropdown(trigger.current?.parentElement ?? null)
+    window.addEventListener('resize', reposition)
+    return () => window.removeEventListener('resize', reposition)
+  }, [dropdownOpen])
+
   function closeDropdown() {
     setExpanded(false)
     setHovered(false)
-  }
-
-  function positionDropdown(anchor: HTMLElement | null) {
-    if (!anchor) return
-    const viewport = document.documentElement.clientWidth
-    const width = Math.min(400, viewport * 0.9)
-    const left = anchor.getBoundingClientRect().left
-    anchor.style.setProperty('--product-menu-left', `${Math.max(12 - left, Math.min(0, viewport - width - 12 - left))}px`)
   }
 
   const isCurrent = (href: string) => segment === (href.split('/')[1] || null)
@@ -117,7 +126,10 @@ export function SiteNav({
                 <div id="lp-product-navigation" className="lp-nav-products__panel" hidden={!dropdownOpen}>
                   {productGroups.map((group) => (
                     <div className="lp-nav-products__group" key={group.href}>
-                      <Link href={group.href} onClick={() => { closeDropdown(); setOpen(false) }}>{group.label}</Link>
+                      <a href={group.href} onClick={() => { closeDropdown(); setOpen(false) }}>
+                        <span>{group.label}</span>
+                        <span aria-hidden="true">→</span>
+                      </a>
                       {group.products.length ? (
                         <ul>
                           {group.products.map((product) => (
