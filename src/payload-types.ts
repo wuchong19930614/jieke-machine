@@ -6959,7 +6959,7 @@ export interface HomePage {
            */
           mobileImage?: (number | null) | Media;
           /**
-           * 调节文字所在区域的渐变遮罩。默认优先突出图片；图片较亮时可调深一点。
+           * 设为 0% 可关闭渐变遮罩。图片较亮、文字不易读时可调深一点。
            */
           overlay?: number | null;
           kicker?: string | null;

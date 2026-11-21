@@ -2337,6 +2337,8 @@ body.lp-locating [data-locate] {
   padding: 0;
 }
 .lp-home .lp-banner-slide::after {
+  /* 0% 关闭遮罩，滑块从 5% 起沿用原有渐变。 */
+  opacity: clamp(0, calc(var(--overlay, .5) * 20), 1);
   background: linear-gradient(90deg, rgb(8 24 35 / clamp(.26, var(--overlay, .5), .85)), rgb(8 24 35 / calc(var(--overlay, .5) * .45)) 43%, transparent 76%);
 }
 .lp-home .lp-banner-copy {
