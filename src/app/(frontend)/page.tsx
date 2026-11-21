@@ -258,7 +258,16 @@ export default async function HomePageView() {
             </div>
             {photos.length ? (
               <PhotoGallery photos={photos} doc={homePhotos.length ? H : globalDoc('about-page')} basePath={homePhotos.length ? 'aboutIntro' : 'intro'} L={L} zoomLabel={ui.common.clickToEnlarge} />
-            ) : <Img media={image} ratio={pickRatio(imageSource, 'image')} fit={imageSource?.imageFit} defaultRatio="original" sizes="(max-width: 767px) 100vw, 650px" attrs={useHomeImage ? L(H, 'aboutIntro.image') : L(globalDoc('about-page'), 'intro.image')} />}
+            ) : (
+              <Img
+                media={image}
+                ratio={pickRatio(imageSource, 'image')}
+                fit={imageSource?.imageFit}
+                defaultRatio="original"
+                sizes="(max-width: 400px) calc(100vw - 40px), (max-width: 767px) 90vw, (max-width: 1800px) 46vw, calc(52.5vw - 128px)"
+                attrs={useHomeImage ? L(H, 'aboutIntro.image') : L(globalDoc('about-page'), 'intro.image')}
+              />
+            )}
           </Section>
         )
       }
