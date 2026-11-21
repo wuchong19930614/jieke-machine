@@ -2,9 +2,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+import { ProductCategoryNav } from '@/components/client/ProductCategoryNav'
 import { pickRatio } from '@/components/Img'
 import { ProductLineCard } from '@/components/ProductLineCard'
 import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
+import { StandaloneMachineCard } from '@/components/StandaloneMachineCard'
 import { withDefaults } from '@/content/defineTexts'
 import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
 import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
@@ -53,16 +55,37 @@ export default async function ProductsListPage() {
           </p>
         ) : null}
       </PageBanner>
-      {products.length ? (
-        groupProducts(products).map(({ value, label, products: entries }) => (
-          <Section key={value} id={value} className="lp-store-lines">
-            <h2 className="lp-catalog-heading">{label}</h2>
-            {entries.map((product, index) => (
+      <Section>
+        <ProductCategoryNav
+          label={settings.nav.products}
+          empty={
+            <div className="lp-empty">
+              <p {...L(U, 'productList.emptyText')}>{ui.productList.emptyText}</p>
+              <Link href="/contact/" className="lp-action" {...L(U, 'productList.emptyButton')}>
+                {ui.productList.emptyButton}
+              </Link>
+            </div>
+          }
+          groups={groupProducts(products).map(({ value, label, products: entries }) => ({
+            value,
+            label,
+            content: entries.length ? entries.map((product, index) => value === 'standalone-machine' ? (
+              <StandaloneMachineCard
+                key={product.id}
+                product={product}
+                detailsText={ui.productList.viewDetails}
+                detailsAttrs={L(U, 'productList.viewDetails')}
+                whatsapp={settings.whatsapp}
+                whatsappTexts={settings.whatsappTexts}
+                L={L}
+                draft={draft}
+              />
+            ) : (
               <ProductLineCard
                 key={product.id}
                 product={product}
                 index={index}
-                headingLevel="h3"
+                headingLevel="h2"
                 buttonText={ui.productList.viewDetails}
                 buttonAttrs={L(U, 'productList.viewDetails')}
                 L={L}
@@ -70,19 +93,10 @@ export default async function ProductsListPage() {
                 layout={{ ratio: pickRatio(page, 'listImage'), fit: page.listImageFit, width: page.listImageWidth, position: page.listImagePosition ?? 'left' }}
                 draft={draft}
               />
-            ))}
-          </Section>
-        ))
-      ) : (
-        <Section>
-          <div className="lp-empty">
-            <p {...L(U, 'productList.emptyText')}>{ui.productList.emptyText}</p>
-            <Link href="/contact/" className="lp-action" {...L(U, 'productList.emptyButton')}>
-              {ui.productList.emptyButton}
-            </Link>
-          </div>
-        </Section>
-      )}
+            )) : null,
+          }))}
+        />
+      </Section>
       <JsonLd data={breadcrumbJsonLd([{ name: ui.common.home, path: '/' }, { name: settings.nav.products, path: '/products/' }])} />
     </>
   )
