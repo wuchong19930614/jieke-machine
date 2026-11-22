@@ -459,6 +459,14 @@ a.lp-image-link:hover {
   overflow-wrap: anywhere;
   margin-bottom: 6px;
 }
+.lp-breadcrumb {
+  --breadcrumb-size-current: var(--breadcrumb-size);
+}
+@media (max-width: 767px) {
+  .lp-breadcrumb {
+    --breadcrumb-size-current: var(--breadcrumb-size-mobile, var(--breadcrumb-size));
+  }
+}
 .lp-breadcrumb ol {
   display: flex;
   flex-wrap: wrap;
@@ -468,6 +476,15 @@ a.lp-image-link:hover {
   padding: 0;
   font-size: 0.79em;
   color: var(--lp-muted);
+}
+.lp-breadcrumb li > :is(a, span),
+.lp-breadcrumb li + li::before {
+  font-family: var(--breadcrumb-font, inherit);
+  font-size: var(--breadcrumb-size-current, inherit);
+}
+.lp-breadcrumb li {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .lp-breadcrumb li + li::before {
   content: '/';

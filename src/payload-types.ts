@@ -3504,6 +3504,17 @@ export interface SiteSetting {
     | boolean
     | null;
   /**
+   * 适用于产品页等内页的 Home / Products 路径。留空沿用当前样式。可在右侧预览点击 Products 查看。
+   */
+  breadcrumbLayout?: {
+    font?: ('system' | 'inter' | 'montserrat' | 'open-sans' | 'barlow' | 'barlow-condensed') | null;
+    fontSize?: number | null;
+    /**
+     * 留空沿用电脑端设置。
+     */
+    fontSizeMobile?: number | null;
+  };
+  /**
    * 前台位置：顶栏、页脚、联系页、邮箱弹层
    */
   email?: string | null;
@@ -8699,6 +8710,13 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   footerIntro?: T;
   footerIntroStyle?: T;
+  breadcrumbLayout?:
+    | T
+    | {
+        font?: T;
+        fontSize?: T;
+        fontSizeMobile?: T;
+      };
   email?: T;
   emailStyle?: T;
   phone?: T;

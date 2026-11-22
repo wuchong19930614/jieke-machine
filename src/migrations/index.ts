@@ -19,6 +19,7 @@ import * as migration_20261120_101500_theme_font_size from './20261120_101500_th
 import * as migration_20261121_120000_header_logo_zoom from './20261121_120000_header_logo_zoom';
 import * as migration_20261122_115352_standalone_machine_card from './20261122_115352_standalone_machine_card';
 import * as migration_20261122_150000_barlow_typography from './20261122_150000_barlow_typography';
+import * as migration_20261122_150100_breadcrumb_typography from './20261122_150100_breadcrumb_typography';
 
 export const migrations = [
   {
@@ -125,5 +126,10 @@ export const migrations = [
     up: migration_20261122_150000_barlow_typography.up,
     down: migration_20261122_150000_barlow_typography.down,
     name: '20261122_150000_barlow_typography',
+  },
+  {
+    up: migration_20261122_150100_breadcrumb_typography.up,
+    down: migration_20261122_150100_breadcrumb_typography.down,
+    name: '20261122_150100_breadcrumb_typography',
   },
 ];

@@ -15,6 +15,7 @@ import {
 } from '@/content/texts'
 import { at, textStyleField } from '@/fields'
 import { PATHS } from '@/hooks/revalidate'
+import { BREADCRUMB_FONT_SIZE_MAX, BREADCRUMB_FONT_SIZE_MIN, TEXT_STYLE_FONTS } from '@/lib/constants'
 
 import { editableGlobal } from './helpers'
 
@@ -130,6 +131,28 @@ export const SiteSettings = editableGlobal({
         },
         { name: 'footerIntro', type: 'textarea', label: '页脚简介', admin: { description: at('页脚 › 品牌区') } },
         textStyleField('footerIntro', '页脚简介'),
+      ],
+    },
+    {
+      name: 'breadcrumbLayout',
+      type: 'group',
+      label: '面包屑导航',
+      admin: { description: '适用于产品页等内页的 Home / Products 路径。留空沿用当前样式。可在右侧预览点击 Products 查看。' },
+      fields: [
+        {
+          name: 'font',
+          type: 'select',
+          label: '面包屑字体',
+          options: TEXT_STYLE_FONTS.filter(({ value }) => value !== '').map(({ label, value }) => ({ label, value })),
+          admin: { placeholder: '跟随主题' },
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'fontSize', type: 'number', label: '电脑端字号（px）', min: BREADCRUMB_FONT_SIZE_MIN, max: BREADCRUMB_FONT_SIZE_MAX },
+            { name: 'fontSizeMobile', type: 'number', label: '手机端字号（px）', min: BREADCRUMB_FONT_SIZE_MIN, max: BREADCRUMB_FONT_SIZE_MAX, admin: { description: '留空沿用电脑端设置。' } },
+          ],
+        },
       ],
     },
     {

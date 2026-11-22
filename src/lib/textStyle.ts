@@ -57,7 +57,7 @@ export function validateTextStyle(value: unknown): true | string {
   return true
 }
 
-const fontFamily = (key: string): string => (key !== 'system' && FONT_VARS[key] ? `var(${FONT_VARS[key]}), ${SYSTEM}` : SYSTEM)
+export const fontFamily = (key: string): string => (key !== 'system' && FONT_VARS[key] ? `var(${FONT_VARS[key]}), ${SYSTEM}` : SYSTEM)
 
 // 一条样式 → 电脑端声明和手机端声明（手机只放字号）
 export function textStyleDeclarations(style: TextStyle, { opacity = true } = {}): { desktop: string; mobile: string } {

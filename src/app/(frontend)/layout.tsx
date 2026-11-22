@@ -10,6 +10,7 @@ import { LightboxProvider } from '@/components/client/Lightbox'
 import { PreviewTools } from '@/components/client/PreviewTools'
 import { UiProvider } from '@/components/client/UiProvider'
 import { ContactBand, MobileBar, SiteFooter, SiteHeader, TopBar } from '@/components/SiteChrome'
+import { breadcrumbStyle } from '@/lib/breadcrumbStyle'
 import { getProducts, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
 import { globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
@@ -49,7 +50,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   const uiTextStyles = textStyleSheet(globalDoc('ui-texts'), ui.raw)
 
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable} ${openSans.variable}`} style={themeStyle(theme, FONT_VARS)}>
+    <html lang="en" className={`${inter.variable} ${montserrat.variable} ${openSans.variable}`} style={{ ...themeStyle(theme, FONT_VARS), ...breadcrumbStyle(settings.raw.breadcrumbLayout) }}>
       <body>
         {/* 主题 › 文字级别；内容来自清洗后的数字、色号和内置字体名（lib/textStyle.ts） */}
         {textCss ? <style data-theme-text dangerouslySetInnerHTML={{ __html: textCss }} /> : null}
