@@ -173,7 +173,7 @@ export const Products: CollectionConfig = {
           ],
         },
         textStyleField('name', '英文名称'),
-        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片', hint: '首页横滑大图建议 1920×800 px；产品列表和相关生产线卡片建议将设备主体居中。' }),
+        imageField({ name: 'listImage', label: '列表图', location: '首页生产线、产品列表、相关生产线卡片', hint: '首页横滑大图建议 1920×800 px；单机设备建议 1200×1000 px、白底或透明底，主体居中并留少量边距。' }),
         linkField({ name: 'listLink', label: '点击列表图跳转', location: '首页生产线、产品列表里点击列表图时打开的页面', defaultLabel: '本产品详情页（默认）' }),
         {
           name: 'listSummary',
@@ -216,7 +216,7 @@ export const Products: CollectionConfig = {
           type: 'array',
           label: '成品列表',
           labels: { singular: '成品', plural: '成品' },
-          admin: { description: at(`${D} › 可生产成品`, '成品图 1:1，只展示图片和名称'), components: { RowLabel: titleRowLabel('name') } },
+          admin: { description: at(`${D} › 可生产成品`, '成品图 1:1；可见成品的名称也会显示在单机设备列表卡片上'), components: { RowLabel: titleRowLabel('name') } },
           fields: [
             imageField({ name: 'image', label: '成品图', location: `${D} › 可生产成品 › 成品图`, hint: '建议 900×900 px，主体靠中间。' }),
             { name: 'name', type: 'text', label: '成品名称', required: true, admin: { width: '50%' } },
@@ -286,7 +286,7 @@ export const Products: CollectionConfig = {
           defaultValue: defaultSpecTable(),
           validate: (value: unknown) => validateSpecTable(value),
           admin: {
-            description: at(`${D} › Technical Specifications`, '每个型号一列；勾选“公开”的行才在前台显示；单位写在参数名里，如 Capacity (kg/h)'),
+            description: at(`${D} › Technical Specifications`, '每个型号一列；勾选“公开”的行才在前台显示；单机设备列表展示前 3 项已填数值的公开参数；单位写在参数名里，如 Capacity (kg/h)'),
             components: { Field: '@/admin/components/SpecTableField#SpecTableField' },
           },
         },

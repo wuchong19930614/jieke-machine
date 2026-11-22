@@ -3304,39 +3304,30 @@ export interface SiteSetting {
     | boolean
     | null;
   /**
-   * 前台位置：页头、页脚、蓝色在线沟通面板。建议透明背景 PNG，高度 80px 以上
+   * 前台位置：页头、页脚、蓝色在线沟通面板。横版 Logo 建议透明 PNG，主体约 450 × 135 px，四周少留空白。已上传的图片可在下方调整显示大小。
    */
   logo?: (number | null) | Media;
   /**
-   * 前台位置：页脚 › 品牌区
-   */
-  footerIntro?: string | null;
-  footerIntroStyle?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  /**
-   * 应用到全站页眉。不同位置的 Logo 与导航可能分行显示，手机端使用折叠菜单。
+   * 应用到全站页眉。建议电脑图案约 150 × 45 px、手机约 110 × 33 px，可通过右侧实时预览检查。
    */
   headerLayout?: {
+    /**
+     * 留空为 44 px。
+     */
+    logoHeight?: number | null;
+    /**
+     * 留空为 32 px。
+     */
+    logoMobileHeight?: number | null;
+    /**
+     * 留空为 100%。当前带留白的 Logo 可试 245%，电脑高度 52 px、手机高度 38 px。放大后图片居中，超出设定高度的部分会裁去。
+     */
+    logoZoom?: number | null;
     logoAlign?: ('left' | 'center' | 'right' | 'custom') | null;
     /**
      * 0 靠左，50 居中，100 靠右。
      */
     logoPosition?: number | null;
-    /**
-     * 留空为 44 px，图片保持原比例。
-     */
-    logoHeight?: number | null;
-    /**
-     * 留空为 32 px，图片保持原比例。
-     */
-    logoMobileHeight?: number | null;
     navAlign?: ('left' | 'center' | 'right' | 'custom') | null;
     /**
      * 0 靠左，50 居中，100 靠右。
@@ -3351,6 +3342,19 @@ export interface SiteSetting {
      */
     navGap?: number | null;
   };
+  /**
+   * 前台位置：页脚 › 品牌区
+   */
+  footerIntro?: string | null;
+  footerIntroStyle?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * 前台位置：顶栏、页脚、联系页、邮箱弹层
    */
@@ -6959,7 +6963,7 @@ export interface HomePage {
            */
           mobileImage?: (number | null) | Media;
           /**
-           * 调节文字所在区域的渐变遮罩。默认优先突出图片；图片较亮时可调深一点。
+           * 设为 0% 可关闭渐变遮罩。图片较亮、文字不易读时可调深一点。
            */
           overlay?: number | null;
           kicker?: string | null;
@@ -8532,20 +8536,21 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   companyName?: T;
   companyNameStyle?: T;
   logo?: T;
-  footerIntro?: T;
-  footerIntroStyle?: T;
   headerLayout?:
     | T
     | {
-        logoAlign?: T;
-        logoPosition?: T;
         logoHeight?: T;
         logoMobileHeight?: T;
+        logoZoom?: T;
+        logoAlign?: T;
+        logoPosition?: T;
         navAlign?: T;
         navPosition?: T;
         navFontSize?: T;
         navGap?: T;
       };
+  footerIntro?: T;
+  footerIntroStyle?: T;
   email?: T;
   emailStyle?: T;
   phone?: T;
