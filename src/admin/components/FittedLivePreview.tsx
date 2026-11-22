@@ -20,8 +20,8 @@ export function FittedLivePreview(props: EditViewProps) {
     if (!pane || !isLivePreviewing || !fitted) return
 
     const measure = () => {
-      const { innerWidth: width, innerHeight: height } = window
-      const paneWidth = pane.clientWidth
+      const width = window.innerWidth
+      const { clientWidth: paneWidth, clientHeight: height } = pane
       if (!paneWidth || !width || !height) return
       const scale = Math.min(1, paneWidth / width)
       setViewport((current) => current.width === width && current.height === height && current.scale === scale
@@ -60,8 +60,8 @@ export function FittedLivePreview(props: EditViewProps) {
 
   const dimensions = fitted && viewport.width > 0 ? {
     '--jk-preview-width': viewport.width + 'px',
-    '--jk-preview-height': viewport.height + 'px',
-    '--jk-preview-display-height': viewport.height * viewport.scale + 'px',
+    '--jk-preview-height': viewport.height / viewport.scale + 'px',
+    '--jk-preview-display-height': viewport.height + 'px',
     '--jk-preview-scale': viewport.scale,
   } as CSSProperties : undefined
 
