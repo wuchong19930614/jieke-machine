@@ -382,6 +382,19 @@ p {
 .lp-bg-dark .lp-muted {
   color: #c4d2df;
 }
+.lp-bg-image {
+  position: relative;
+  isolation: isolate;
+}
+.lp-bg-image::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--section-image) var(--section-image-position) / cover no-repeat;
+  pointer-events: none;
+}
 .lp-bg-blue {
   background: var(--lp-brand);
   color: #fff;
@@ -564,6 +577,30 @@ a.lp-image-link:hover {
 }
 .lp-wide-image {
   margin: 26px 0;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :where(img, .lp-logo__crop),
+  .lp-bg-image::before {
+    transition: scale 220ms ease;
+  }
+  /* Use the fixed frame as the hover target so the image stays shrunk at its edges. */
+  :where(
+    img:hover,
+    .lp-frame:hover > img,
+    .lp-image-frame:hover img,
+    .lp-hero:hover .lp-banner-slide img,
+    .lp-logo:hover > img,
+    .lp-logo:hover > .lp-logo__crop,
+    .lp-video button:hover img,
+    .lp-lightbox:hover > img
+  ),
+  .lp-bg-image:hover::before {
+    scale: .97;
+  }
+  .lp-logo__crop > img {
+    scale: none;
+  }
 }
 
 /* ---------- 首页 Banner ---------- */
@@ -2258,12 +2295,6 @@ body.lp-locating [data-locate] {
 .lp-home .lp-store-factory-grid .lp-image-link {
   overflow: hidden;
   background: var(--lp-soft);
-}
-.lp-home .lp-store-factory-grid img {
-  transition: transform 300ms ease;
-}
-.lp-home .lp-store-factory-grid .lp-image-link:hover img {
-  transform: scale(1.035);
 }
 .lp-home .lp-store-lines {
   gap: 28px;
