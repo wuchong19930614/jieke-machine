@@ -321,7 +321,7 @@ export interface Product {
     | boolean
     | null;
   /**
-   * 前台位置：首页生产线、产品列表、相关生产线卡片。首页横滑大图建议 1920×800 px；产品列表和相关生产线卡片建议将设备主体居中。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+   * 前台位置：首页生产线、产品列表、相关生产线卡片。首页横滑大图建议 1920×800 px；单机设备建议 1200×1000 px、白底或透明底，主体居中并留少量边距。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
    */
   listImage?: (number | null) | Media;
   /**
@@ -364,6 +364,120 @@ export interface Product {
    * 前台位置：网址 /products/{网址短名}/。留空时按英文名称自动生成；修改后系统自动把旧网址永久跳转到新网址
    */
   slug: string;
+  /**
+   * 只影响前台产品列表的单机设备卡片。留空时沿用基本信息、公开参数和可见成品。
+   */
+  standaloneCard?: {
+    title?: string | null;
+    titleStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    summary?: string | null;
+    summaryStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * 前台位置：产品列表 › 单机设备卡片。建议 1200×1000 px，白底或透明底，主体居中。默认按原图比例完整显示。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+     */
+    image?: (number | null) | Media;
+    /**
+     * 前台位置：产品列表 › 单机设备卡片。“按用途默认”取主题里的默认比例
+     */
+    imageRatio?: ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+    /**
+     * 图框比例选“自定义…”时填写，例如 5:4、21:9
+     */
+    imageRatioCustom?: string | null;
+    /**
+     * 前台位置：产品列表 › 单机设备卡片
+     */
+    imageFit?: ('default' | 'contain' | 'cover') | null;
+    /**
+     * 最多三组，例如参数名称 Capacity，参数值 1000–3000 kg/h。
+     */
+    specs?:
+      | {
+          label: string;
+          labelStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          value: string;
+          valueStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    materials?:
+      | {
+          label: string;
+          labelStyle?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    detailsLabel?: string | null;
+    detailsLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    inquiryLabel?: string | null;
+    inquiryLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    whatsappLabel?: string | null;
+    whatsappLabelStyle?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
   /**
    * 前台位置：产品详情。拖动调整模块顺序；取消“显示”后整个模块在前台隐藏；模块没有内容时也会自动隐藏
    */
@@ -468,7 +582,7 @@ export interface Product {
     | boolean
     | null;
   /**
-   * 前台位置：产品详情 › 可生产成品。成品图 1:1，只展示图片和名称
+   * 前台位置：产品详情 › 可生产成品。成品图 1:1；可见成品的名称也会显示在单机设备列表卡片上
    */
   applications?:
     | {
@@ -635,7 +749,7 @@ export interface Product {
    */
   flowImageFit?: ('default' | 'contain' | 'cover') | null;
   /**
-   * 前台位置：产品详情 › Technical Specifications。每个型号一列；勾选“公开”的行才在前台显示；单位写在参数名里，如 Capacity (kg/h)
+   * 前台位置：产品详情 › Technical Specifications。每个型号一列；勾选“公开”的行才在前台显示；单机设备列表展示前 3 项已填数值的公开参数；单位写在参数名里，如 Capacity (kg/h)
    */
   specTable?:
     | {
@@ -2714,6 +2828,40 @@ export interface ProductsSelect<T extends boolean = true> {
   listSummary?: T;
   listSummaryStyle?: T;
   slug?: T;
+  standaloneCard?:
+    | T
+    | {
+        title?: T;
+        titleStyle?: T;
+        summary?: T;
+        summaryStyle?: T;
+        image?: T;
+        imageRatio?: T;
+        imageRatioCustom?: T;
+        imageFit?: T;
+        specs?:
+          | T
+          | {
+              label?: T;
+              labelStyle?: T;
+              value?: T;
+              valueStyle?: T;
+              id?: T;
+            };
+        materials?:
+          | T
+          | {
+              label?: T;
+              labelStyle?: T;
+              id?: T;
+            };
+        detailsLabel?: T;
+        detailsLabelStyle?: T;
+        inquiryLabel?: T;
+        inquiryLabelStyle?: T;
+        whatsappLabel?: T;
+        whatsappLabelStyle?: T;
+      };
   sections?:
     | T
     | {
