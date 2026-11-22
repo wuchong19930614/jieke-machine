@@ -18,6 +18,7 @@ import { indexingAllowed, JsonLd, organizationJsonLd } from '@/lib/seo'
 import { FONT_VARS } from '@/lib/textStyle'
 import { themeStyle, themeTextCss } from '@/lib/theme'
 
+import './fonts.css'
 import './globals.css'
 
 // 字体随网站一起发布（构建时下载并自托管），只包含拉丁字符（技术方案 8.2 第 4 条）

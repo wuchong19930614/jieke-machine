@@ -19,10 +19,12 @@ export const QUOTE_COLORS = {
 } as const
 
 export const FONTS = {
-  system: { label: 'Arial（原型默认）' },
+  system: { label: 'Arial' },
   inter: { label: 'Inter' },
   montserrat: { label: 'Montserrat（仅标题）' },
   'open-sans': { label: 'Open Sans（仅正文）' },
+  barlow: { label: 'Barlow' },
+  'barlow-condensed': { label: 'Barlow Condensed' },
 } as const
 
 // 主题里的默认比例没有填写宽高的地方，不提供“自定义”
@@ -86,7 +88,7 @@ export const Theme = editableGlobal({
           label: '全站字重',
           defaultValue: 'inherit',
           options: [
-            { label: '跟随原样式', value: 'inherit' },
+            { label: '按文字用途（推荐）', value: 'inherit' },
             { label: '常规', value: 'regular' },
             { label: '加粗', value: 'bold' },
           ],
@@ -126,16 +128,16 @@ export const Theme = editableGlobal({
               type: 'select',
               label: '标题字体',
               defaultValue: 'system',
-              options: ['system', 'inter', 'montserrat'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-              admin: { width: '50%', description: at('全站：各级标题') },
+              options: (['system', 'inter', 'montserrat', 'barlow', 'barlow-condensed'] as const).map((value) => ({ label: FONTS[value].label, value })),
+              admin: { width: '50%', description: at('全站：各级标题和栏目引导文字') },
             },
             {
               name: 'bodyFont',
               type: 'select',
               label: '正文字体',
               defaultValue: 'system',
-              options: ['system', 'inter', 'open-sans'].map((value) => ({ label: FONTS[value as keyof typeof FONTS].label, value })),
-              admin: { width: '50%', description: at('全站：正文文字') },
+              options: (['system', 'inter', 'open-sans', 'barlow', 'barlow-condensed'] as const).map((value) => ({ label: FONTS[value].label, value })),
+              admin: { width: '50%', description: at('全站：正文、导航和按钮') },
             },
           ],
         },

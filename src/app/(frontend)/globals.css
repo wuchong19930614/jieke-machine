@@ -21,8 +21,8 @@
   --font-scale: 1;
   --editorial-radius: clamp(18px, 4vw, 56px);
   --space-scale: 1;
-  --font-heading: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  --font-body: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --font-heading: var(--font-barlow-condensed), Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --font-body: var(--font-barlow), Arial, 'Helvetica Neue', Helvetica, sans-serif;
   /* 内容最大宽度和两侧最小留白跟随“主题 › 页面宽度”（lib/theme.ts）；手机和平板两侧固定 5% */
   --gutter: max(5%, calc((100% - var(--lp-content-width, 1180px)) / 2));
   color-scheme: light;
@@ -87,9 +87,12 @@ img {
 
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 700;
 }
 h1 {
   font-size: 2.43em;
@@ -168,7 +171,6 @@ p {
   background: transparent;
   border: 1px solid var(--lp-line);
   color: var(--lp-ink);
-  font-weight: 400;
 }
 .lp-actions {
   display: flex;
@@ -190,6 +192,7 @@ p {
   text-decoration: underline;
 }
 .lp-kicker {
+  font-family: var(--font-heading);
   font-size: 0.79em;
   letter-spacing: 2px;
   color: var(--lp-accent);
@@ -317,6 +320,7 @@ p {
   padding: 7px 0;
   color: var(--lp-ink);
   font-size: calc(var(--header-nav-size, 12px) * var(--font-scale));
+  font-weight: 600;
   overflow-wrap: anywhere;
   text-decoration: none;
   border-bottom: 2px solid transparent;
@@ -2618,6 +2622,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 .lp-nav-products__group a {
   display: flex;
   align-items: center;
+  font-weight: 500;
   min-height: 44px;
   padding: 8px 10px;
   border: 0;
@@ -2628,7 +2633,6 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   justify-content: space-between;
   gap: 6px;
   background: color-mix(in srgb, var(--lp-bg), #8ff0d0 21%);
-  font-weight: 700;
 }
 .lp-nav-products__group > a span:last-child {
   flex: none;
@@ -2673,7 +2677,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   border-block-end: 2px solid var(--lp-line);
   color: var(--lp-ink);
   font-size: calc(clamp(15px, 2vw, 24px) * var(--font-scale));
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.22;
   overflow-wrap: anywhere;
   scroll-margin-block-start: 20px;
@@ -2726,7 +2730,6 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 .lp-machine-copy h2 {
   margin: 0;
   font-size: calc(clamp(1.4rem, 2.35vw, 2.2rem) * var(--font-scale));
-  font-weight: 800;
   line-height: 1.14;
   text-transform: uppercase;
 }
@@ -2756,7 +2759,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 }
 .lp-machine-specs dd {
   margin: 3px 0 0;
-  font-weight: 750;
+  font-weight: 600;
 }
 .lp-machine-materials,
 .lp-machine-actions {
@@ -2788,7 +2791,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 0.9em;
-  font-weight: 650;
+  font-weight: 600;
   text-align: center;
   text-decoration: none;
 }

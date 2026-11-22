@@ -10,12 +10,17 @@ export const TEXT_SIZE_MAX = 120
 // 手机字号没填时按电脑字号的 85%（大标题在手机上原样显示会太挤）
 export const MOBILE_SCALE = 0.85
 
-import { HEX_COLOR as HEX } from './constants'
+import { HEX_COLOR as HEX, TEXT_STYLE_FONTS } from './constants'
 
-const FONT_KEYS = ['system', 'inter', 'montserrat', 'open-sans'] as const
 const SYSTEM = "Arial, 'Helvetica Neue', Helvetica, sans-serif"
-// 与前台布局里 next/font 生成的变量名一致（app/(frontend)/layout.tsx）
-export const FONT_VARS: Record<string, string> = { inter: '--font-inter', montserrat: '--font-montserrat', 'open-sans': '--font-open-sans' }
+// 与前台布局及 fonts.css 定义的变量名一致。
+export const FONT_VARS: Record<string, string> = {
+  inter: '--font-inter',
+  montserrat: '--font-montserrat',
+  'open-sans': '--font-open-sans',
+  barlow: '--font-barlow',
+  'barlow-condensed': '--font-barlow-condensed',
+}
 
 const sizeOf = (v: unknown): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) && v >= TEXT_SIZE_MIN && v <= TEXT_SIZE_MAX ? Math.round(v) : undefined
@@ -29,7 +34,7 @@ export function cleanTextStyle(value: unknown): TextStyle | null {
   const sizeMobile = sizeOf(v.sizeMobile)
   if (size) style.size = size
   if (sizeMobile) style.sizeMobile = sizeMobile
-  if (typeof v.font === 'string' && (FONT_KEYS as readonly string[]).includes(v.font)) style.font = v.font
+  if (typeof v.font === 'string' && v.font && TEXT_STYLE_FONTS.some(({ value }) => value === v.font)) style.font = v.font
   if (typeof v.color === 'string' && HEX.test(v.color.trim())) style.color = v.color.trim().toUpperCase()
   if (v.weight === 400 || v.weight === 700) style.weight = v.weight
   if (typeof v.opacity === 'number' && v.opacity >= 10 && v.opacity < 100) style.opacity = Math.round(v.opacity)

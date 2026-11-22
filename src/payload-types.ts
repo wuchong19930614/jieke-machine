@@ -4740,13 +4740,13 @@ export interface Theme {
   baseFontSize?: number | null;
   previousBaseFontSize?: number | null;
   /**
-   * 前台位置：全站：各级标题
+   * 前台位置：全站：各级标题和栏目引导文字
    */
-  headingFont?: ('system' | 'inter' | 'montserrat') | null;
+  headingFont?: ('system' | 'inter' | 'montserrat' | 'barlow' | 'barlow-condensed') | null;
   /**
-   * 前台位置：全站：正文文字
+   * 前台位置：全站：正文、导航和按钮
    */
-  bodyFont?: ('system' | 'inter' | 'open-sans') | null;
+  bodyFont?: ('system' | 'inter' | 'open-sans' | 'barlow' | 'barlow-condensed') | null;
   /**
    * 前台位置：全站：各模块上下留白
    */

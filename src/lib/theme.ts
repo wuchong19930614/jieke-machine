@@ -27,8 +27,8 @@ export function themeStyle(theme: Theme | null | undefined, fontVars: Record<str
     '--lp-brand': palette.brand,
     '--lp-brand-ink': palette.brandInk,
     '--lp-accent': accent,
-    '--font-heading': font(theme?.headingFont),
-    '--font-body': font(theme?.bodyFont),
+    '--font-heading': font(theme?.headingFont ?? 'barlow-condensed'),
+    '--font-body': font(theme?.bodyFont ?? 'barlow'),
     '--font-scale': String(scale),
     '--font-size-adjustment': theme?.baseFontSize == null ? '0px' : `${baseFontSize(theme.baseFontSize, theme.fontScale) - DEFAULT_BASE_FONT_SIZE}px`,
     '--space-scale': String(SPACE_SCALE[(theme?.spacingScale ?? 'standard') as keyof typeof SPACE_SCALE] ?? 1),
@@ -61,7 +61,7 @@ const LEVEL_SELECTORS: Record<string, string[]> = {
   sectionTitle: ['main h2:not(.lp-store-line *)', 'main .lp-article h3:not(.lp-rich *)', '.lp-contact-band h2'],
   kicker: ['.lp-kicker'],
   body: ['main p', 'main li', 'main .lp-rich'],
-  button: ['.lp-action', '.lp-outline', '.lp-link', '.lp-store-blue-button'],
+  button: ['.lp-action', '.lp-outline', '.lp-link', '.lp-store-blue-button', '.lp-machine-actions a'],
 }
 
 export function themeTextCss(theme: Theme | null | undefined): string {
