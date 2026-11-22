@@ -2802,6 +2802,7 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-height: 48px;
   max-width: 100%;
   padding: 7px clamp(10px, 1.2vw, 18px);
@@ -2812,6 +2813,8 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
   text-align: center;
   text-decoration: none;
 }
+.lp-machine-actions a > svg { flex: none; }
+.lp-machine-actions a > span { min-width: 0; overflow-wrap: anywhere; }
 .lp-machine-actions :is(.lp-machine-details, .lp-machine-inquiry) { letter-spacing: .035em; text-transform: uppercase; }
 .lp-machine-actions .lp-machine-details { background: #a44919; color: #fff; }
 .lp-machine-actions .lp-machine-inquiry { border-color: var(--lp-ink); color: var(--lp-ink); }

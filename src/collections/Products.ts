@@ -224,7 +224,7 @@ export const Products: CollectionConfig = {
         },
         { name: 'detailsLabel', type: 'text', label: '详情按钮文案', admin: { placeholder: 'Learn More' } },
         textStyleField('detailsLabel', '详情按钮', { opacity: false }),
-        { name: 'inquiryLabel', type: 'text', label: '询价按钮文案', admin: { placeholder: 'Get Information' } },
+        { name: 'inquiryLabel', type: 'text', label: '询价按钮文案', admin: { placeholder: 'Get a Quote' } },
         textStyleField('inquiryLabel', '询价按钮', { opacity: false }),
         { name: 'whatsappLabel', type: 'text', label: 'WhatsApp 按钮文案', admin: { placeholder: 'WhatsApp' } },
         textStyleField('whatsappLabel', 'WhatsApp 按钮', { opacity: false }),

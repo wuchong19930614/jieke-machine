@@ -152,7 +152,7 @@ export default async function ContactPageView() {
             </dl>
             <Img media={page.image} ratio={pickRatio(page, 'image')} fit={page.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(G, 'image')} />
           </div>
-          <div>
+          <div id="inquiry">
             {t.formTitle ? <h3 {...L(G, 'formTitle')}>{t.formTitle}</h3> : null}
             <Suspense fallback={<InquiryForm source="contact_page" {...formProps} />}>
               <ContactForm {...formProps} productNames={Object.fromEntries(products.map((p) => [p.slug, p.name]))} />

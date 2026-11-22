@@ -1,7 +1,7 @@
+import { ArrowRight, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 import { fill } from '@/content/defineTexts'
-import { PRODUCT_SECTIONS } from '@/lib/constants'
 import { collectionDoc } from '@/lib/locate'
 import type { LocateAttrs, Locator } from '@/lib/locator'
 import { normalizeSpecTable, publicRows } from '@/lib/specTable'
@@ -10,7 +10,6 @@ import type { Product } from '@/payload-types'
 
 import { Img, mediaOf, pickRatio } from './Img'
 import { linkHref, LinkTo } from './LinkTo'
-import { orderedSections } from './Section'
 
 export function StandaloneMachineCard({
   product,
@@ -36,10 +35,7 @@ export function StandaloneMachineCard({
   const summary = card?.summary?.trim() || product.listSummary
   const details = card?.detailsLabel?.trim() || (detailsText === 'View Details →' ? 'Learn More' : detailsText)
   const href = `/products/${product.slug}/`
-  const inquiry = orderedSections(product.sections, PRODUCT_SECTIONS).find(({ module }) => module === 'inquiry')
-  const inquiryHref = inquiry && !['desktop', 'mobile'].includes(inquiry.background.device ?? '')
-    ? `${href}#inquiry`
-    : `/contact/?product=${encodeURIComponent(product.slug)}`
+  const inquiryHref = `/contact/?product=${encodeURIComponent(product.slug)}#inquiry`
   const imageLink = linkHref(product.listLink, draft)
   const table = normalizeSpecTable(product.specTable)
   const preferredSpecs = (card?.specs ?? []).map(({ label, value }, index) => ({
@@ -64,6 +60,7 @@ export function StandaloneMachineCard({
     .map(({ name }) => name.trim())
     .filter(Boolean))].map((label) => ({ label, key: label, attrs: L(doc, 'applications') }))
   const message = fill(whatsappTexts.productMessage, { productName: product.name }) || whatsappTexts.message
+  const productMessage = message.includes(product.name) ? message : [message, product.name].filter(Boolean).join('\n')
   const cardImage = mediaOf(card?.image)
   const media = cardImage ?? product.listImage
   const image = (
@@ -105,11 +102,23 @@ export function StandaloneMachineCard({
           </ul>
         ) : null}
         <div className="lp-machine-actions">
-          {details ? <Link href={href} className="lp-machine-details" {...cardAttrs('detailsLabel', card?.detailsLabel?.trim() ? undefined : detailsAttrs)}>{details}</Link> : null}
-          <Link href={inquiryHref} className="lp-machine-inquiry" {...cardAttrs('inquiryLabel')}>{card?.inquiryLabel?.trim() || 'Get Information'}</Link>
+          {details ? (
+            <Link href={href} className="lp-machine-details" {...cardAttrs('detailsLabel', card?.detailsLabel?.trim() ? undefined : detailsAttrs)}>
+              <ArrowRight size={16} aria-hidden="true" />
+              <span>{details}</span>
+            </Link>
+          ) : null}
+          <Link href={inquiryHref} className="lp-machine-inquiry" {...cardAttrs('inquiryLabel')}>
+            <FileText size={16} aria-hidden="true" />
+            <span>{card?.inquiryLabel?.trim() || 'Get a Quote'}</span>
+          </Link>
           {/\d/.test(whatsapp) ? (
-            <a href={whatsappLink(whatsapp, message)} className="lp-machine-whatsapp" target="_blank" rel="noopener noreferrer" {...cardAttrs('whatsappLabel')}>
-              {card?.whatsappLabel?.trim() || 'WhatsApp'}
+            <a href={whatsappLink(whatsapp, productMessage)} className="lp-machine-whatsapp" target="_blank" rel="noopener noreferrer" {...cardAttrs('whatsappLabel')}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2.5a9.5 9.5 0 0 0-8.3 14.1l-1.2 4.8 4.9-1.2A9.5 9.5 0 1 0 12 2.5Z" />
+                <path d="M8.1 7.6c-.8.4-.9 1.4-.5 2.5 1 2.5 3.2 4.7 5.7 5.7 1.1.4 2.1.3 2.5-.5l.4-.9c.1-.3 0-.6-.3-.7l-1.8-.9a.6.6 0 0 0-.7.2l-.6.7c-1.5-.6-2.7-1.9-3.3-3.3l.7-.6a.6.6 0 0 0 .2-.7l-.9-1.8a.6.6 0 0 0-.7-.3Z" />
+              </svg>
+              <span>{card?.whatsappLabel?.trim() || 'WhatsApp'}</span>
             </a>
           ) : null}
         </div>
