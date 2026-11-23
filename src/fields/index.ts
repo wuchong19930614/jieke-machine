@@ -87,15 +87,17 @@ export function photoGalleryField(location: string, { captionsRequired = false }
 export const CUSTOM_RATIO = /^\d+(\.\d+)?\s*[:：]\s*\d+(\.\d+)?$/
 
 // 图框比例 + 适配方式两个选择框；多图字段（如案例现场图片）整组共用一套设置
-export function ratioFitFields(name: string, location: string): Field[] {
+export function ratioFitFields(name: string, location: string, defaultToOriginal = false): Field[] {
   return [
     {
       name: `${name}Ratio`,
       type: 'select',
       label: '图框比例',
-      options: [...IMAGE_RATIOS],
+      options: IMAGE_RATIOS.map((option) =>
+        defaultToOriginal && option.value === 'default' ? { ...option, label: '列表默认（按原图比例）' } : option,
+      ),
       defaultValue: 'default',
-      admin: { width: '25%', description: at(location, '“按用途默认”取主题里的默认比例') },
+      admin: { width: '25%', description: at(location, defaultToOriginal ? '默认按原图宽高比显示，选择固定比例可统一图框。' : '“按用途默认”取主题里的默认比例') },
     },
     {
       name: `${name}RatioCustom`,

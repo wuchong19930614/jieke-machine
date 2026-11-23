@@ -9,12 +9,11 @@ import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/compone
 import { StandaloneMachineCard } from '@/components/StandaloneMachineCard'
 import { withDefaults } from '@/content/defineTexts'
 import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
-import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
+import { getProducts, getProductsPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
 import { groupProducts } from '@/lib/productCategories'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
-import { defaultRatio } from '@/lib/theme'
 
 const G = globalDoc('products-page')
 const U = globalDoc('ui-texts')
@@ -28,12 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ProductsListPage() {
   const draft = await isDraft()
-  const [page, products, settings, ui, theme, L] = await Promise.all([
+  const [page, products, settings, ui, L] = await Promise.all([
     getProductsPage(draft),
     getProducts(draft),
     getSettings(draft),
     getUiTexts(draft),
-    getTheme(draft),
     getLocator(),
   ])
   const texts = withDefaults(PRODUCTS_PAGE_TEXTS, page)
@@ -89,7 +87,6 @@ export default async function ProductsListPage() {
                 buttonText={ui.productList.viewDetails}
                 buttonAttrs={L(U, 'productList.viewDetails')}
                 L={L}
-                ratio={defaultRatio(theme, 'equipment')}
                 layout={{ ratio: pickRatio(page, 'listImage'), fit: page.listImageFit, width: page.listImageWidth, position: page.listImagePosition ?? 'left' }}
                 draft={draft}
               />

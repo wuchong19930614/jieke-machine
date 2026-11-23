@@ -6,7 +6,7 @@ import { collectionDoc } from '@/lib/locate'
 import type { LocateAttrs, Locator } from '@/lib/locator'
 import type { Product } from '@/payload-types'
 
-import { Img, mediaOf, ownOrGroupFit, ownOrGroupRatio } from './Img'
+import { Img, mediaOf, ownOrGroupFit } from './Img'
 import { linkHref, LinkTo } from './LinkTo'
 
 // 产品列表页“列表图片设置”（第 9 点）；首页生产线不传，保持原样
@@ -23,7 +23,6 @@ export function ProductLineCard({
   buttonText,
   buttonAttrs,
   L,
-  ratio,
   headingLevel = 'h2',
   layout,
   draft,
@@ -34,7 +33,6 @@ export function ProductLineCard({
   // 按钮文字所在字段的定位标注（首页在首页配置，产品列表在界面文案）
   buttonAttrs?: LocateAttrs
   L: Locator
-  ratio: string
   headingLevel?: 'h2' | 'h3'
   layout?: LineLayout
   // 预览模式：列表图跳转的目标产品 / 案例没发布时也显示链接
@@ -47,13 +45,13 @@ export function ProductLineCard({
   const hasImage = Boolean(mediaOf(product.listImage))
   const reverse = hasImage && (layout?.position === 'right' || (layout?.position === 'alternate' && index % 2 === 1))
   const width = ['40', '50', '60'].includes(layout?.width ?? '') ? Number(layout?.width) : null
-  // 产品自己选了比例 / 适配方式时以产品为准，否则用列表页的统一设置
+  // 默认让列表图框跟随原图。需要统一尺寸时由列表页设置固定比例。
   const image = (
     <Img
       media={product.listImage}
-      ratio={ownOrGroupRatio(product, 'listImage', layout?.ratio)}
+      ratio={layout?.ratio}
       fit={ownOrGroupFit(product, 'listImage', layout?.fit)}
-      defaultRatio={ratio}
+      defaultRatio="original"
       sizes={`(max-width: 767px) 100vw, ${width ? Math.round(1180 * (width / 100)) : 600}px`}
       attrs={L(doc, 'listImage')}
     />
