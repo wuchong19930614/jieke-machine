@@ -31,13 +31,13 @@ import { backgroundProps, type BackgroundSpec, deviceClass, orderedSections, Sec
 import { fill, withDefaults } from '@/content/defineTexts'
 import * as T from '@/content/texts'
 import { HOME_SECTION_DEFAULT_BACKGROUND, HOME_SECTIONS, IMAGE_SECTION_MODULES, isImageSectionModule } from '@/lib/constants'
-import { getAboutPage, getHomePage, getProducts, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
+import { getAboutPage, getHomeCases, getHomePage, getProducts, getSettings, getTheme, getUiTexts, isDraft, isVisibleDoc } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, locateGroup, type Locator, textStyleSheet } from '@/lib/locator'
 import { buildMetadata } from '@/lib/seo'
 import { defaultRatio } from '@/lib/theme'
 import { productCategory } from '@/lib/productCategories'
-import type { Case, HomePage, Media, Product } from '@/payload-types'
+import type { HomePage, Media, Product } from '@/payload-types'
 
 const H = globalDoc('home-page')
 const S = globalDoc('site-settings')
@@ -135,13 +135,13 @@ function BannerSlide({ slide, index, first, ui, L, draft }: { slide: NonNullable
 
 export default async function HomePageView() {
   const draft = await isDraft()
-  const [home, aboutPage, settings, ui, theme, L, catalog] = await Promise.all([getHomePage(draft), getAboutPage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator(), getProducts(draft)])
+  const [home, aboutPage, settings, ui, theme, L, catalog, homeCases] = await Promise.all([getHomePage(draft), getAboutPage(draft), getSettings(draft), getUiTexts(draft), getTheme(draft), getLocator(), getProducts(draft), getHomeCases(draft)])
   const featuredLines = catalog.filter((product) => productCategory(product.category).value === 'production-lines' && mediaOf(product.listImage)).slice(0, 2)
   // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
   const textStyles = textStyleSheet(H, home)
   const aboutPhotoStyles = textStyleSheet(globalDoc('about-page'), aboutPage)
   const productStyles = featuredLines.map((product) => textStyleSheet(collectionDoc('products', product.id), product))
-  const caseStyles = (home.featuredCases?.cases ?? []).filter((item): item is Case => isVisibleDoc<Case>(item, draft)).map((item) => textStyleSheet(collectionDoc('cases', item.id), item))
+  const caseStyles = homeCases.map((item) => textStyleSheet(collectionDoc('cases', item.id), item))
 
   const services = withDefaults(T.HOME_SERVICES_TEXTS, home.services)
   const stats = withDefaults(T.HOME_STATS_TEXTS, home.companyStats)
@@ -330,8 +330,7 @@ export default async function HomePageView() {
         )
       }
       case 'featuredCases': {
-        // 案例被撤下后自动从首页精选中消失，不留空卡片（技术方案 3.5）
-        const list = (home.featuredCases?.cases ?? []).filter((c): c is Case => isVisibleDoc<Case>(c, draft)).slice(0, 3)
+        const list = homeCases
         if (!list.length) return null
         return (
           <Section key={module} id="cases" background={background} className={`lp-home-cases${list.length === 1 ? ' lp-home-cases--single' : ''}`}>

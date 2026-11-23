@@ -273,6 +273,7 @@ async function seedCases(payload: Payload, productIds: number[]): Promise<number
         _status: 'published',
         title: item.title,
         slug: item.slug,
+        showOnHome: true,
         country: item.country as never,
         capacity: item.capacity,
         coverImage,
@@ -303,7 +304,7 @@ async function publishGlobal(payload: Payload, slug: string, data: Record<string
   await payload.updateGlobal({ slug: slug as never, data: { ...data, _status: 'published' } as never, overrideAccess: true, context: ctx, draft: false })
 }
 
-async function seedGlobals(payload: Payload, productIds: number[], caseIds: number[]) {
+async function seedGlobals(payload: Payload, productIds: number[]) {
   const [logo, favicon, banner1, banner1m, banner2, banner2m, ...factory] = await Promise.all([
     makeImage(payload, { label: 'SAMPLE LOGO', alt: 'Sample Food Machinery logo', usage: 'other', width: 480, height: 120, hue: 215, format: 'png' }),
     makeImage(payload, { label: 'S', alt: 'Site icon', usage: 'other', width: 180, height: 180, hue: 215, format: 'png' }),
@@ -363,7 +364,6 @@ async function seedGlobals(payload: Payload, productIds: number[], caseIds: numb
     },
     factoryGallery: { items: factory.map((image) => ({ image })) },
     productLines: { products: productIds },
-    featuredCases: { cases: caseIds },
   })
 
   const [aboutImage, ...scenes] = await Promise.all([
@@ -456,7 +456,7 @@ async function main() {
   )
   const productIds = await seedProducts(payload, pool)
   const caseIds = await seedCases(payload, productIds)
-  await seedGlobals(payload, productIds, caseIds)
+  await seedGlobals(payload, productIds)
   console.log(`示例数据已写入：${productIds.length} 个产品、${caseIds.length} 个案例（${((Date.now() - started) / 1000).toFixed(1)} 秒）`)
   process.exit(0)
 }

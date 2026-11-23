@@ -33,9 +33,9 @@ export const Cases: CollectionConfig = {
   admin: {
     group: '案例管理',
     useAsTitle: 'title',
-    defaultColumns: ['title', 'country', '_status', 'updatedAt'],
+    defaultColumns: ['title', 'country', 'showOnHome', '_status', 'updatedAt'],
     listSearchableFields: ['title', 'slug', 'customerName'],
-    description: '列表里拖动可调整案例顺序，前台案例列表按这个顺序显示',
+    description: '列表里拖动可调整案例顺序，前台案例列表和首页客户案例按这个顺序显示',
   },
   access: {
     read: isLoggedIn,
@@ -60,6 +60,13 @@ export const Cases: CollectionConfig = {
       fields: [
         { name: 'title', type: 'text', label: '案例标题', required: true, admin: { description: at(`${D}主标题、案例列表、首页精选案例`) } },
         textStyleField('title', '案例标题'),
+        {
+          name: 'showOnHome',
+          type: 'checkbox',
+          label: '展示到首页',
+          defaultValue: false,
+          admin: { description: '发布后同步到首页「客户案例」。取消勾选并发布后，案例仍保留在案例列表。' },
+        },
         {
           type: 'row',
           fields: [

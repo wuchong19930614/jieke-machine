@@ -1412,6 +1412,10 @@ export interface Case {
     | boolean
     | null;
   /**
+   * 发布后同步到首页「客户案例」。取消勾选并发布后，案例仍保留在案例列表。
+   */
+  showOnHome?: boolean | null;
+  /**
    * 前台位置：案例卡片和项目概况
    */
   country?:
@@ -3056,6 +3060,7 @@ export interface CasesSelect<T extends boolean = true> {
   _order?: T;
   title?: T;
   titleStyle?: T;
+  showOnHome?: T;
   country?: T;
   capacity?: T;
   coverImage?: T;
