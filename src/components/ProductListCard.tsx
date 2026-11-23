@@ -1,5 +1,6 @@
 import { ArrowRight, FileText } from 'lucide-react'
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 
 import { fill } from '@/content/defineTexts'
 import { collectionDoc } from '@/lib/locate'
@@ -8,10 +9,10 @@ import { normalizeSpecTable, publicRows } from '@/lib/specTable'
 import { whatsappLink } from '@/lib/whatsapp'
 import type { Product } from '@/payload-types'
 
-import { Img, mediaOf, pickRatio } from './Img'
+import { Img, mediaOf, ownOrGroupFit, pickRatio } from './Img'
 import { linkHref, LinkTo } from './LinkTo'
 
-export function StandaloneMachineCard({
+export function ProductListCard({
   product,
   detailsText,
   detailsAttrs,
@@ -19,6 +20,7 @@ export function StandaloneMachineCard({
   whatsappTexts,
   L,
   draft,
+  lineLayout,
 }: {
   product: Product
   detailsText: string
@@ -27,6 +29,7 @@ export function StandaloneMachineCard({
   whatsappTexts: { message: string; productMessage: string }
   L: Locator
   draft: boolean
+  lineLayout?: { ratio: string | null; fit?: string | null; width?: string | null; reverse: boolean }
 }) {
   const doc = collectionDoc('products', product.id)
   const card = product.standaloneCard
@@ -63,19 +66,23 @@ export function StandaloneMachineCard({
   const productMessage = message.includes(product.name) ? message : [message, product.name].filter(Boolean).join('\n')
   const cardImage = mediaOf(card?.image)
   const media = cardImage ?? product.listImage
+  const imageWidth = ['40', '50', '60'].includes(lineLayout?.width ?? '') ? Number(lineLayout?.width) : 43
+  const columns = { '--card-image-share': `${imageWidth}fr`, '--card-copy-share': `${100 - imageWidth}fr` } as CSSProperties
+  const ratio = cardImage ? pickRatio(card, 'image') : lineLayout ? lineLayout.ratio : pickRatio(product, 'listImage')
+  const fit = cardImage ? card?.imageFit : ownOrGroupFit(product, 'listImage', lineLayout?.fit)
   const image = (
     <Img
       media={media}
-      ratio={cardImage ? pickRatio(card, 'image') : pickRatio(product, 'listImage')}
-      fit={cardImage ? card?.imageFit : product.listImageFit}
+      ratio={ratio}
+      fit={fit}
       defaultRatio="original"
-      sizes="(max-width: 767px) 90vw, (max-width: 1300px) 39vw, 490px"
+      sizes={`(max-width: 767px) 90vw, (max-width: 1300px) ${Math.round(imageWidth * .9)}vw, ${Math.round(1140 * imageWidth / 100)}px`}
       attrs={cardAttrs('image')}
     />
   )
 
   return (
-    <article className="lp-machine-card">
+    <article className="lp-machine-card" data-production-line={lineLayout ? '' : undefined} data-image-right={lineLayout?.reverse && mediaOf(media) ? '' : undefined} style={columns}>
       {mediaOf(media) ? (
         imageLink ? (
           <LinkTo link={imageLink} className="lp-machine-image lp-image-link" label={product.name}>{image}</LinkTo>

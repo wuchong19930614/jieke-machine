@@ -2767,13 +2767,22 @@ main:has(> .lp-home) + .lp-contact-band { display: none; }
 }
 @media (min-width: 768px) {
   .lp-machine-card:has(.lp-machine-image) {
-    grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
+    grid-template-columns: minmax(0, var(--card-image-share, 43fr)) minmax(0, var(--card-copy-share, 57fr));
+  }
+  .lp-machine-card[data-image-right]:has(.lp-machine-image) {
+    grid-template-columns: minmax(0, var(--card-copy-share, 57fr)) minmax(0, var(--card-image-share, 43fr));
+  }
+  .lp-machine-card[data-image-right] .lp-machine-copy {
+    grid-row: 1;
   }
 }
 .lp-machine-image .lp-frame {
   max-height: clamp(340px, 40vw, 480px);
   border-radius: 6px;
   background: var(--lp-bg);
+}
+.lp-machine-card[data-production-line] .lp-machine-image .lp-frame {
+  max-height: none;
 }
 .lp-machine-copy h2 {
   margin: 0;
