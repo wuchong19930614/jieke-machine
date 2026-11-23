@@ -355,7 +355,7 @@ export default async function HomePageView() {
                   buttonText={cases.cardButton}
                   buttonAttrs={L(H, 'featuredCases.cardButton')}
                   ratio={defaultRatio(theme, 'case')}
-                  sizes={list.length === 1 ? '(max-width: 1060px) 94vw, 960px' : undefined}
+                  sizes={list.length === 1 ? '(max-width: 620px) 92vw, 560px' : '(max-width: 620px) 92vw, (max-width: 800px) 560px, (max-width: 1200px) 45vw, 470px'}
                   variant="featured"
                   labels={{ country: ui.caseList.countryLabel, equipment: ui.caseList.equipmentLabel }}
                   photosLabel={{ text: ui.caseDetail.photos || 'Project Photos', attrs: L(U, 'caseDetail.photos') }}
