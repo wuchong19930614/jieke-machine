@@ -91,6 +91,14 @@ export const Cases: CollectionConfig = {
     slugField('title', '网址 /case-studies/{网址短名}/'),
     {
       type: 'collapsible',
+      label: '案例视频',
+      fields: [
+        { name: 'videoUrl', type: 'text', label: '案例视频链接（YouTube）', validate: validateYoutubeUrl, admin: { description: '填入可嵌入的 YouTube 链接后，首页客户案例可以点击原位播放，案例详情也会显示视频。未填链接时，首页显示案例封面。', components: { afterInput: ['@/admin/components/YouTubePreview#YouTubePreview'] } } },
+        imageField({ name: 'videoCover', label: '视频封面图片（选填）', location: '首页精选案例、案例视频', hint: '首页视频固定按 16:9 展示；不上传时首页使用 YouTube 缩略图' }),
+      ],
+    },
+    {
+      type: 'collapsible',
       label: '客户信息',
       admin: { initCollapsed: true },
       fields: [
@@ -154,8 +162,6 @@ export const Cases: CollectionConfig = {
             ...ratioFitFields('gallery', `${D} › Project Photos`),
           ],
         },
-        { name: 'videoUrl', type: 'text', label: 'YouTube 视频链接', validate: validateYoutubeUrl, admin: { description: at(`${D} › Project Video；首页精选案例`, '为空时首页和详情显示封面图'), components: { afterInput: ['@/admin/components/YouTubePreview#YouTubePreview'] } } },
-        imageField({ name: 'videoCover', label: '视频封面图片（选填）', location: '首页精选案例、案例视频', hint: '只能放图片，16:9；不填时用 YouTube 缩略图' }),
       ],
     },
     {

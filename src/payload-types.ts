@@ -1732,6 +1732,27 @@ export interface Case {
    */
   slug: string;
   /**
+   * 填入可嵌入的 YouTube 链接后，首页客户案例可以点击原位播放，案例详情也会显示视频。未填链接时，首页显示案例封面。
+   */
+  videoUrl?: string | null;
+  /**
+   * 前台位置：首页精选案例、案例视频。首页视频固定按 16:9 展示；不上传时首页使用 YouTube 缩略图 建议尺寸：1280×720 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
+   */
+  videoCover?: (number | null) | Media;
+  /**
+   * 前台位置：首页精选案例、案例视频。“按用途默认”取主题里的默认比例
+   */
+  videoCoverRatio?:
+    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
+  /**
+   * 图框比例选“自定义…”时填写，例如 5:4、21:9
+   */
+  videoCoverRatioCustom?: string | null;
+  /**
+   * 前台位置：首页精选案例、案例视频
+   */
+  videoCoverFit?: ('default' | 'contain' | 'cover') | null;
+  /**
    * 前台位置：案例详情 › 项目概况 › Customer
    */
   customerName?: string | null;
@@ -1893,27 +1914,6 @@ export interface Case {
    * 前台位置：案例详情 › Project Photos
    */
   galleryFit?: ('default' | 'contain' | 'cover') | null;
-  /**
-   * 前台位置：案例详情 › Project Video；首页精选案例。为空时首页和详情显示封面图
-   */
-  videoUrl?: string | null;
-  /**
-   * 前台位置：首页精选案例、案例视频。只能放图片，16:9；不填时用 YouTube 缩略图 建议尺寸：1280×720 px。 选择「按原图比例」可随上传图片自动调整图框；手动比例优先。
-   */
-  videoCover?: (number | null) | Media;
-  /**
-   * 前台位置：首页精选案例、案例视频。“按用途默认”取主题里的默认比例
-   */
-  videoCoverRatio?:
-    ('default' | '4/3' | '1/1' | '3/2' | '16/9' | '3/4' | '2/3' | '9/16' | 'custom' | 'original') | null;
-  /**
-   * 图框比例选“自定义…”时填写，例如 5:4、21:9
-   */
-  videoCoverRatioCustom?: string | null;
-  /**
-   * 前台位置：首页精选案例、案例视频
-   */
-  videoCoverFit?: ('default' | 'contain' | 'cover') | null;
   /**
    * 只在本案例与默认文案不同时填写；不填时使用“界面文案 › 案例详情”的文字
    */
@@ -3073,6 +3073,11 @@ export interface CasesSelect<T extends boolean = true> {
   summaryStyle?: T;
   capacityStyle?: T;
   slug?: T;
+  videoUrl?: T;
+  videoCover?: T;
+  videoCoverRatio?: T;
+  videoCoverRatioCustom?: T;
+  videoCoverFit?: T;
   customerName?: T;
   customerNameStyle?: T;
   showCustomerName?: T;
@@ -3102,11 +3107,6 @@ export interface CasesSelect<T extends boolean = true> {
   galleryRatio?: T;
   galleryRatioCustom?: T;
   galleryFit?: T;
-  videoUrl?: T;
-  videoCover?: T;
-  videoCoverRatio?: T;
-  videoCoverRatioCustom?: T;
-  videoCoverFit?: T;
   sectionTexts?:
     | T
     | {
