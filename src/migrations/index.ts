@@ -15,9 +15,11 @@ import * as migration_20261119_064752_homepage_v4_editorial from './20261119_064
 import * as migration_20261119_101633_homepage_review_feedback from './20261119_101633_homepage_review_feedback';
 import * as migration_20261119_150827_global_font_weight from './20261119_150827_global_font_weight';
 import * as migration_20261120_014653_header_layout from './20261120_014653_header_layout';
-
 import * as migration_20261120_101500_theme_font_size from './20261120_101500_theme_font_size';
 import * as migration_20261121_120000_header_logo_zoom from './20261121_120000_header_logo_zoom';
+import * as migration_20261122_115352_standalone_machine_card from './20261122_115352_standalone_machine_card';
+import * as migration_20261122_150000_barlow_typography from './20261122_150000_barlow_typography';
+import * as migration_20261122_150100_breadcrumb_typography from './20261122_150100_breadcrumb_typography';
 
 export const migrations = [
   {
@@ -103,7 +105,7 @@ export const migrations = [
   {
     up: migration_20261120_014653_header_layout.up,
     down: migration_20261120_014653_header_layout.down,
-    name: '20261120_014653_header_layout'
+    name: '20261120_014653_header_layout',
   },
   {
     up: migration_20261120_101500_theme_font_size.up,
@@ -114,5 +116,20 @@ export const migrations = [
     up: migration_20261121_120000_header_logo_zoom.up,
     down: migration_20261121_120000_header_logo_zoom.down,
     name: '20261121_120000_header_logo_zoom',
+  },
+  {
+    up: migration_20261122_115352_standalone_machine_card.up,
+    down: migration_20261122_115352_standalone_machine_card.down,
+    name: '20261122_115352_standalone_machine_card'
+  },
+  {
+    up: migration_20261122_150000_barlow_typography.up,
+    down: migration_20261122_150000_barlow_typography.down,
+    name: '20261122_150000_barlow_typography',
+  },
+  {
+    up: migration_20261122_150100_breadcrumb_typography.up,
+    down: migration_20261122_150100_breadcrumb_typography.down,
+    name: '20261122_150100_breadcrumb_typography',
   },
 ];

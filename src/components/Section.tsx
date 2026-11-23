@@ -60,12 +60,11 @@ function backgroundOnly(spec: BackgroundSpec, defaultClass: string): { className
       .map(([url, density]) => `url("${url}") ${density}`)
       .join(', ')
     return {
-      className: 'lp-bg-dark lp-bg-custom',
+      className: 'lp-bg-dark lp-bg-custom lp-bg-image',
       style: {
-        backgroundImage: `linear-gradient(rgb(10 25 40 / ${overlay}), rgb(10 25 40 / ${overlay})), ${set ? `-webkit-image-set(${set})` : `url("${imageSrc(media.url)}")`}`,
-        backgroundSize: 'cover',
-        backgroundPosition: `${media.focalX ?? 50}% ${media.focalY ?? 50}%`,
-      },
+        '--section-image': `linear-gradient(rgb(10 25 40 / ${overlay}), rgb(10 25 40 / ${overlay})), ${set ? `-webkit-image-set(${set})` : `url("${imageSrc(media.url)}")`}`,
+        '--section-image-position': `${media.focalX ?? 50}% ${media.focalY ?? 50}%`,
+      } as React.CSSProperties,
     }
   }
   if (spec.value === 'custom') {

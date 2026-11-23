@@ -211,7 +211,11 @@ export const TEXT_STYLE_FONTS = [
   { label: 'Inter', value: 'inter' },
   { label: 'Montserrat', value: 'montserrat' },
   { label: 'Open Sans', value: 'open-sans' },
+  { label: 'Barlow', value: 'barlow' },
+  { label: 'Barlow Condensed', value: 'barlow-condensed' },
 ] as const
+export const BREADCRUMB_FONT_SIZE_MIN = 10
+export const BREADCRUMB_FONT_SIZE_MAX = 36
 // 文字样式色板：白、深色字、灰色字、品牌蓝、橙、浅金
 export const TEXT_STYLE_SWATCHES = ['#FFFFFF', '#142B42', '#647587', '#3275DF', '#E7662B', '#F5C26B'] as const
 
