@@ -47,7 +47,7 @@ export default async function AboutPageView() {
         // 正文和图片都没有时整块不显示（小标题、标题和按钮只是模块外壳）
         if (!hasRichText(page.intro?.body) && !mediaOf(page.intro?.image) && !photos.length) return null
         return (
-          <Section key={module} background={background}>
+          <Section key={module} background={background} className="lp-about-intro">
             <div className="lp-split">
               <div>
                 {intro.kicker ? (
@@ -65,7 +65,7 @@ export default async function AboutPageView() {
                   </div>
                 ) : null}
               </div>
-              {photos.length ? <PhotoGallery photos={photos} doc={A} basePath="intro" L={L} zoomLabel={ui.common.clickToEnlarge} /> : <Img media={page.intro?.image} ratio={pickRatio(page.intro, 'image')} fit={page.intro?.imageFit} defaultRatio={defaultRatio(theme, 'factory')} defaultFit="cover" sizes="(max-width: 767px) 100vw, 560px" attrs={L(A, 'intro.image')} />}
+              {photos.length ? <PhotoGallery photos={photos} doc={A} basePath="intro" L={L} zoomLabel={ui.common.clickToEnlarge} /> : <Img media={page.intro?.image} ratio={pickRatio(page.intro, 'image')} fit={page.intro?.imageFit} defaultRatio="original" defaultFit="contain" sizes="(max-width: 767px) 94vw, (max-width: 1319px) 51vw, 640px" attrs={L(A, 'intro.image')} />}
             </div>
           </Section>
         )
@@ -81,7 +81,7 @@ export default async function AboutPageView() {
         const columns = ['2', '3', '4'].includes(group?.columns ?? '') ? group?.columns : '3'
         const sizes = `(max-width: 767px) 100vw, (max-width: 1179px) 50vw, ${Math.round(1180 / Number(columns))}px`
         return (
-          <Section key={module} background={background}>
+          <Section key={module} background={background} className="lp-about-gallery">
             <SectionTitle title={{ text: texts.title, attrs: L(A, `${module}.title`) }} subtitle={{ text: texts.subtitle, attrs: L(A, `${module}.subtitle`) }} />
             <div className={`lp-grid3 lp-cols-${columns}`}>
               {items.map(({ item, index }) => {

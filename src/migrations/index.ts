@@ -23,6 +23,8 @@ import * as migration_20261122_150100_breadcrumb_typography from './20261122_150
 
 import * as migration_20261123_120000_home_case_visibility from './20261123_120000_home_case_visibility';
 
+import * as migration_20261124_110000_about_intro_background from './20261124_110000_about_intro_background';
+
 export const migrations = [
   {
     up: migration_20261021_153138_initial.up,
@@ -138,5 +140,10 @@ export const migrations = [
     up: migration_20261123_120000_home_case_visibility.up,
     down: migration_20261123_120000_home_case_visibility.down,
     name: '20261123_120000_home_case_visibility',
+  },
+  {
+    up: migration_20261124_110000_about_intro_background.up,
+    down: migration_20261124_110000_about_intro_background.down,
+    name: '20261124_110000_about_intro_background',
   },
 ];
