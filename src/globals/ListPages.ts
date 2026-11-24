@@ -19,11 +19,11 @@ export const ProductsPage = editableGlobal({
     {
       type: 'collapsible',
       label: '列表图片设置',
-      admin: { description: '一行一个产品，卡片高度随图片和文字调整。这里可以统一设置图片的比例、宽度和位置；每个产品点图片跳到哪里在“产品管理 › 基本信息 › 点击列表图跳转”里设置' },
+      admin: { description: '生产线列表的图框默认跟随原图比例。这里可为基本信息中的列表图统一设置比例，并调整生产线卡片图片的宽度和位置。单独上传的卡片主图在“产品管理 › 产品列表卡片”设置比例。' },
       fields: [
         {
           type: 'row',
-          fields: ratioFitFields('listImage', '产品列表 › 每个产品的列表图（单个产品另选了比例时以产品为准）'),
+          fields: ratioFitFields('listImage', '产品列表 › 生产线列表图', true),
         },
         {
           type: 'row',
@@ -34,7 +34,7 @@ export const ProductsPage = editableGlobal({
               label: '图片占一行的宽度',
               defaultValue: 'default',
               options: [
-                { label: '标准（约 52%，原型默认）', value: 'default' },
+                { label: '标准（约 43%，与单机一致）', value: 'default' },
                 { label: '40%', value: '40' },
                 { label: '50%', value: '50' },
                 { label: '60%', value: '60' },

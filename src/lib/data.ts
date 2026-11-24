@@ -157,6 +157,19 @@ export const getCases = cache(
   },
 )
 
+export const getHomeCases = cache(async (draft: boolean): Promise<Case[]> => {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'cases',
+    draft,
+    depth: 1,
+    pagination: false,
+    sort: '_order',
+    where: draft ? undefined : { ...published(false), showOnHome: { equals: true } },
+  })
+  return draft ? docs.filter((item) => item.showOnHome) : docs
+})
+
 export const getCase = cache(async (slug: string, draft: boolean): Promise<Case | null> => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({

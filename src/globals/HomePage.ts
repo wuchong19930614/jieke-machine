@@ -252,11 +252,11 @@ export const HomePage = editableGlobal({
       name: 'featuredCases',
       type: 'group',
       label: '客户案例',
-      admin: { description: at(`${H} › Customer Case Studies`, '最多 3 个。每个案例的封面、国家、设备和图片说明在对应案例记录中编辑。') },
+      admin: { description: at(`${H} › Customer Case Studies`, '在「案例管理」打开对应案例，勾选「展示到首页」并发布。首页按案例管理中的顺序显示。') },
       fields: [
         ...textFields(HOME_CASES_TEXTS, `${H} › 客户案例`, { styled: true }),
         linkField({ name: 'allLink', label: '查看案例按钮跳转', location: `${H} › 客户案例 › 查看全部`, defaultLabel: '案例列表' }),
-        { name: 'cases', type: 'relationship', relationTo: 'cases', hasMany: true, maxRows: 3, label: '精选案例' },
+        { name: 'cases', type: 'relationship', relationTo: 'cases', hasMany: true, maxRows: 3, label: '精选案例', admin: { hidden: true } },
       ],
     },
     {

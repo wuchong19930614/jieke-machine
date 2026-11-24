@@ -21,6 +21,8 @@ import * as migration_20261122_115352_standalone_machine_card from './20261122_1
 import * as migration_20261122_150000_barlow_typography from './20261122_150000_barlow_typography';
 import * as migration_20261122_150100_breadcrumb_typography from './20261122_150100_breadcrumb_typography';
 
+import * as migration_20261123_120000_home_case_visibility from './20261123_120000_home_case_visibility';
+
 export const migrations = [
   {
     up: migration_20261021_153138_initial.up,
@@ -131,5 +133,10 @@ export const migrations = [
     up: migration_20261122_150100_breadcrumb_typography.up,
     down: migration_20261122_150100_breadcrumb_typography.down,
     name: '20261122_150100_breadcrumb_typography',
+  },
+  {
+    up: migration_20261123_120000_home_case_visibility.up,
+    down: migration_20261123_120000_home_case_visibility.down,
+    name: '20261123_120000_home_case_visibility',
   },
 ];

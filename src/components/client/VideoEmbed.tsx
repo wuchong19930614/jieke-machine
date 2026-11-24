@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { imageSrc } from '@/components/Img'
+import type { LocateAttrs } from '@/lib/locator'
 import { youtubeEmbed, youtubeThumbnail, youtubeWatch } from '@/lib/youtube'
 
 type Props = {
@@ -15,9 +16,10 @@ type Props = {
   cover?: { url: string; alt: string } | null
   texts: { playAria: string; videoError: string; watchOnYouTube: string; contactUs: string; opensNewTab: string }
   sizes?: string
+  attrs?: LocateAttrs
 }
 
-export function VideoEmbed({ videoId, title, cover, texts, sizes = '(max-width: 767px) 100vw, 880px' }: Props) {
+export function VideoEmbed({ videoId, title, cover, texts, sizes = '(max-width: 767px) 100vw, 880px', attrs }: Props) {
   const [playing, setPlaying] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -31,7 +33,7 @@ export function VideoEmbed({ videoId, title, cover, texts, sizes = '(max-width: 
   const coverUrl = cover?.url ? imageSrc(cover.url) : youtubeThumbnail(videoId)
 
   return (
-    <div className="lp-video">
+    <div className="lp-video" {...attrs}>
       {playing ? (
         <iframe
           src={youtubeEmbed(videoId)}

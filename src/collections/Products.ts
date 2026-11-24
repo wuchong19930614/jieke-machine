@@ -188,17 +188,16 @@ export const Products: CollectionConfig = {
     {
       name: 'standaloneCard',
       type: 'group',
-      label: '单机设备列表卡片',
+      label: '产品列表卡片',
       admin: {
-        condition: (data) => data?.category === 'standalone-machine',
-        description: '只影响前台产品列表的单机设备卡片。留空时沿用基本信息、公开参数和可见成品。',
+        description: '生产线和单机设备都可设置。只影响前台产品列表；留空时沿用基本信息、公开参数和可见成品。',
       },
       fields: [
         { name: 'title', type: 'text', label: '卡片标题' },
         textStyleField('title', '卡片标题'),
         { name: 'summary', type: 'textarea', label: '卡片简介' },
         textStyleField('summary', '卡片简介'),
-        imageField({ name: 'image', label: '卡片主图', location: '产品列表 › 单机设备卡片', hint: '建议 1200×1000 px，白底或透明底，主体居中。默认按原图比例完整显示。' }),
+        imageField({ name: 'image', label: '卡片主图', location: '产品列表 › 卡片配图', hint: '生产线横图建议 1920×800 px；单机设备建议 1200×1000 px。单独上传的卡片主图默认按原图比例显示，可在此手动设置。' }),
         {
           name: 'specs',
           type: 'array',
@@ -331,7 +330,7 @@ export const Products: CollectionConfig = {
           defaultValue: defaultSpecTable(),
           validate: (value: unknown) => validateSpecTable(value),
           admin: {
-            description: at(`${D} › Technical Specifications`, '每个型号一列；勾选“公开”的行才在前台显示；单机设备列表展示前 3 项已填数值的公开参数；单位写在参数名里，如 Capacity (kg/h)'),
+            description: at(`${D} › Technical Specifications`, '每个型号一列；勾选“公开”的行才在前台显示；列表卡片未单独填写参数时展示前 3 项已填数值的公开参数；单位写在参数名里，如 Capacity (kg/h)'),
             components: { Field: '@/admin/components/SpecTableField#SpecTableField' },
           },
         },

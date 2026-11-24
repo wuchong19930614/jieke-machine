@@ -31,14 +31,15 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, sizes = '(ma
   const doc = collectionDoc('cases', item.id)
   const href = `/case-studies/${item.slug}/`
   const video = variant === 'featured' ? youtubeId(item.videoUrl) : null
-  const cover = mediaOf(item.videoCover) ?? mediaOf(item.coverImage)
+  const videoCover = mediaOf(item.videoCover)
   const photos = variant === 'featured' ? galleryPhotos(item.photos, item.gallery ?? [], pickRatio(item, 'gallery'), item.galleryFit, item.summary || item.title) : []
   const configuredCover = mediaOf(item.coverImage)
   const image = configuredCover ?? photos[0]?.media
-  const displayedImage = video && videoTexts ? cover : image
-  const photoCover = photos.find(({ media }) => media.id === displayedImage?.id)
+  const displayedImage = video && videoTexts ? videoCover : image
+  const captionImage = displayedImage ?? configuredCover
+  const photoCover = photos.find(({ media }) => media.id === captionImage?.id)
   const extraPhotos = photos.filter(({ media }) => media.id !== displayedImage?.id)
-  const caption = item.coverCaption || photoCover?.caption || item.summary || displayedImage?.caption
+  const caption = item.coverCaption || photoCover?.caption || item.summary || captionImage?.caption
   const captionField = item.coverCaption ? 'coverCaption' : photoCover?.path ? `${photoCover.path}.caption` : 'summary'
   const equipment = (item.products ?? [])
     .filter((p): p is Product => typeof p === 'object' && Boolean(p) && (draft || p._status === 'published'))
@@ -50,9 +51,11 @@ export function CaseCard({ item, L, buttonText, buttonAttrs, ratio, sizes = '(ma
       {video && videoTexts ? (
         // 首页精选案例有视频时显示 16:9 封面，点击后在原位播放（技术方案 4.3）
         <VideoEmbed
+          key={video}
           videoId={video}
+          attrs={L(doc, 'videoUrl')}
           title={item.title}
-          cover={cover?.url ? { url: cover.url, alt: cover.alt ?? '' } : null}
+          cover={videoCover?.url ? { url: videoCover.url, alt: videoCover.alt ?? '' } : null}
           texts={{ ...videoTexts, playAria: videoTexts.playAria.replace('{videoTitle}', item.title) }}
           sizes={sizes}
         />

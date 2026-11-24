@@ -4,17 +4,15 @@ import Link from 'next/link'
 
 import { ProductCategoryNav } from '@/components/client/ProductCategoryNav'
 import { pickRatio } from '@/components/Img'
-import { ProductLineCard } from '@/components/ProductLineCard'
+import { ProductListCard } from '@/components/ProductListCard'
 import { Breadcrumbs, crumbHome, crumbNav, PageBanner, Section } from '@/components/Section'
-import { StandaloneMachineCard } from '@/components/StandaloneMachineCard'
 import { withDefaults } from '@/content/defineTexts'
 import { PRODUCTS_PAGE_TEXTS } from '@/content/texts'
-import { getProducts, getProductsPage, getSettings, getTheme, getUiTexts, isDraft } from '@/lib/data'
+import { getProducts, getProductsPage, getSettings, getUiTexts, isDraft } from '@/lib/data'
 import { collectionDoc, globalDoc } from '@/lib/locate'
 import { getLocator, textStyleSheet } from '@/lib/locator'
 import { groupProducts } from '@/lib/productCategories'
 import { breadcrumbJsonLd, buildMetadata, JsonLd } from '@/lib/seo'
-import { defaultRatio } from '@/lib/theme'
 
 const G = globalDoc('products-page')
 const U = globalDoc('ui-texts')
@@ -28,18 +26,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ProductsListPage() {
   const draft = await isDraft()
-  const [page, products, settings, ui, theme, L] = await Promise.all([
+  const [page, products, settings, ui, L] = await Promise.all([
     getProductsPage(draft),
     getProducts(draft),
     getSettings(draft),
     getUiTexts(draft),
-    getTheme(draft),
     getLocator(),
   ])
   const texts = withDefaults(PRODUCTS_PAGE_TEXTS, page)
   // 文字样式要在生成页面内容之前登记（见 lib/locator.ts）
   const textStyles = textStyleSheet(G, page)
   const productStyles = products.map((item) => textStyleSheet(collectionDoc('products', item.id), item))
+  const lineImageRatio = pickRatio(page, 'listImage')
   return (
     <>
       {textStyles}
@@ -69,8 +67,8 @@ export default async function ProductsListPage() {
           groups={groupProducts(products).map(({ value, label, products: entries }) => ({
             value,
             label,
-            content: entries.length ? entries.map((product, index) => value === 'standalone-machine' ? (
-              <StandaloneMachineCard
+            content: entries.length ? entries.map((product, index) => (
+              <ProductListCard
                 key={product.id}
                 product={product}
                 detailsText={ui.productList.viewDetails}
@@ -79,19 +77,12 @@ export default async function ProductsListPage() {
                 whatsappTexts={settings.whatsappTexts}
                 L={L}
                 draft={draft}
-              />
-            ) : (
-              <ProductLineCard
-                key={product.id}
-                product={product}
-                index={index}
-                headingLevel="h2"
-                buttonText={ui.productList.viewDetails}
-                buttonAttrs={L(U, 'productList.viewDetails')}
-                L={L}
-                ratio={defaultRatio(theme, 'equipment')}
-                layout={{ ratio: pickRatio(page, 'listImage'), fit: page.listImageFit, width: page.listImageWidth, position: page.listImagePosition ?? 'left' }}
-                draft={draft}
+                lineLayout={value === 'production-lines' ? {
+                  ratio: lineImageRatio,
+                  fit: page.listImageFit,
+                  width: page.listImageWidth,
+                  reverse: page.listImagePosition === 'right' || (page.listImagePosition === 'alternate' && index % 2 === 1),
+                } : undefined}
               />
             )) : null,
           }))}
