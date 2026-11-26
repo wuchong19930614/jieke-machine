@@ -236,7 +236,7 @@ export const Products: CollectionConfig = {
       admin: { initCollapsed: true },
       fields: [
         moduleTitles('hero'),
-        imageField({ name: 'heroImage', label: '横幅图', location: `${D} › 横幅`, hint: '整条生产线或设备场景图' }),
+        imageField({ name: 'heroImage', label: '横幅图', location: `${D} › 横幅`, hint: '建议 1920×800 px 的生产线或设备场景横图。详情页两侧留边，默认按原图比例完整显示。' }),
         {
           type: 'row',
           fields: [

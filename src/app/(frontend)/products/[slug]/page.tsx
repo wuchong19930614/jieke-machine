@@ -102,7 +102,7 @@ export default async function ProductPage({ params }: Params) {
         const bg = backgroundProps(background)
         return (
           <div key={module} className={`lp-solution-hero ${bg.className}`} style={bg.style}>
-            <Img media={product.heroImage} ratio={pickRatio(product, 'heroImage')} fit={product.heroImageFit} defaultRatio="21/9" defaultFit="cover" sizes="100vw" priority attrs={L(P, 'heroImage')} />
+            <Img media={product.heroImage} ratio={pickRatio(product, 'heroImage')} fit={product.heroImageFit} defaultRatio="original" defaultFit="contain" sizes="(max-width: 1311px) 90vw, 1180px" className="lp-detail-banner" priority attrs={L(P, 'heroImage')} />
             <div className="lp-solution-heading">
               {heroKicker ? (
                 <div className="lp-kicker" {...L(P, 'heroKicker')}>
@@ -477,9 +477,9 @@ export default async function ProductPage({ params }: Params) {
   const image = mediaOf(product.listImage) ?? mediaOf(product.heroImage)
 
   return (
-    <>
+    <div className="lp-product-detail">
       {textStyles}
-      <div className="lp-section" style={{ paddingTop: 15, paddingBottom: 0 }}>
+      <div className="lp-detail-breadcrumb">
         <Breadcrumbs
           label={ui.common.breadcrumb}
           items={[crumbHome(ui.common.home, L), crumbNav('/products/', settings.nav.products, 'products', L), { text: product.name, attrs: L(P, 'name') }]}
@@ -507,6 +507,6 @@ export default async function ProductPage({ params }: Params) {
           },
         ]}
       />
-    </>
+    </div>
   )
 }
