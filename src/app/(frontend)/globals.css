@@ -350,7 +350,7 @@ p {
     .lp-section:not(.lp-bg-custom).lp-bg-dark:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-dark,
     .lp-section:not(.lp-bg-custom).lp-bg-blue:has(.lp-article) + .lp-section:not(.lp-bg-custom).lp-bg-blue,
     .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue):has(.lp-article) + .lp-section:not(.lp-bg-custom):not(.lp-bg-light, .lp-bg-dark, .lp-bg-blue)
-  ):has(.lp-article) {
+  ):has(.lp-article):not(.lp-product-detail > *) {
   padding-top: 0;
 }
 :is(
@@ -940,16 +940,53 @@ a.lp-image-link:hover {
 }
 
 /* ---------- 产品详情 ---------- */
-.lp-solution-hero {
-  border-radius: 0 0 var(--editorial-radius) var(--editorial-radius);
-  background: linear-gradient(125deg, var(--lp-soft), color-mix(in srgb, var(--lp-soft), #78bea9 17%));
+.lp-product-detail {
+  --detail-gutter: max(var(--gutter), 5%, calc((100% - 1180px) / 2));
+  --detail-spacing: clamp(32px, 4.5vw, 72px);
+}
+.lp-detail-breadcrumb {
+  padding: 16px var(--detail-gutter);
+}
+.lp-product-detail > .lp-solution-hero,
+.lp-product-detail > .lp-section {
+  padding: var(--detail-spacing) var(--detail-gutter);
+  border-bottom: 1px solid var(--lp-line);
+}
+.lp-product-detail > .lp-solution-hero:has(.lp-detail-banner) {
+  padding-block-start: clamp(16px, 2.5vw, 36px);
+}
+.lp-product-detail .lp-detail-banner {
+  border-radius: clamp(12px, 2vw, 24px);
+}
+.lp-detail-banner + .lp-solution-heading {
+  margin-top: clamp(22px, 3vw, 44px);
 }
 .lp-solution-heading {
-  padding: 30px 8% 35px;
-  max-width: 900px;
+  max-width: 880px;
 }
 .lp-solution-heading h1 {
   font-size: 2.36em;
+  overflow-wrap: anywhere;
+}
+.lp-product-detail .lp-title {
+  text-align: start;
+}
+.lp-product-detail .lp-title::after {
+  margin-inline: 0;
+}
+.lp-product-detail .lp-article,
+.lp-product-detail .lp-applications {
+  margin-inline: 0;
+}
+.lp-product-detail .lp-article > :is(h2, h3):first-child {
+  margin-top: 0;
+}
+.lp-product-detail .lp-applications {
+  max-width: none;
+}
+.lp-product-detail :is(.lp-application, .lp-product, .lp-benefits .lp-grid3 > div) {
+  border-radius: 12px;
+  overflow: hidden;
 }
 .lp-applications {
   max-width: 1000px;
